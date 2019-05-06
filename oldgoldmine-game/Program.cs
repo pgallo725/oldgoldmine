@@ -14,7 +14,7 @@ namespace oldgoldmine_game
         [STAThread]
         static void Main()
         {
-            using (var game = new Game1())
+            using (var game = new OldGoldMineGame())
                 game.Run();
         }
     }
