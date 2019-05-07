@@ -12,18 +12,10 @@ namespace oldgoldmine_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Vector3 camTarget;
-        Vector3 camPosition;
+        GameCamera camera;
 
-        Matrix projectionMatrix;
-        Matrix viewMatrix;
         Matrix worldMatrix;
 
-        /*
-        BasicEffect basicEffect;
-        VertexPositionColor[] triangleVertices;
-        VertexBuffer vertexBuffer;
-        */
 
         Model woodenCrate;
         Matrix cratePosition;
@@ -66,18 +58,11 @@ namespace oldgoldmine_game
         {
             base.Initialize();
 
-            // Setup Camera
-            camTarget = new Vector3(0f, 0f, 0f);
-            camPosition = new Vector3(0f, 0f, -12f);
+            // Create and initialize Camera object
+            camera = new GameCamera();
+            camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
 
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(60f),                              // 60º FOV
-                GraphicsDevice.DisplayMode.AspectRatio,                 // Same aspect ratio as the screen
-                1f, 100f);                                              // Clipping planes (near and far)
-
-            viewMatrix = Matrix.CreateLookAt(camPosition, camTarget, Vector3.Up);
-
-            worldMatrix = Matrix.CreateWorld(camTarget, Vector3.Forward, Vector3.Up);
+            worldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
             cratePosition = Matrix.CreateTranslation(new Vector3(0, 0, 0));
             crateRotation = Matrix.CreateRotationY(MathHelper.ToRadians(0f));
@@ -98,22 +83,11 @@ namespace oldgoldmine_game
                 * Matrix.CreateRotationX(MathHelper.ToRadians(10f));
             sackScale = Matrix.CreateScale(0.6f);
 
-            /*
-            // BasicEffect
-            basicEffect = new BasicEffect(GraphicsDevice);
-            basicEffect.Alpha = 1.0f;
-            basicEffect.VertexColorEnabled = true;
-            basicEffect.LightingEnabled = false;
 
-            // Create triangle
-            triangleVertices = new VertexPositionColor[3];
-            triangleVertices[0] = new VertexPositionColor(new Vector3(0, 2, 0), Color.Red);
-            triangleVertices[1] = new VertexPositionColor(new Vector3(-2, -2, 0), Color.Green);
-            triangleVertices[2] = new VertexPositionColor(new Vector3(2, -2, 0), Color.Blue);
-
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(triangleVertices);
-            */
+            PrepareModel(woodenCrate/*, cratePosition * (crateRotation * (crateScale * worldMatrix))*/);
+            PrepareModel(pickaxe/*, pickaxePosition * (pickaxeRotation * (pickaxeScale * worldMatrix))*/);
+            PrepareModel(lantern/*, lanternPosition * (lanternRotation * (lanternScale * worldMatrix))*/);
+            PrepareModel(sack/*, sackPosition * (sackRotation * (sackScale * worldMatrix))*/);
         }
 
         /// <summary>
@@ -149,41 +123,41 @@ namespace oldgoldmine_game
         {
             if (IsActive)
             {
-                Vector3 camDirection = camPosition - camTarget;
-
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     Exit();
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                {
-                    Vector3 camMovement = new Vector3(-camDirection.Z, 0f, camDirection.X);
-                    camPosition += (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camMovement;
-                    camTarget += (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camMovement;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                {
-                    Vector3 camMovement = new Vector3(-camDirection.Z, 0f, camDirection.X);
-                    camPosition -= (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camMovement;
-                    camTarget -= (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camMovement;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                {
-                    camPosition.Y -= (4f * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    camTarget.Y -= (4f * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                }
+                float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
                 if (Keyboard.GetState().IsKeyDown(Keys.Up))
                 {
-                    camPosition.Y += (4f * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    camTarget.Y += (4f * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    camera.Move(moveSpeed, camera.Forward);
                 }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                {
+                    camera.Move(moveSpeed, camera.Back);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                {
+                    camera.Move(moveSpeed, camera.Left);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                {
+                    camera.Move(moveSpeed, camera.Right);
+                }
+
                 if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
                 {
-                    camPosition -= (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camDirection;
+                    if (!orbit) camera.Move(moveSpeed, camera.Up);
                 }
+
                 if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
                 {
-                    camPosition += (4f * (float)gameTime.ElapsedGameTime.TotalSeconds) * camDirection;
+                    if (!orbit) camera.Move(moveSpeed, camera.Down);
                 }
+
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
                     if (!spaceWasPressed)
@@ -195,12 +169,12 @@ namespace oldgoldmine_game
 
                 if (orbit)
                 {
-                    Matrix rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(60f) * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    camPosition = Vector3.Transform(camPosition, rotationMatrix);
+                    camera.LookAt(Vector3.Zero);
+                    float rotation = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    camera.RotateAroundTargetY(rotation);
                 }
 
-                viewMatrix = Matrix.CreateLookAt(camPosition, camTarget, Vector3.Up);
-
+                camera.Update();
                 base.Update(gameTime);
             }
         }
@@ -213,24 +187,13 @@ namespace oldgoldmine_game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            /*
-            basicEffect.Projection = projectionMatrix;
-            basicEffect.View = viewMatrix;
-            basicEffect.World = worldMatrix;
 
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            woodenCrate.Draw(cratePosition * (crateRotation * (crateScale * worldMatrix)), camera.View, camera.Projection);
+            pickaxe.Draw(pickaxePosition * (pickaxeRotation * (pickaxeScale * worldMatrix)), camera.View, camera.Projection);
+            lantern.Draw(lanternPosition * (lanternRotation * (lanternScale * worldMatrix)), camera.View, camera.Projection);
+            sack.Draw(sackPosition * (sackRotation * (sackScale * worldMatrix)), camera.View, camera.Projection);
 
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 3);
-            }
-            */
-
-            woodenCrate.Draw(cratePosition * (crateRotation * (crateScale * worldMatrix)), viewMatrix, projectionMatrix);
-            pickaxe.Draw(pickaxePosition * (pickaxeRotation * (pickaxeScale * worldMatrix)), viewMatrix, projectionMatrix);
-            lantern.Draw(lanternPosition * (lanternRotation * (lanternScale * worldMatrix)), viewMatrix, projectionMatrix);
-            sack.Draw(sackPosition * (sackRotation * (sackScale * worldMatrix)), viewMatrix, projectionMatrix);
+            
 
 
             double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;     // Print framerate informations
@@ -239,5 +202,29 @@ namespace oldgoldmine_game
 
             base.Draw(gameTime);
         }
+
+
+        /// <summary>
+        /// Provides a quick way to draw a model in the scene after setting 
+        /// all its BasicEffects properties to the desired values
+        /// </summary>
+        void PrepareModel(Model model/*, Matrix positionMatrix*/)
+        {
+            foreach (var mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    //effect.World = positionMatrix;
+                    //effect.View = camera.View;
+                    //effect.Projection = camera.Projection;
+                }
+
+                // Draw the entire mesh
+                //mesh.Draw();
+            }
+        }
+
     }
 }
