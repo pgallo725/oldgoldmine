@@ -14,29 +14,16 @@ namespace oldgoldmine_game
 
         GameCamera camera;
 
-        Matrix worldMatrix;
+        GameObject3D woodenCrate;
+        GameObject3D pickaxe;
+        GameObject3D lantern;
+        GameObject3D sack;
 
+        Model m3d_woodenCrate;
+        Model m3d_pickaxe;
+        Model m3d_lantern;
+        Model m3d_sack;
 
-        Model woodenCrate;
-        Matrix cratePosition;
-        Matrix crateRotation;
-        Matrix crateScale;
-        Model pickaxe;
-        Matrix pickaxePosition;
-        Matrix pickaxeRotation;
-        Matrix pickaxeScale;
-        Model lantern;
-        Matrix lanternPosition;
-        Matrix lanternRotation;
-        Matrix lanternScale;
-        Model sack;
-        Matrix sackPosition;
-        Matrix sackRotation;
-        Matrix sackScale;
-
-
-        bool orbit;
-        bool spaceWasPressed;
 
         public OldGoldMineGame()
         {
@@ -62,32 +49,31 @@ namespace oldgoldmine_game
             camera = new GameCamera();
             camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
 
-            worldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
+            // Create GameObjects for the imported 3D models and set their position, rotation and scale
+            woodenCrate = new GameObject3D(m3d_woodenCrate);
+            pickaxe = new GameObject3D(m3d_pickaxe);
+            lantern = new GameObject3D(m3d_lantern);
+            sack = new GameObject3D(m3d_sack);
 
-            cratePosition = Matrix.CreateTranslation(new Vector3(0, 0, 0));
-            crateRotation = Matrix.CreateRotationY(MathHelper.ToRadians(0f));
-            crateScale = Matrix.CreateScale(2.5f);
+            woodenCrate.EnableLightingModel();
+            pickaxe.EnableLightingModel();
+            lantern.EnableLightingModel();
+            sack.EnableLightingModel();
 
-            pickaxePosition = Matrix.CreateTranslation(new Vector3(0, 0.5f, 3f));
-            pickaxeRotation = Matrix.CreateRotationY(MathHelper.ToRadians(90f))
-                * (Matrix.CreateRotationX(MathHelper.ToRadians(180f))
-                * Matrix.CreateRotationZ(MathHelper.ToRadians(15f)));
-            pickaxeScale = Matrix.CreateScale(1.1f);
+            pickaxe.RotateAroundAxis(Vector3.Up, 90f);
+            pickaxe.RotateAroundAxis(Vector3.Right, 170f);
+            lantern.RotateAroundAxis(Vector3.Up, 10f);
+            sack.RotateAroundAxis(Vector3.Up, 110f);
+            sack.RotateAroundAxis(Vector3.Backward, 5f);
 
-            lanternPosition = Matrix.CreateTranslation(new Vector3(-1, 7.5f, -1));
-            lanternRotation = Matrix.CreateRotationY(MathHelper.ToRadians(10f));
-            lanternScale = Matrix.CreateScale(0.6f);
+            pickaxe.Position = new Vector3(3f, 0.5f, 0f);
+            lantern.Position = new Vector3(-0.6f, 4.5f, -0.6f);
+            sack.Position = new Vector3(-2.5f, -2.75f, -3.25f);
 
-            sackPosition = Matrix.CreateTranslation(new Vector3(6.25f, -5f, -1));
-            sackRotation = Matrix.CreateRotationY(MathHelper.ToRadians(120f))
-                * Matrix.CreateRotationX(MathHelper.ToRadians(10f));
-            sackScale = Matrix.CreateScale(0.6f);
-
-
-            PrepareModel(woodenCrate/*, cratePosition * (crateRotation * (crateScale * worldMatrix))*/);
-            PrepareModel(pickaxe/*, pickaxePosition * (pickaxeRotation * (pickaxeScale * worldMatrix))*/);
-            PrepareModel(lantern/*, lanternPosition * (lanternRotation * (lanternScale * worldMatrix))*/);
-            PrepareModel(sack/*, sackPosition * (sackRotation * (sackScale * worldMatrix))*/);
+            woodenCrate.ScaleSize(2.5f);
+            pickaxe.ScaleSize(1.1f);
+            lantern.ScaleSize(0.6f);
+            sack.ScaleSize(0.6f);
         }
 
         /// <summary>
@@ -99,10 +85,10 @@ namespace oldgoldmine_game
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
-            pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
-            lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
-            sack = Content.Load<Model>("models_3d/sack_lowpoly");
+            m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
+            m3d_pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
+            m3d_lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
+            m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
         }
 
         /// <summary>
@@ -127,52 +113,58 @@ namespace oldgoldmine_game
                     Exit();
 
                 float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                float rotationSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                if (Keyboard.GetState().IsKeyDown(Keys.W))
                 {
                     camera.Move(moveSpeed, camera.Forward);
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                if (Keyboard.GetState().IsKeyDown(Keys.S))
                 {
                     camera.Move(moveSpeed, camera.Back);
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                if (Keyboard.GetState().IsKeyDown(Keys.A))
                 {
                     camera.Move(moveSpeed, camera.Left);
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                if (Keyboard.GetState().IsKeyDown(Keys.D))
                 {
                     camera.Move(moveSpeed, camera.Right);
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
-                {
-                    if (!orbit) camera.Move(moveSpeed, camera.Up);
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
-                {
-                    if (!orbit) camera.Move(moveSpeed, camera.Down);
-                }
-
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
-                    if (!spaceWasPressed)
-                        orbit = !orbit;
-
-                    spaceWasPressed = true;
+                    camera.Move(moveSpeed, camera.Up);
                 }
-                else spaceWasPressed = false;
 
-                if (orbit)
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 {
-                    camera.LookAt(Vector3.Zero);
-                    float rotation = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    camera.RotateAroundTargetY(rotation);
+                    camera.Move(moveSpeed, camera.Down);
                 }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                {
+                    camera.RotateViewVertical(rotationSpeed);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                {
+                    camera.RotateViewVertical(-rotationSpeed);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                {
+                    camera.RotateViewHorizontal(-rotationSpeed);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                {
+                    camera.RotateViewHorizontal(rotationSpeed);
+                }
+
 
                 camera.Update();
                 base.Update(gameTime);
@@ -188,42 +180,16 @@ namespace oldgoldmine_game
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
 
-            woodenCrate.Draw(cratePosition * (crateRotation * (crateScale * worldMatrix)), camera.View, camera.Projection);
-            pickaxe.Draw(pickaxePosition * (pickaxeRotation * (pickaxeScale * worldMatrix)), camera.View, camera.Projection);
-            lantern.Draw(lanternPosition * (lanternRotation * (lanternScale * worldMatrix)), camera.View, camera.Projection);
-            sack.Draw(sackPosition * (sackRotation * (sackScale * worldMatrix)), camera.View, camera.Projection);
-
-            
-
+            woodenCrate.Draw(camera);
+            pickaxe.Draw(camera);
+            lantern.Draw(camera);
+            sack.Draw(camera);
 
             double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;     // Print framerate informations
             Window.Title = fps.ToString("The Old Gold Mine (Pre-Alpha) - Framerate: 0.# FPS");
 
 
             base.Draw(gameTime);
-        }
-
-
-        /// <summary>
-        /// Provides a quick way to draw a model in the scene after setting 
-        /// all its BasicEffects properties to the desired values
-        /// </summary>
-        void PrepareModel(Model model/*, Matrix positionMatrix*/)
-        {
-            foreach (var mesh in model.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    //effect.World = positionMatrix;
-                    //effect.View = camera.View;
-                    //effect.Projection = camera.Projection;
-                }
-
-                // Draw the entire mesh
-                //mesh.Draw();
-            }
         }
 
     }

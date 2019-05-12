@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework;
+
 
 namespace oldgoldmine_game
 {
@@ -8,6 +9,9 @@ namespace oldgoldmine_game
         private Vector3 target;
         private Vector3 position;
         private Vector3 direction;
+
+        private const float maxLookUpAngle = 75f;
+        private const float minLookDownAngle = -75f;
 
         private Matrix viewMatrix;
         private Matrix projectionMatrix;
@@ -68,12 +72,20 @@ namespace oldgoldmine_game
             this.direction = target - position;
         }
 
+        /// <summary>
+        /// Move the camera in an arbitrary direction in tri-dimensional space, 
+        /// it will keep looking in the same direction
+        /// </summary>
         public void Move(float speed, Vector3 direction)
         {
             this.position += speed * direction;
             this.target += speed * direction;
         }
 
+        /// <summary>
+        /// Move the camera in an arbitrary direction in tri-dimensional space, 
+        /// it will keep looking at the previous target and therefore rotate the view
+        /// </summary>
         public void MoveKeepTarget(float speed, Vector3 direction)
         {
             this.position += speed * direction;
@@ -81,27 +93,22 @@ namespace oldgoldmine_game
         }
 
 
-        public void RotateX(float degrees)
-        {
 
+        public void RotateViewVertical(float degrees)
+        {
+            Matrix t = Matrix.CreateTranslation(-position);
+            Quaternion q = Quaternion.CreateFromAxisAngle(this.Right, MathHelper.ToRadians(degrees));
+
+            this.LookAt(Vector3.Transform(target, (t * Matrix.CreateFromQuaternion(q)) * Matrix.Invert(t)));
         }
 
-        public void RotateY(float degrees)
+
+        public void RotateViewHorizontal(float degrees)
         {
+            Matrix t = Matrix.CreateTranslation(-position);
+            Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Down, MathHelper.ToRadians(degrees));
 
-        }
-
-        public void RotateZ(float degrees)
-        {
-
-        }
-
-        public void RotateAroundTargetY(float degrees)
-        {
-            this.position = Vector3.Transform(position - target,
-                Matrix.CreateRotationY(MathHelper.ToRadians(degrees))) + target;
-
-            this.direction = target - position;
+            this.LookAt(Vector3.Transform(target, (t * Matrix.CreateFromQuaternion(q)) * Matrix.Invert(t)));
         }
     }
 }
