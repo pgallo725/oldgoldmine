@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using oldgoldmine_game.Menus;
+using oldgoldmine_game.Engine;
 
 namespace oldgoldmine_game
 {
@@ -20,8 +22,13 @@ namespace oldgoldmine_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        GameCamera camera;
+        GameCamera camera = new GameCamera();
         GameState gameState;
+
+        MainMenu mainMenu = new MainMenu();
+        PauseMenu pauseMenu = new PauseMenu();
+        GameOverMenu deathMenu = new GameOverMenu();
+
 
         GameObject3D woodenCrate;
         GameObject3D pickaxe;
@@ -33,13 +40,9 @@ namespace oldgoldmine_game
         Model m3d_lantern;
         Model m3d_sack;
 
-        Texture2D buttonTexture;
+        Texture2D buttonTextureNormal;
+        Texture2D buttonTextureHighlighted;
         SpriteFont menuFont;
-        Rectangle playButtonRectangle;
-        Rectangle exitButtonRectangle;
-
-        MouseState lastMouseState;
-        MouseState currentMouseState;
 
 
         public OldGoldMineGame()
@@ -53,6 +56,8 @@ namespace oldgoldmine_game
 
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 576;
+
+            Window.Title = "The Old Gold Mine (Pre-Alpha)";
         }
 
         /// <summary>
@@ -65,9 +70,13 @@ namespace oldgoldmine_game
         {
             base.Initialize();
 
-            // Create and initialize Camera object
-            camera = new GameCamera();
+            // Initialize Camera object
             camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
+
+            // Initialize menus
+            mainMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
+            pauseMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
+            deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
 
             // Create GameObjects for the imported 3D models and set their position, rotation and scale
             woodenCrate = new GameObject3D(m3d_woodenCrate);
@@ -97,17 +106,6 @@ namespace oldgoldmine_game
 
             gameState = GameState.MainMenu;
 
-
-            // Main menu setup
-            playButtonRectangle = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 200,
-                GraphicsDevice.Viewport.Height / 2 - 60 - 70,
-                400, 120);
-
-            exitButtonRectangle = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 200,
-                GraphicsDevice.Viewport.Height / 2 - 60 + 70,
-                400, 120);
-
-            lastMouseState = Mouse.GetState();
             IsMouseVisible = true;
         }
 
@@ -125,7 +123,8 @@ namespace oldgoldmine_game
             m3d_lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
             m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
 
-            buttonTexture = Content.Load<Texture2D>("ui_elements_2d/wood_button");
+            buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
+            buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
             menuFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
         }
 
@@ -148,24 +147,12 @@ namespace oldgoldmine_game
             if (!IsActive)
                 return;
 
-            currentMouseState = Mouse.GetState();
 
             switch (gameState)
             {
                 case GameState.MainMenu:
                 {
-                    // Recognize a single click of the left mouse button
-                    if (lastMouseState.LeftButton == ButtonState.Released && currentMouseState.LeftButton == ButtonState.Pressed)
-                    {
-                        // React to the click
-                        Rectangle clickArea = new Rectangle(currentMouseState.Position, new Point(10, 10));
-
-                        if (clickArea.Intersects(playButtonRectangle))
-                            StartGame();
-                        else if (clickArea.Intersects(exitButtonRectangle))
-                            Exit();
-                    }
-
+                    mainMenu.Update(this);
                     break;
                 }
                     
@@ -234,9 +221,7 @@ namespace oldgoldmine_game
 
                 case GameState.Paused:
                 {
-                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                        ResumeGame();
-
+                    pauseMenu.Update(this);
                     break;
                 }
 
@@ -244,8 +229,6 @@ namespace oldgoldmine_game
                     break;
             }
 
-
-            lastMouseState = currentMouseState;
 
             base.Update(gameTime);
         }
@@ -260,24 +243,24 @@ namespace oldgoldmine_game
             {
                 case GameState.MainMenu:
                 {
-                    GraphicsDevice.Clear(Color.Black);
-
-                    spriteBatch.Begin();
-
-                    spriteBatch.Draw(buttonTexture, destinationRectangle: playButtonRectangle);
-                    spriteBatch.DrawString(menuFont, "PLAY", playButtonRectangle.Center.ToVector2(), Color.White);
-
-                    spriteBatch.Draw(buttonTexture, destinationRectangle: exitButtonRectangle);
-                    spriteBatch.DrawString(menuFont, "QUIT", exitButtonRectangle.Center.ToVector2(), Color.White);
-
-                    spriteBatch.End();
-
+                    mainMenu.Draw(GraphicsDevice);
                     break;
                 }
 
                 case GameState.Running:
                 {
                     GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                    spriteBatch.Begin();
+
+                    double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+                    spriteBatch.DrawString(menuFont,                            // Print framerate information
+                        fps.ToString("Framerate: 0.# FPS"),
+                        new Vector2(5, 5), 
+                        fps > 60f ? Color.Green : Color.Red);
+
+                    spriteBatch.End();
+
 
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -287,16 +270,13 @@ namespace oldgoldmine_game
                     lantern.Draw(camera);
                     sack.Draw(camera);
 
-                    double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;     // Print framerate informations
-                    Window.Title = fps.ToString("The Old Gold Mine (Pre-Alpha) - Framerate: 0.# FPS");
-
+                    
                     break;
                 }
 
                 case GameState.Paused:
                 {
-                    GraphicsDevice.Clear(Color.DarkOrange);
-
+                    pauseMenu.Draw(GraphicsDevice);
                     break;
                 }
 
@@ -309,7 +289,7 @@ namespace oldgoldmine_game
         }
 
 
-        protected void StartGame()
+        public void StartGame()
         {
             if (gameState == GameState.MainMenu)
             {
@@ -319,7 +299,7 @@ namespace oldgoldmine_game
             }
         }
 
-        protected void PauseGame()
+        public void PauseGame()
         {
             if (gameState == GameState.Running)
             {
@@ -329,12 +309,22 @@ namespace oldgoldmine_game
             }
         }
 
-        protected void ResumeGame()
+        public void ResumeGame()
         {
             if (gameState == GameState.Paused)
             {
                 gameState = GameState.Running;
                 IsMouseVisible = false;
+                // anything else ?
+            }
+        }
+
+        public void ToMainMenu()
+        {
+            if (gameState == GameState.MainMenu)
+            {
+                gameState = GameState.MainMenu;
+                IsMouseVisible = true;
                 // anything else ?
             }
         }
