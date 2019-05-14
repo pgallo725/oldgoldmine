@@ -10,8 +10,8 @@ namespace oldgoldmine_game
         private Vector3 position;
         private Vector3 direction;
 
-        private const float maxLookUpAngle = 75f;
-        private const float minLookDownAngle = -75f;
+        private static float maxLookUpAngle = 75f;
+        private static float minLookDownAngle = -75f;
 
         private Matrix viewMatrix;
         private Matrix projectionMatrix;
@@ -31,7 +31,6 @@ namespace oldgoldmine_game
         public Vector3 Down { get { return Vector3.Normalize(new Vector3(-direction.X, -direction.Z, direction.Y)); } }
 
         
-
 
 
         /// <summary>
