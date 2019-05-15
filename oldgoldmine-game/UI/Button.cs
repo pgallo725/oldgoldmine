@@ -65,7 +65,7 @@ namespace oldgoldmine_game.UI
         public void Draw(in SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(highlighted ? highlightedButtonTexture : normalButtonTexture,
-                destinationRectangle: buttonArea, Color.White);
+                destinationRectangle: buttonArea, Color.BurlyWood);
 
             buttonText.Draw(spriteBatch);
         }

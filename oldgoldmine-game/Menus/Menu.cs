@@ -1,19 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using oldgoldmine_game.UI;
 
 namespace oldgoldmine_game.Menus
 {
     abstract class Menu
     {
-        protected SpriteFont menuFont;
+        protected readonly Vector2 buttonSize = new Vector2(400, 120);
+        protected const int elementSeparation = 70;
+
         protected Texture2D menuBackground;
-
-        protected Texture2D buttonTextureNormal;
-        protected Texture2D buttonTextureHighlighted;
-
-        protected MouseState lastMouseState;
-        protected MouseState currentMouseState;
 
 
         public abstract void Initialize(GraphicsDevice device, Texture2D background,

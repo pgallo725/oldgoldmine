@@ -44,7 +44,7 @@ namespace oldgoldmine_game
         Texture2D buttonTextureHighlighted;
         SpriteFont menuFont;
 
-
+        
         public OldGoldMineGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -159,7 +159,7 @@ namespace oldgoldmine_game
                     
                 case GameState.Running:
                 {
-                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    if (InputManager.PauseKeyPressed)
                         PauseGame();
 
                     float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -256,9 +256,9 @@ namespace oldgoldmine_game
 
                     double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
                     spriteBatch.DrawString(menuFont,                            // Print framerate information
-                        fps.ToString("Framerate: 0.# FPS"),
+                        fps.ToString(" 0.# FPS"),
                         new Vector2(5, 5), 
-                        fps > 60f ? Color.Green : Color.Red);
+                        fps < 60f ? Color.Red : Color.Green);
 
                     spriteBatch.End();
 
@@ -322,7 +322,7 @@ namespace oldgoldmine_game
 
         public void ToMainMenu()
         {
-            if (gameState == GameState.MainMenu)
+            if (gameState != GameState.MainMenu)
             {
                 gameState = GameState.MainMenu;
                 IsMouseVisible = true;

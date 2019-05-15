@@ -12,6 +12,7 @@ namespace oldgoldmine_game.Engine
         private static Vector2 mouseMovement = Vector2.Zero;
         private static bool mouseLeftClickSingle = false;
         private static bool mouseLeftClickHold = false;
+        private static bool pauseWasPressed = false;
         private static bool pausePressed = false;
 
         public static Vector2 CurrentFrameMouseMovement { get { return mouseMovement; } }
@@ -31,8 +32,8 @@ namespace oldgoldmine_game.Engine
             mousePosition = mouseState.Position;
             mouseLeftClickSingle = !mouseLeftClickHold && mouseState.LeftButton == ButtonState.Pressed;
             mouseLeftClickHold = mouseState.LeftButton == ButtonState.Pressed;
-            pausePressed = !pausePressed && 
-                (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
+            pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
+            pauseWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
         }
 
     }
