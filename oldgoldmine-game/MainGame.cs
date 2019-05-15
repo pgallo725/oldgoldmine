@@ -147,6 +147,7 @@ namespace oldgoldmine_game
             if (!IsActive)
                 return;
 
+            InputManager.UpdateFrameInput();
 
             switch (gameState)
             {

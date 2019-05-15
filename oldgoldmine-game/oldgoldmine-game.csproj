@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\GameObject3D.cs" />
+    <Compile Include="Engine\InputManager.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />
     <Compile Include="Menus\MainMenu.cs" />
