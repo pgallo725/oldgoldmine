@@ -24,7 +24,6 @@ namespace oldgoldmine_game.Menus
         {
             this.menuBackground = background;
             this.menuFont = font;
-            this.menuSpriteBatch = new SpriteBatch(device);
             this.buttonTextureNormal = normalButton;
             this.buttonTextureHighlighted = highlightedButton;
 
@@ -49,7 +48,7 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Update(OldGoldMineGame application)
+        public override void Update(in OldGoldMineGame application)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 application.ResumeGame();
@@ -76,21 +75,21 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Draw(GraphicsDevice screen)
+        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
             screen.Clear(Color.DarkOrange);
 
-            menuSpriteBatch.Begin();
+            spriteBatch.Begin();
 
-            menuSpriteBatch.Draw(resumeButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
+            spriteBatch.Draw(resumeButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
                 destinationRectangle: resumeButtonRectangle, Color.BurlyWood);
-            menuSpriteBatch.DrawString(menuFont, "RESUME", resumeTextPosition, Color.White);
+            spriteBatch.DrawString(menuFont, "RESUME", resumeTextPosition, Color.White);
 
-            menuSpriteBatch.Draw(menuButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
+            spriteBatch.Draw(menuButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
                 destinationRectangle: menuButtonRectangle, Color.BurlyWood);
-            menuSpriteBatch.DrawString(menuFont, "QUIT", menuTextPosition, Color.White);
+            spriteBatch.DrawString(menuFont, "QUIT", menuTextPosition, Color.White);
 
-            menuSpriteBatch.End();
+            spriteBatch.End();
         }
 
     }

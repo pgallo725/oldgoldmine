@@ -19,16 +19,12 @@ namespace oldgoldmine_game.Menus
         private bool playButtonHighlighted = false;
         private bool exitButtonHighlighted = false;
 
-        private MouseState lastMouseState;
-        private MouseState currentMouseState;
-
 
         public override void Initialize(GraphicsDevice device, Texture2D background,
             SpriteFont font, Texture2D normalButton, Texture2D highlightedButton)
         {
             this.menuBackground = background;
             this.menuFont = font;
-            this.menuSpriteBatch = new SpriteBatch(device);
             this.buttonTextureNormal = normalButton;
             this.buttonTextureHighlighted = highlightedButton;
 
@@ -56,7 +52,7 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Update(OldGoldMineGame application)
+        public override void Update(in OldGoldMineGame application)
         {
             currentMouseState = Mouse.GetState();
 
@@ -80,27 +76,27 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Draw(GraphicsDevice screen)
+        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
             screen.Clear(Color.Black);
 
-            menuSpriteBatch.Begin();
+            spriteBatch.Begin();
 
-            menuSpriteBatch.Draw(playButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
+            spriteBatch.Draw(playButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
                 destinationRectangle: playButtonRectangle, Color.BurlyWood);
-            menuSpriteBatch.DrawString(menuFont, "PLAY", playTextPosition, Color.White);
+            spriteBatch.DrawString(menuFont, "PLAY", playTextPosition, Color.White);
 
-            menuSpriteBatch.Draw(exitButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
+            spriteBatch.Draw(exitButtonHighlighted ? buttonTextureHighlighted : buttonTextureNormal,
                 destinationRectangle: exitButtonRectangle, Color.BurlyWood);
-            menuSpriteBatch.DrawString(menuFont, "QUIT", exitTextPosition, Color.White);
+            spriteBatch.DrawString(menuFont, "QUIT", exitTextPosition, Color.White);
 
             int testScore = 17520;
             string highscoreText = testScore.ToString("Highscore: 0.#");
 
-            menuSpriteBatch.DrawString(menuFont, highscoreText, highscoreTextPosition 
+            spriteBatch.DrawString(menuFont, highscoreText, highscoreTextPosition 
                 - menuFont.MeasureString(highscoreText) / 2, Color.LightGoldenrodYellow);
 
-            menuSpriteBatch.End();
+            spriteBatch.End();
         }
 
     }

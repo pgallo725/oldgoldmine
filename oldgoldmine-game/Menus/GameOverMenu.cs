@@ -14,12 +14,12 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Update(OldGoldMineGame application)
+        public override void Update(in OldGoldMineGame application)
         {
             
         }
 
-        public override void Draw(GraphicsDevice screen)
+        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
             screen.Clear(Color.DarkRed);
         }

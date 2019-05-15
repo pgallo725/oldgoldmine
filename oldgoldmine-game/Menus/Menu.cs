@@ -7,7 +7,6 @@ namespace oldgoldmine_game.Menus
     abstract class Menu
     {
         protected SpriteFont menuFont;
-        protected SpriteBatch menuSpriteBatch;
         protected Texture2D menuBackground;
 
         protected Texture2D buttonTextureNormal;
@@ -21,10 +20,10 @@ namespace oldgoldmine_game.Menus
             SpriteFont font, Texture2D normalButton, Texture2D highlightedButton);
 
 
-        public abstract void Update(OldGoldMineGame application);
+        public abstract void Update(in OldGoldMineGame application);
 
 
-        public abstract void Draw(GraphicsDevice screen);
+        public abstract void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch);
     }
 
 }

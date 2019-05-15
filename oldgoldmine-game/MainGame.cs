@@ -243,7 +243,7 @@ namespace oldgoldmine_game
             {
                 case GameState.MainMenu:
                 {
-                    mainMenu.Draw(GraphicsDevice);
+                    mainMenu.Draw(GraphicsDevice, spriteBatch);
                     break;
                 }
 
@@ -276,7 +276,7 @@ namespace oldgoldmine_game
 
                 case GameState.Paused:
                 {
-                    pauseMenu.Draw(GraphicsDevice);
+                    pauseMenu.Draw(GraphicsDevice, spriteBatch);
                     break;
                 }
 
