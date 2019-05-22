@@ -51,16 +51,57 @@ namespace oldgoldmine_game.UI
                 highlightedButtonTexture = normalButtonTexture;
         }
 
-        
+        public Button(Rectangle buttonArea, SpriteFont font, string text,
+            Texture2D buttonNormal, Texture2D buttonHighlighted = null)
+        {
+            this.buttonArea = buttonArea;
+            this.buttonText = new SpriteText(font, text,
+                buttonArea.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+            this.normalButtonTexture = buttonNormal;
+            this.highlightedButtonTexture = buttonHighlighted;
+
+            if (buttonHighlighted == null)
+                highlightedButtonTexture = normalButtonTexture;
+        }
+
+        public Button(Point position, Point size, SpriteFont font, string text,
+            Texture2D buttonNormal, Texture2D buttonHighlighted = null)
+        {
+            this.buttonArea = new Rectangle(position, size);
+            this.buttonText = new SpriteText(font, text, 
+                buttonArea.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+            this.normalButtonTexture = buttonNormal;
+            this.highlightedButtonTexture = buttonHighlighted;
+
+            if (buttonHighlighted == null)
+                highlightedButtonTexture = normalButtonTexture;
+        }
+
+        public Button(int x, int y, int width, int height, SpriteFont font, string text,
+            Texture2D buttonNormal, Texture2D buttonHighlighted = null)
+        {
+            this.buttonArea = new Rectangle(x, y, width, height);
+            this.buttonText = new SpriteText(font, text,
+                buttonArea.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+            this.normalButtonTexture = buttonNormal;
+            this.highlightedButtonTexture = buttonHighlighted;
+
+            if (buttonHighlighted == null)
+                highlightedButtonTexture = normalButtonTexture;
+        }
+
+
         public void Update()
         {
             highlighted = buttonArea.Contains(InputManager.MousePosition);
         }
 
+
         public bool IsClicked()
         {
             return InputManager.MouseSingleLeftClick && buttonArea.Contains(InputManager.MousePosition);
         }
+
 
         public void Draw(in SpriteBatch spriteBatch)
         {

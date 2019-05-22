@@ -28,13 +28,8 @@ namespace oldgoldmine_game.Menus
                 (int)buttonSize.X, (int)buttonSize.Y);
 
 
-            resumeButton = new Button(resumeButtonRectangle,
-                new SpriteText(font, "RESUME", resumeButtonRectangle.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter),
-                normalButton, highlightedButton);
-
-            menuButton = new Button(menuButtonRectangle,
-                new SpriteText(font, "BACK TO MENU", menuButtonRectangle.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter),
-                normalButton, highlightedButton);
+            resumeButton = new Button(resumeButtonRectangle, font, "RESUME", normalButton, highlightedButton);
+            menuButton = new Button(menuButtonRectangle,font, "BACK TO MENU", normalButton, highlightedButton);
         }
 
 

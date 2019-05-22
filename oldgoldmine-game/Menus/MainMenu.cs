@@ -32,13 +32,8 @@ namespace oldgoldmine_game.Menus
                 exitButtonRectangle.Bottom + (elementSeparation / 2));
 
 
-            playButton = new Button(playButtonRectangle,
-                new SpriteText(font, "PLAY", playButtonRectangle.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter),
-                normalButton, highlightedButton);
-
-            exitButton = new Button(exitButtonRectangle,
-                new SpriteText(font, "QUIT", exitButtonRectangle.Center.ToVector2(), SpriteText.TextAlignment.MiddleCenter),
-                normalButton, highlightedButton);
+            playButton = new Button(playButtonRectangle, font, "PLAY", normalButton, highlightedButton);
+            exitButton = new Button(exitButtonRectangle, font, "QUIT", normalButton, highlightedButton);
 
             highscoreText = new SpriteText(font, "Highscore: 17520", Color.LightGoldenrodYellow,
                 highscoreTextPosition, SpriteText.TextAlignment.MiddleCenter);

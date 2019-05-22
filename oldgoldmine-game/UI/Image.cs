@@ -34,7 +34,7 @@ namespace oldgoldmine_game.UI
 
         public void Draw(in SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(imageTexture, destinationRectangle: drawArea, color: null);
+            spriteBatch.Draw(imageTexture, drawArea, Color.White);
         }
     }
 }
