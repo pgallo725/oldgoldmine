@@ -312,6 +312,7 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.MainMenu)
             {
+                // TODO: reload the entire scene to its initial state
                 gameState = GameState.Running;
                 IsMouseVisible = false;
                 // anything else ?
