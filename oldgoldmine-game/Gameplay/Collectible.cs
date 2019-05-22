@@ -7,9 +7,18 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Collectible : GameObject3D
     {
+        private static readonly Vector3 cornerOffset = new Vector3(0.5f, 0.5f, -0.5f);
 
         private BoundingBox hitbox;
 
+        public override Vector3 Position {
+            get { return base.Position; }
+            set {
+                base.Position = value;
+                hitbox.Min = value - cornerOffset;
+                hitbox.Max = value + cornerOffset;
+            }
+        }
 
         public Collectible()
             : base()
@@ -17,10 +26,16 @@ namespace oldgoldmine_game.Gameplay
             this.hitbox = new BoundingBox(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, 0.5f, -0.5f));
         }
 
-        public Collectible(Model model, BoundingBox hitbox)
+        public Collectible(Model model/*, BoundingBox hitbox*/)
             : base(model)
         {
-            this.hitbox = hitbox;
+            // Automatically create the bounding box based on the model meshes
+            this.hitbox = BoundingBox.CreateFromSphere(model.Meshes[0].BoundingSphere);
+            for (int meshIndex = 1; meshIndex < model.Meshes.Count; meshIndex++)
+            {
+                BoundingBox meshBox = BoundingBox.CreateFromSphere(model.Meshes[meshIndex].BoundingSphere);
+                this.hitbox = BoundingBox.CreateMerged(this.hitbox, meshBox);
+            }
         }
 
         public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
@@ -46,8 +61,6 @@ namespace oldgoldmine_game.Gameplay
                 this.IsActive = false;
                 OldGoldMineGame.Score += 100;
             }
-
-            base.Update();
         }
 
 

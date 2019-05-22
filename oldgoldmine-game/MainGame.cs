@@ -37,12 +37,13 @@ namespace oldgoldmine_game
         GameObject3D lantern;
         GameObject3D sack;
 
-        Collectible test;
+        Collectible gold;
 
         Model m3d_woodenCrate;
         Model m3d_pickaxe;
         Model m3d_lantern;
         Model m3d_sack;
+        Model m3d_gold;
 
         Texture2D buttonTextureNormal;
         Texture2D buttonTextureHighlighted;
@@ -88,7 +89,7 @@ namespace oldgoldmine_game
             deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
 
             // Collectibles
-            test = new Collectible();
+            gold = new Collectible(m3d_gold);
 
             // Create GameObjects for the imported 3D models and set their position, rotation and scale
             woodenCrate = new GameObject3D(m3d_woodenCrate);
@@ -100,6 +101,7 @@ namespace oldgoldmine_game
             pickaxe.EnableLightingModel();
             lantern.EnableLightingModel();
             sack.EnableLightingModel();
+            gold.EnableLightingModel();
 
             pickaxe.RotateAroundAxis(Vector3.Up, 90f);
             pickaxe.RotateAroundAxis(Vector3.Right, 170f);
@@ -110,11 +112,13 @@ namespace oldgoldmine_game
             pickaxe.Position = new Vector3(3f, 0.5f, 0f);
             lantern.Position = new Vector3(-0.6f, 4.5f, -0.6f);
             sack.Position = new Vector3(-2.5f, -2.75f, -3.25f);
+            gold.Position = new Vector3(-1f, 5f, -1f);
 
             woodenCrate.ScaleSize(2.5f);
             pickaxe.ScaleSize(1.1f);
             lantern.ScaleSize(0.6f);
             sack.ScaleSize(0.6f);
+            gold.ScaleSize(2f);
 
             gameState = GameState.MainMenu;
 
@@ -134,6 +138,7 @@ namespace oldgoldmine_game
             m3d_pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
             m3d_lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
             m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
+            m3d_gold = Content.Load<Model>("models_3d/goldOre");
 
             buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
             buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
@@ -176,6 +181,7 @@ namespace oldgoldmine_game
 
                     float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float rotationSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    float lookAroundSpeed = 100f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (Keyboard.GetState().IsKeyDown(Keys.W))
                     {
@@ -209,23 +215,26 @@ namespace oldgoldmine_game
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Up))
                     {
-                        player.LookUpDown(rotationSpeed);
+                        player.RotateUpDown(rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Down))
                     {
-                        player.LookUpDown(-rotationSpeed);
+                        player.RotateUpDown(-rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Left))
                     {
-                        player.LookLeftRight(-rotationSpeed);
+                        player.RotateLeftRight(-rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Right))
                     {
-                        player.LookLeftRight(rotationSpeed);
+                        player.RotateLeftRight(rotationSpeed);
                     }
+
+                    player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
+                    player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
 
                     player.Update();
 
@@ -237,12 +246,12 @@ namespace oldgoldmine_game
                     pauseMenu.Update(this);
                     break;
                 }
-
+                
                 default:
                     break;
             }
 
-            test.Update();
+            gold.Update();
 
             base.Update(gameTime);
         }
@@ -288,6 +297,7 @@ namespace oldgoldmine_game
                     pickaxe.Draw(player.Camera);
                     lantern.Draw(player.Camera);
                     sack.Draw(player.Camera);
+                    gold.Draw(player.Camera);
 
                     
                     break;

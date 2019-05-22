@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using oldgoldmine_game.Engine;
 
 
@@ -6,6 +7,11 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Player
     {
+        private const float maxVerticalAngle = 45f;
+        private const float maxHorizontalAngle = 30f;
+
+        private float verticalLookAngle = 0.0f;
+        private float horizontalLookAngle = 0.0f;
 
         //private readonly Vector3 size = Vector3.One;
         private GameCamera camera;
@@ -30,14 +36,32 @@ namespace oldgoldmine_game.Gameplay
 
 
 
-        public void LookUpDown(float degrees)
+        public void RotateUpDown(float degrees)
         {
             camera.RotateViewVertical(degrees);
         }
 
-        public void LookLeftRight(float degrees)
+        public void RotateLeftRight(float degrees)
         {
             camera.RotateViewHorizontal(degrees);
+        }
+
+        public void LookUpDown(float degrees)
+        {
+            float targetAngle = MathHelper.Clamp(verticalLookAngle + degrees,
+                -maxVerticalAngle, maxVerticalAngle);
+
+            camera.RotateViewVertical(targetAngle - verticalLookAngle);
+            verticalLookAngle = targetAngle;
+        }
+
+        public void LookLeftRight(float degrees)
+        {
+            float targetAngle = MathHelper.Clamp(horizontalLookAngle + degrees,
+                -maxHorizontalAngle, maxHorizontalAngle);
+
+            camera.RotateViewHorizontal(targetAngle - horizontalLookAngle);
+            horizontalLookAngle = targetAngle;
         }
 
         public void Move(float speed, Vector3 direction)

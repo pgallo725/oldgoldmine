@@ -16,9 +16,9 @@ namespace oldgoldmine_game.Engine
         protected bool active = true;
 
 
-        public Vector3 Position { get { return position; } set { position = value; } }
-        public Vector3 Scale { get { return scale; } set { scale = value; } }
-        public Quaternion Rotation { get { return rotation; } set { rotation = value; } }
+        public virtual Vector3 Position { get { return position; } set { position = value; } }
+        public virtual Vector3 Scale { get { return scale; } set { scale = value; } }
+        public virtual Quaternion Rotation { get { return rotation; } set { rotation = value; } }
 
         // When a GameObject is active, it's rendered on screen and 
         public bool IsActive { get { return active; } set { active = value; } }
@@ -170,8 +170,8 @@ namespace oldgoldmine_game.Engine
         /// </summary>
         public virtual void Update()
         {
-            if (!active)
-                return;
+            //if (!active)
+                //return;
 
             // Update objectWorldMatrix
             objectWorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up)

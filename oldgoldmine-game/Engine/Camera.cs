@@ -11,9 +11,6 @@ namespace oldgoldmine_game.Engine
         private Vector3 position;
         private Vector3 direction;
 
-        private static float maxLookUpAngle = 75f;
-        private static float minLookDownAngle = -75f;
-
         private Matrix viewMatrix;
         private Matrix projectionMatrix;
 

@@ -17,6 +17,8 @@ namespace oldgoldmine_game.Engine
 
         public static Vector2 CurrentFrameMouseMovement { get { return mouseMovement; } }
         public static Point MousePosition { get { return mousePosition; } }
+        public static float MouseMovementX { get { return mouseMovement.X; } }
+        public static float MouseMovementY { get { return -mouseMovement.Y; } }
         public static bool MouseSingleLeftClick { get { return mouseLeftClickSingle; } }
         public static bool MouseHoldLeftClick { get { return mouseLeftClickHold; } }
         public static bool PauseKeyPressed { get { return pausePressed; } }
