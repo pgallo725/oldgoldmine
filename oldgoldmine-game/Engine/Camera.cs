@@ -79,23 +79,21 @@ namespace oldgoldmine_game.Engine
         /// Move the camera in an arbitrary direction in tri-dimensional space, 
         /// it will keep looking in the same direction.
         /// </summary>
-        /// <param name="speed">The movement speed.</param>
-        /// <param name="direction">A normalized Vector3 representing the direction of the movement.</param>
-        public void Move(float speed, Vector3 direction)
+        /// <param name="movement">The movement vector.</param>
+        public void Move(Vector3 movement)
         {
-            this.position += speed * direction;
-            this.target += speed * direction;
+            this.position += movement;
+            this.target += movement;
         }
 
         /// <summary>
         /// Move the camera in an arbitrary direction in tri-dimensional space, 
         /// the view will be locked on the previous target and therefore the camera will rotate.
         /// </summary>
-        /// <param name="speed">The movement speed.</param>
-        /// <param name="direction">A normalized Vector3 representing the direction of the movement.</param>
-        public void MoveKeepTarget(float speed, Vector3 direction)
+        /// <param name="movement">The movement vector.</param>
+        public void MoveKeepTarget(Vector3 movement)
         {
-            this.position += speed * direction;
+            this.position += movement;
             this.direction = target - position;
         }
 

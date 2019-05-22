@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace oldgoldmine_game.Engine
 {
 
-    class GameObject3D
+    public class GameObject3D
     {
         private readonly Model model3d;
 
@@ -13,10 +13,15 @@ namespace oldgoldmine_game.Engine
         private Vector3 scale;
         private Quaternion rotation;
 
+        protected bool active = true;
+
 
         public Vector3 Position { get { return position; } set { position = value; } }
         public Vector3 Scale { get { return scale; } set { scale = value; } }
         public Quaternion Rotation { get { return rotation; } set { rotation = value; } }
+
+        // When a GameObject is active, it's rendered on screen and 
+        public bool IsActive { get { return active; } set { active = value; } }
 
         private Matrix objectWorldMatrix;
         private bool updated = false;
@@ -37,6 +42,18 @@ namespace oldgoldmine_game.Engine
             this.position = Vector3.Zero;
             this.scale = Vector3.One;
             this.rotation = Quaternion.Identity;
+        }
+
+        /// <summary>
+        /// GameObject3D copy constructor.
+        /// </summary>
+        public GameObject3D(GameObject3D other)
+        {
+            this.model3d = other.model3d;
+            this.position = other.position;
+            this.scale = other.scale;
+            this.rotation = other.rotation;
+            this.active = other.active;
         }
 
         /// <summary>
@@ -151,8 +168,11 @@ namespace oldgoldmine_game.Engine
         /// <summary>
         /// Apply all previous changes to the object's Position, Rotation and Scale, updating the ObjectWorldMatrix.
         /// </summary>
-        public void Update()
+        public virtual void Update()
         {
+            if (!active)
+                return;
+
             // Update objectWorldMatrix
             objectWorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up)
                 * Matrix.CreateScale(scale)
@@ -169,6 +189,9 @@ namespace oldgoldmine_game.Engine
         /// <param name="camera">The camera that will be used to render the object.</param>
         public void Draw(in GameCamera camera)
         {
+            if (!active)
+                return;
+
             model3d.Draw(this.ObjectWorldMatrix, camera.View, camera.Projection);
         }
 

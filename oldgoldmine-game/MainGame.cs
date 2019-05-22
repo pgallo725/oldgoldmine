@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
+using oldgoldmine_game.Gameplay;
 
 namespace oldgoldmine_game
 {
@@ -22,7 +23,8 @@ namespace oldgoldmine_game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        GameCamera camera = new GameCamera();
+        //GameCamera camera = new GameCamera();
+        public static Player player = new Player();
         GameState gameState;
 
         MainMenu mainMenu = new MainMenu();
@@ -35,6 +37,8 @@ namespace oldgoldmine_game
         GameObject3D lantern;
         GameObject3D sack;
 
+        Collectible test;
+
         Model m3d_woodenCrate;
         Model m3d_pickaxe;
         Model m3d_lantern;
@@ -43,6 +47,9 @@ namespace oldgoldmine_game
         Texture2D buttonTextureNormal;
         Texture2D buttonTextureHighlighted;
         SpriteFont menuFont;
+
+        private static int score = 0;
+        public static int Score { get { return score; } set { score = value; } }
 
         
         public OldGoldMineGame()
@@ -70,13 +77,18 @@ namespace oldgoldmine_game
         {
             base.Initialize();
 
-            // Initialize Camera object
+            // Initialize player and Player objects
+            GameCamera camera = new GameCamera();
             camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
+            player.Initialize(camera);
 
             // Initialize menus
             mainMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
             pauseMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
             deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
+
+            // Collectibles
+            test = new Collectible();
 
             // Create GameObjects for the imported 3D models and set their position, rotation and scale
             woodenCrate = new GameObject3D(m3d_woodenCrate);
@@ -167,55 +179,55 @@ namespace oldgoldmine_game
 
                     if (Keyboard.GetState().IsKeyDown(Keys.W))
                     {
-                        camera.Move(moveSpeed, camera.Forward);
+                        player.Move(moveSpeed, player.Camera.Forward);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.S))
                     {
-                        camera.Move(moveSpeed, camera.Back);
+                        player.Move(moveSpeed, player.Camera.Back);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.A))
                     {
-                        camera.Move(moveSpeed, camera.Left);
+                        player.Move(moveSpeed, player.Camera.Left);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.D))
                     {
-                        camera.Move(moveSpeed, camera.Right);
+                        player.Move(moveSpeed, player.Camera.Right);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
-                        camera.Move(moveSpeed, camera.Up);
+                        player.Move(moveSpeed, player.Camera.Up);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     {
-                        camera.Move(moveSpeed, camera.Down);
+                        player.Move(moveSpeed, player.Camera.Down);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Up))
                     {
-                        camera.RotateViewVertical(rotationSpeed);
+                        player.LookUpDown(rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Down))
                     {
-                        camera.RotateViewVertical(-rotationSpeed);
+                        player.LookUpDown(-rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Left))
                     {
-                        camera.RotateViewHorizontal(-rotationSpeed);
+                        player.LookLeftRight(-rotationSpeed);
                     }
 
                     if (Keyboard.GetState().IsKeyDown(Keys.Right))
                     {
-                        camera.RotateViewHorizontal(rotationSpeed);
+                        player.LookLeftRight(rotationSpeed);
                     }
 
-                    camera.Update();
+                    player.Update();
 
                     break;
                 }
@@ -230,6 +242,7 @@ namespace oldgoldmine_game
                     break;
             }
 
+            test.Update();
 
             base.Update(gameTime);
         }
@@ -260,16 +273,21 @@ namespace oldgoldmine_game
                         new Vector2(5, 5), 
                         fps < 60f ? Color.Red : Color.Green);
 
+                    spriteBatch.DrawString(menuFont,                            // Show score
+                        score.ToString("Score: 0.#"),
+                        new Vector2(5, 50),
+                        Color.White);
+
                     spriteBatch.End();
 
 
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-                    woodenCrate.Draw(camera);
-                    pickaxe.Draw(camera);
-                    lantern.Draw(camera);
-                    sack.Draw(camera);
+                    woodenCrate.Draw(player.Camera);
+                    pickaxe.Draw(player.Camera);
+                    lantern.Draw(player.Camera);
+                    sack.Draw(player.Camera);
 
                     
                     break;
