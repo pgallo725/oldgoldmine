@@ -9,16 +9,16 @@ namespace oldgoldmine_game.Engine
     {
         private readonly Model model3d;
 
-        private Vector3 position;
-        private Vector3 scale;
-        private Quaternion rotation;
+        protected Vector3 position;
+        protected Vector3 scale;
+        protected Quaternion rotation;
 
         protected bool active = true;
 
 
-        public virtual Vector3 Position { get { return position; } set { position = value; } }
-        public virtual Vector3 Scale { get { return scale; } set { scale = value; } }
-        public virtual Quaternion Rotation { get { return rotation; } set { rotation = value; } }
+        public virtual Vector3 Position { get { return position; } set { position = value; updated = false; } }
+        public virtual Vector3 Scale { get { return scale; } set { scale = value; updated = false; } }
+        public virtual Quaternion Rotation { get { return rotation; } set { rotation = value; updated = false; } }
 
         // When a GameObject is active, it's rendered on screen and 
         public bool IsActive { get { return active; } set { active = value; } }
@@ -30,7 +30,24 @@ namespace oldgoldmine_game.Engine
         /// Get the world matrix representing the coordinate system of this object, incorporating any position,
         /// rotation and scale transformation that has been applied to it. Use this for rendering the 3D model.
         /// </summary>
-        public Matrix ObjectWorldMatrix { get { if (!updated) this.Update(); return objectWorldMatrix; } }
+        public Matrix ObjectWorldMatrix
+        {
+            get
+            {
+                if (!updated)
+                {
+                    // Update objectWorldMatrix
+                    objectWorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up)
+                        * Matrix.CreateScale(scale)
+                        * Matrix.CreateFromQuaternion(rotation)
+                        * Matrix.CreateTranslation(position);
+
+                    updated = true;
+                }
+
+                return objectWorldMatrix;
+            }
+        }
 
 
         /// <summary>
@@ -88,7 +105,7 @@ namespace oldgoldmine_game.Engine
         /// Change the position of this object in 3D coordinate space.
         /// </summary>
         /// <param name="movement">A Vector3 representing the amount of movement to apply on each axis.</param>
-        public void MovePosition(Vector3 movement)
+        public virtual void MovePosition(Vector3 movement)
         {
             position += movement;
             updated = false;
@@ -98,7 +115,7 @@ namespace oldgoldmine_game.Engine
         /// Change the scale (size) of the 3D model.
         /// </summary>
         /// <param name="scale">A value representing the uniform scaling factor for the entire object.</param>
-        public void ScaleSize(float scale)
+        public virtual void ScaleSize(float scale)
         {
             this.scale.X = scale;
             this.scale.Y = scale;
@@ -110,7 +127,7 @@ namespace oldgoldmine_game.Engine
         /// Change the scale (size) of the 3D model.
         /// </summary>
         /// <param name="scale">A Vector3 representing the scaling factors for each axis.</param>
-        public void ScaleSize(Vector3 scale)
+        public virtual void ScaleSize(Vector3 scale)
         {
             this.scale = scale;
             updated = false;
@@ -166,33 +183,16 @@ namespace oldgoldmine_game.Engine
 
 
         /// <summary>
-        /// Apply all previous changes to the object's Position, Rotation and Scale, updating the ObjectWorldMatrix.
-        /// </summary>
-        public virtual void Update()
-        {
-            //if (!active)
-                //return;
-
-            // Update objectWorldMatrix
-            objectWorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up)
-                * Matrix.CreateScale(scale)
-                * Matrix.CreateFromQuaternion(rotation)
-                * Matrix.CreateTranslation(position);
-
-            updated = true;
-        }
-
-
-        /// <summary>
         /// Render the object in 3D space, with the previously defined Position, Rotation and Scale.
         /// </summary>
         /// <param name="camera">The camera that will be used to render the object.</param>
-        public void Draw(in GameCamera camera)
+        public virtual void Draw(in GameCamera camera)
         {
             if (!active)
                 return;
 
-            model3d.Draw(this.ObjectWorldMatrix, camera.View, camera.Projection);
+            if (model3d != null)
+                model3d.Draw(this.ObjectWorldMatrix, camera.View, camera.Projection);
         }
 
     }

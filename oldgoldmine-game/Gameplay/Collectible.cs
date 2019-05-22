@@ -7,18 +7,34 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Collectible : GameObject3D
     {
-        private static readonly Vector3 cornerOffset = new Vector3(0.5f, 0.5f, -0.5f);
+        private const bool debugDrawHitbox = true;
 
         private BoundingBox hitbox;
-
-        public override Vector3 Position {
-            get { return base.Position; }
-            set {
+        
+        public override Vector3 Position
+        {
+            get { return base.position; }
+            set
+            {
+                Vector3 boxSize = hitbox.Max - hitbox.Min;
                 base.Position = value;
-                hitbox.Min = value - cornerOffset;
-                hitbox.Max = value + cornerOffset;
+                hitbox.Min = value - boxSize / 2;
+                hitbox.Max = value + boxSize / 2;
             }
         }
+
+        public override Vector3 Scale
+        {
+            get { return base.scale; }
+            set
+            {
+                Vector3 boxSize = ((hitbox.Max - hitbox.Min) / base.Scale) * value;
+                base.Scale = value;
+                hitbox.Min = Position - boxSize / 2;
+                hitbox.Max = Position + boxSize / 2;
+            }
+        }
+
 
         public Collectible()
             : base()
@@ -26,10 +42,39 @@ namespace oldgoldmine_game.Gameplay
             this.hitbox = new BoundingBox(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, 0.5f, -0.5f));
         }
 
-        public Collectible(Model model/*, BoundingBox hitbox*/)
+        public Collectible(Model model)
             : base(model)
         {
-            // Automatically create the bounding box based on the model meshes
+            CreateBoundingBoxFromModel(model);
+        }
+
+        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
+            : base(model, position, scale, rotation)
+        {
+            CreateBoundingBoxFromModel(model);
+
+            this.Position = position;
+            this.Scale = scale;
+        }
+
+        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, Vector3 hitboxSize)
+            : base(model, position, scale, rotation)
+        {
+            this.hitbox = new BoundingBox(position - hitboxSize/2, position + hitboxSize/2);
+        }
+
+        public Collectible(GameObject3D collectibleObj, Vector3 hitboxSize)
+            : base(collectibleObj)
+        {
+            this.hitbox = new BoundingBox(collectibleObj.Position - hitboxSize / 2,
+                collectibleObj.Position + hitboxSize / 2);
+        }
+
+
+        // Create the bounding box by taking the bounds of all the model meshes
+        // and merging them together into a single bounding box
+        void CreateBoundingBoxFromModel(in Model model)
+        {
             this.hitbox = BoundingBox.CreateFromSphere(model.Meshes[0].BoundingSphere);
             for (int meshIndex = 1; meshIndex < model.Meshes.Count; meshIndex++)
             {
@@ -38,20 +83,36 @@ namespace oldgoldmine_game.Gameplay
             }
         }
 
-        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
-            : base(model, position, scale, rotation)
+
+        /// <summary>
+        /// Change the position of this collectible in 3D coordinate space.
+        /// </summary>
+        /// <param name="movement">A Vector3 representing the amount of movement to apply on each axis.</param>
+        public override void MovePosition(Vector3 movement)
         {
-            this.hitbox = hitbox;
+            this.Position += movement;
         }
 
-        public Collectible(GameObject3D collectibleObj, BoundingBox hitbox)
-            : base(collectibleObj)
+        /// <summary>
+        /// Change the scale (size) of the Collectible object, both the model and its hitbox.
+        /// </summary>
+        /// <param name="scale">A value representing the uniform scaling factor for the entire object.</param>
+        public override void ScaleSize(float scale)
         {
-            this.hitbox = hitbox;
+            this.Scale = new Vector3(scale, scale, scale);
+        }
+
+        /// <summary>
+        /// Change the scale (size) of the Collectible object, both the model and its hitbox.
+        /// </summary>
+        /// <param name="scale">A Vector3 representing the scaling factors for each axis.</param>
+        public override void ScaleSize(Vector3 scale)
+        {
+            this.Scale = scale;
         }
 
 
-        public override void Update()
+        public void Update()
         {
             if (!active)
                 return;
@@ -69,6 +130,56 @@ namespace oldgoldmine_game.Gameplay
             if (this.hitbox.Intersects(player.hitbox))
                 return true;
             return false;
+        }
+
+
+        public override void Draw(in GameCamera camera)
+        {
+            if (!active)
+                return;
+
+            base.Draw(camera);
+
+            if (debugDrawHitbox)
+            {
+                OldGoldMineGame.basicEffect.Projection = OldGoldMineGame.player.Camera.Projection;
+                OldGoldMineGame.basicEffect.View = OldGoldMineGame.player.Camera.View;
+
+                Vector3[] vertices = hitbox.GetCorners();
+
+                // Pairs of points define the lines (segments) which are the border of the box to draw
+                VertexPositionColor[] lineVertices = new VertexPositionColor[24]
+                {
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red)
+                };
+
+                OldGoldMineGame.basicEffect.CurrentTechnique.Passes[0].Apply();
+                OldGoldMineGame.graphics.GraphicsDevice.
+                    DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, lineVertices, 0, 12);
+            }
         }
 
     }

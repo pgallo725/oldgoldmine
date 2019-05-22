@@ -39,7 +39,7 @@ namespace oldgoldmine_game.Engine
         /// needed to create and initialize the view and projection matrices
         /// </summary>
         public void Initialize(Vector3 camPosition, Vector3 camTarget, float aspectRatio, 
-            float fieldOfView = 60f, float clippingPlaneNear = 1f, float clippingPlaneFar = 100f)
+            float fieldOfView = 60f, float clippingPlaneNear = 1f, float clippingPlaneFar = 500f)
         {
             this.position = camPosition;
             this.target = camTarget;

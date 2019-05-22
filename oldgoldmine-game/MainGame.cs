@@ -20,11 +20,13 @@ namespace oldgoldmine_game
             GameOver
         }
 
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        // Statically accessible graphics and rendering tools
+        public static GraphicsDeviceManager graphics;
+        public static SpriteBatch spriteBatch;
+        public static BasicEffect basicEffect;
 
-        //GameCamera camera = new GameCamera();
-        public static Player player = new Player();
+        public static Player player;
+
         GameState gameState;
 
         MainMenu mainMenu = new MainMenu();
@@ -59,8 +61,8 @@ namespace oldgoldmine_game
             Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
-            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 2);
-            this.graphics.SynchronizeWithVerticalRetrace = false;
+            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
+            OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
 
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 576;
@@ -79,6 +81,7 @@ namespace oldgoldmine_game
             base.Initialize();
 
             // Initialize player and Player objects
+            player = new Player();
             GameCamera camera = new GameCamera();
             camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
             player.Initialize(camera);
@@ -88,14 +91,12 @@ namespace oldgoldmine_game
             pauseMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
             deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
 
-            // Collectibles
-            gold = new Collectible(m3d_gold);
-
-            // Create GameObjects for the imported 3D models and set their position, rotation and scale
+            // Create GameObjects from the imported 3D models and set their position, rotation and scale
             woodenCrate = new GameObject3D(m3d_woodenCrate);
             pickaxe = new GameObject3D(m3d_pickaxe);
             lantern = new GameObject3D(m3d_lantern);
             sack = new GameObject3D(m3d_sack);
+            gold = new Collectible(m3d_gold);
 
             woodenCrate.EnableLightingModel();
             pickaxe.EnableLightingModel();
@@ -112,13 +113,14 @@ namespace oldgoldmine_game
             pickaxe.Position = new Vector3(3f, 0.5f, 0f);
             lantern.Position = new Vector3(-0.6f, 4.5f, -0.6f);
             sack.Position = new Vector3(-2.5f, -2.75f, -3.25f);
-            gold.Position = new Vector3(-1f, 5f, -1f);
+            gold.Position = new Vector3(-4.5f, 5f, -2f);
 
             woodenCrate.ScaleSize(2.5f);
             pickaxe.ScaleSize(1.1f);
             lantern.ScaleSize(0.6f);
             sack.ScaleSize(0.6f);
-            gold.ScaleSize(2f);
+            gold.ScaleSize(1.5f);
+
 
             gameState = GameState.MainMenu;
 
@@ -133,6 +135,13 @@ namespace oldgoldmine_game
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // BasicEffect for rendering out primitives
+            basicEffect = new BasicEffect(GraphicsDevice);
+            basicEffect.Alpha = 1f;
+
+            basicEffect.VertexColorEnabled = true;
+            basicEffect.LightingEnabled = false;
 
             m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
             m3d_pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
@@ -181,7 +190,7 @@ namespace oldgoldmine_game
 
                     float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float rotationSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float lookAroundSpeed = 100f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    float lookAroundSpeed = 80f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (Keyboard.GetState().IsKeyDown(Keys.W))
                     {
@@ -238,6 +247,8 @@ namespace oldgoldmine_game
 
                     player.Update();
 
+                    gold.Update();
+
                     break;
                 }
 
@@ -251,7 +262,6 @@ namespace oldgoldmine_game
                     break;
             }
 
-            gold.Update();
 
             base.Update(gameTime);
         }
@@ -274,22 +284,6 @@ namespace oldgoldmine_game
                 {
                     GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                    spriteBatch.Begin();
-
-                    double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
-                    spriteBatch.DrawString(menuFont,                            // Print framerate information
-                        fps.ToString(" 0.# FPS"),
-                        new Vector2(5, 5), 
-                        fps < 60f ? Color.Red : Color.Green);
-
-                    spriteBatch.DrawString(menuFont,                            // Show score
-                        score.ToString("Score: 0.#"),
-                        new Vector2(5, 50),
-                        Color.White);
-
-                    spriteBatch.End();
-
-
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
@@ -299,7 +293,22 @@ namespace oldgoldmine_game
                     sack.Draw(player.Camera);
                     gold.Draw(player.Camera);
 
-                    
+
+                    spriteBatch.Begin();
+
+                    double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+                    spriteBatch.DrawString(menuFont,                            // Print framerate information
+                        fps.ToString(" 0.# FPS"),
+                        new Vector2(5, 5),
+                        fps < 60f ? Color.Red : Color.Green);
+
+                    spriteBatch.DrawString(menuFont,                            // Show score
+                        score.ToString(" Score: 0.#"),
+                        new Vector2(5, 50),
+                        Color.White);
+
+                    spriteBatch.End();
+
                     break;
                 }
 
