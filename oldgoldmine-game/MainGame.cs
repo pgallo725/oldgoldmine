@@ -38,6 +38,7 @@ namespace oldgoldmine_game
         GameObject3D pickaxe;
         GameObject3D lantern;
         GameObject3D sack;
+        GameObject3D cart;
 
         Collectible gold;
 
@@ -46,6 +47,7 @@ namespace oldgoldmine_game
         Model m3d_lantern;
         Model m3d_sack;
         Model m3d_gold;
+        Model m3d_cart;
 
         Texture2D buttonTextureNormal;
         Texture2D buttonTextureHighlighted;
@@ -97,12 +99,14 @@ namespace oldgoldmine_game
             lantern = new GameObject3D(m3d_lantern);
             sack = new GameObject3D(m3d_sack);
             gold = new Collectible(m3d_gold);
+            cart = new GameObject3D(m3d_cart);
 
             woodenCrate.EnableLightingModel();
             pickaxe.EnableLightingModel();
             lantern.EnableLightingModel();
             sack.EnableLightingModel();
             gold.EnableLightingModel();
+            cart.EnableLightingModel();
 
             pickaxe.RotateAroundAxis(Vector3.Up, 90f);
             pickaxe.RotateAroundAxis(Vector3.Right, 170f);
@@ -114,12 +118,14 @@ namespace oldgoldmine_game
             lantern.Position = new Vector3(-0.6f, 4.5f, -0.6f);
             sack.Position = new Vector3(-2.5f, -2.75f, -3.25f);
             gold.Position = new Vector3(-4.5f, 5f, -2f);
+            cart.Position = new Vector3(10f, 0.5f, 0f);
 
             woodenCrate.ScaleSize(2.5f);
             pickaxe.ScaleSize(1.1f);
             lantern.ScaleSize(0.6f);
             sack.ScaleSize(0.6f);
             gold.ScaleSize(1.5f);
+            cart.ScaleSize(2f);
 
 
             gameState = GameState.MainMenu;
@@ -148,6 +154,7 @@ namespace oldgoldmine_game
             m3d_lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
             m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
             m3d_gold = Content.Load<Model>("models_3d/goldOre");
+            m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
 
             buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
             buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
@@ -287,11 +294,16 @@ namespace oldgoldmine_game
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
+                    RasterizerState rasterizerState = new RasterizerState();
+                    rasterizerState.CullMode = CullMode.None;
+                    GraphicsDevice.RasterizerState = rasterizerState;
+
                     woodenCrate.Draw(player.Camera);
                     pickaxe.Draw(player.Camera);
                     lantern.Draw(player.Camera);
                     sack.Draw(player.Camera);
                     gold.Draw(player.Camera);
+                    cart.Draw(player.Camera);
 
 
                     spriteBatch.Begin();
