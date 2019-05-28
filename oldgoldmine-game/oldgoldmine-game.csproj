@@ -44,8 +44,11 @@
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\GameObject3D.cs" />
     <Compile Include="Engine\InputManager.cs" />
+    <Compile Include="Engine\ObjectPool.cs" />
+    <Compile Include="Engine\Poolable.cs" />
     <Compile Include="Engine\SolidColorTexture.cs" />
     <Compile Include="Gameplay\Collectible.cs" />
+    <Compile Include="Gameplay\Obstacle.cs" />
     <Compile Include="Gameplay\Player.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />

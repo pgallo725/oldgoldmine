@@ -14,6 +14,8 @@ namespace oldgoldmine_game.Engine
         private static bool mouseLeftClickHold = false;
         private static bool pauseWasPressed = false;
         private static bool pausePressed = false;
+        private static bool debugKeyWasPressed = false;
+        private static bool debugKeyPressed = false;
 
         public static Vector2 CurrentFrameMouseMovement { get { return mouseMovement; } }
         public static Point MousePosition { get { return mousePosition; } }
@@ -22,6 +24,7 @@ namespace oldgoldmine_game.Engine
         public static bool MouseSingleLeftClick { get { return mouseLeftClickSingle; } }
         public static bool MouseHoldLeftClick { get { return mouseLeftClickHold; } }
         public static bool PauseKeyPressed { get { return pausePressed; } }
+        public static bool DebugKeyPressed { get { return debugKeyPressed; } }
 
 
         public static void UpdateFrameInput()
@@ -36,6 +39,8 @@ namespace oldgoldmine_game.Engine
             mouseLeftClickHold = mouseState.LeftButton == ButtonState.Pressed;
             pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
             pauseWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
+            debugKeyPressed = !debugKeyWasPressed && (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
+            debugKeyWasPressed = (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
 using oldgoldmine_game.Gameplay;
@@ -27,6 +28,9 @@ namespace oldgoldmine_game
 
         public static Player player;
 
+        private static OldGoldMineGame application;
+        public static OldGoldMineGame Application { get { return application; } }
+
         GameState gameState;
 
         MainMenu mainMenu = new MainMenu();
@@ -34,13 +38,12 @@ namespace oldgoldmine_game
         GameOverMenu deathMenu = new GameOverMenu();
 
 
-        GameObject3D woodenCrate;
-        GameObject3D pickaxe;
-        GameObject3D lantern;
-        GameObject3D sack;
         GameObject3D cart;
-
         Collectible gold;
+        Obstacle box;
+
+        List<GameObject3D> rails;
+        //ObjectPool<GameObject3D> railPool;
 
         Model m3d_woodenCrate;
         Model m3d_pickaxe;
@@ -48,6 +51,7 @@ namespace oldgoldmine_game
         Model m3d_sack;
         Model m3d_gold;
         Model m3d_cart;
+        Model m3d_rails;
 
         Texture2D buttonTextureNormal;
         Texture2D buttonTextureHighlighted;
@@ -56,6 +60,10 @@ namespace oldgoldmine_game
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
 
+        bool freeMovement = false;
+        float nextRailsGenerationPosition = 40f;
+        float popupDistance = 40f;
+        float currentSpeed = 10f;
         
         public OldGoldMineGame()
         {
@@ -64,7 +72,8 @@ namespace oldgoldmine_game
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
-            OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
+            //OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
+            OldGoldMineGame.application = this;
 
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 576;
@@ -85,7 +94,7 @@ namespace oldgoldmine_game
             // Initialize player and Player objects
             player = new Player();
             GameCamera camera = new GameCamera();
-            camera.Initialize(new Vector3(0f, 0f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
+            camera.Initialize(new Vector3(0f, 1.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
             player.Initialize(camera);
 
             // Initialize menus
@@ -94,36 +103,23 @@ namespace oldgoldmine_game
             deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
 
             // Create GameObjects from the imported 3D models and set their position, rotation and scale
-            woodenCrate = new GameObject3D(m3d_woodenCrate);
-            pickaxe = new GameObject3D(m3d_pickaxe);
-            lantern = new GameObject3D(m3d_lantern);
-            sack = new GameObject3D(m3d_sack);
             gold = new Collectible(m3d_gold);
             cart = new GameObject3D(m3d_cart);
+            box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
+            rails = new List<GameObject3D>();
+            rails.Add(new GameObject3D(m3d_rails));
+            rails.Add(new GameObject3D(m3d_rails, new Vector3(0f, 0f, 20f), Vector3.One, Quaternion.Identity));
 
-            woodenCrate.EnableLightingModel();
-            pickaxe.EnableLightingModel();
-            lantern.EnableLightingModel();
-            sack.EnableLightingModel();
             gold.EnableLightingModel();
             cart.EnableLightingModel();
+            box.EnableLightingModel();
+            rails[0].EnableLightingModel();
+            rails[1].EnableLightingModel();
 
-            pickaxe.RotateAroundAxis(Vector3.Up, 90f);
-            pickaxe.RotateAroundAxis(Vector3.Right, 170f);
-            lantern.RotateAroundAxis(Vector3.Up, 10f);
-            sack.RotateAroundAxis(Vector3.Up, 110f);
-            sack.RotateAroundAxis(Vector3.Backward, 5f);
-
-            pickaxe.Position = new Vector3(3f, 0.5f, 0f);
-            lantern.Position = new Vector3(-0.6f, 4.5f, -0.6f);
-            sack.Position = new Vector3(-2.5f, -2.75f, -3.25f);
             gold.Position = new Vector3(-4.5f, 5f, -2f);
             cart.Position = new Vector3(10f, 0.5f, 0f);
+            box.Position = new Vector3(10f, 0.5f, -3f);
 
-            woodenCrate.ScaleSize(2.5f);
-            pickaxe.ScaleSize(1.1f);
-            lantern.ScaleSize(0.6f);
-            sack.ScaleSize(0.6f);
             gold.ScaleSize(1.5f);
             cart.ScaleSize(2f);
 
@@ -155,6 +151,7 @@ namespace oldgoldmine_game
             m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
             m3d_gold = Content.Load<Model>("models_3d/goldOre");
             m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
+            m3d_rails = Content.Load<Model>("models_3d/rails_segment");
 
             buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
             buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
@@ -195,58 +192,68 @@ namespace oldgoldmine_game
                     if (InputManager.PauseKeyPressed)
                         PauseGame();
 
-                    float moveSpeed = 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (InputManager.DebugKeyPressed)
+                        freeMovement = true;
+
+                    float moveSpeed = currentSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float rotationSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float lookAroundSpeed = 80f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.W))
+                    if (freeMovement)
                     {
-                        player.Move(moveSpeed, player.Camera.Forward);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.W))
+                        {
+                            player.Move(moveSpeed, player.Camera.Forward);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.S))
-                    {
-                        player.Move(moveSpeed, player.Camera.Back);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.S))
+                        {
+                            player.Move(moveSpeed, player.Camera.Back);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.A))
-                    {
-                        player.Move(moveSpeed, player.Camera.Left);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.A))
+                        {
+                            player.Move(moveSpeed, player.Camera.Left);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.D))
-                    {
-                        player.Move(moveSpeed, player.Camera.Right);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.D))
+                        {
+                            player.Move(moveSpeed, player.Camera.Right);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                    {
-                        player.Move(moveSpeed, player.Camera.Up);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                        {
+                            player.Move(moveSpeed, player.Camera.Up);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                    {
-                        player.Move(moveSpeed, player.Camera.Down);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                        {
+                            player.Move(moveSpeed, player.Camera.Down);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                    {
-                        player.RotateUpDown(rotationSpeed);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                        {
+                            player.RotateUpDown(rotationSpeed);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                    {
-                        player.RotateUpDown(-rotationSpeed);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                        {
+                            player.RotateUpDown(-rotationSpeed);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                    {
-                        player.RotateLeftRight(-rotationSpeed);
-                    }
+                        if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                        {
+                            player.RotateLeftRight(-rotationSpeed);
+                        }
 
-                    if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                        if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                        {
+                            player.RotateLeftRight(rotationSpeed);
+                        }
+                    }
+                    else
                     {
-                        player.RotateLeftRight(rotationSpeed);
+                        player.Move(moveSpeed, Vector3.Backward);
                     }
 
                     player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
@@ -254,7 +261,13 @@ namespace oldgoldmine_game
 
                     player.Update();
 
+                    if (player.Position.Z >= nextRailsGenerationPosition - popupDistance)
+                    {
+                        ProceduralRailsGeneration();
+                    }
+
                     gold.Update();
+                    box.Update();
 
                     break;
                 }
@@ -264,7 +277,13 @@ namespace oldgoldmine_game
                     pauseMenu.Update(this);
                     break;
                 }
-                
+
+                case GameState.GameOver:
+                {
+                    deathMenu.Update(this);
+                    break;
+                }
+
                 default:
                     break;
             }
@@ -298,12 +317,14 @@ namespace oldgoldmine_game
                     rasterizerState.CullMode = CullMode.None;
                     GraphicsDevice.RasterizerState = rasterizerState;
 
-                    woodenCrate.Draw(player.Camera);
-                    pickaxe.Draw(player.Camera);
-                    lantern.Draw(player.Camera);
-                    sack.Draw(player.Camera);
                     gold.Draw(player.Camera);
-                    cart.Draw(player.Camera);
+                    //cart.Draw(player.Camera);
+                    box.Draw(player.Camera);
+
+                    foreach(GameObject3D rail in rails)
+                    {
+                        rail.Draw(player.Camera);
+                    }
 
 
                     spriteBatch.Begin();
@@ -330,12 +351,26 @@ namespace oldgoldmine_game
                     break;
                 }
 
+                case GameState.GameOver:
+                {
+                    deathMenu.Draw(GraphicsDevice, spriteBatch);
+                    break;
+                }
+
                 default:
                     break;
             }
 
 
             base.Draw(gameTime);
+        }
+
+
+        private void ProceduralRailsGeneration()
+        {
+            rails.Add(new GameObject3D(m3d_rails, new Vector3(0f, 0f, nextRailsGenerationPosition),
+                Vector3.One, Quaternion.Identity));
+            nextRailsGenerationPosition += 20f;
         }
 
 
@@ -367,6 +402,16 @@ namespace oldgoldmine_game
                 gameState = GameState.Running;
                 IsMouseVisible = false;
                 // anything else ?
+            }
+        }
+
+        public void GameOver()
+        {
+            if (gameState == GameState.Running)
+            {
+                gameState = GameState.GameOver;
+                IsMouseVisible = true;
+                // TODO: destroy the player object
             }
         }
 
