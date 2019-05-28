@@ -5,12 +5,12 @@ using oldgoldmine_game.Engine;
 
 namespace oldgoldmine_game.Gameplay
 {
-    public class Collectible : GameObject3D
+    public class Obstacle : GameObject3D
     {
         private const bool debugDrawHitbox = true;
 
         private BoundingBox hitbox;
-        
+
         public override Vector3 Position
         {
             get { return base.position; }
@@ -36,19 +36,19 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
-        public Collectible()
+        public Obstacle()
             : base()
         {
             this.hitbox = new BoundingBox(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, 0.5f, -0.5f));
         }
 
-        public Collectible(Model model)
+        public Obstacle(Model model)
             : base(model)
         {
             CreateBoundingBoxFromModel(model);
         }
 
-        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
+        public Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
             : base(model, position, scale, rotation)
         {
             CreateBoundingBoxFromModel(model);
@@ -57,13 +57,13 @@ namespace oldgoldmine_game.Gameplay
             this.Scale = scale;
         }
 
-        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, Vector3 hitboxSize)
+        public Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation, Vector3 hitboxSize)
             : base(model, position, scale, rotation)
         {
-            this.hitbox = new BoundingBox(position - hitboxSize/2, position + hitboxSize/2);
+            this.hitbox = new BoundingBox(position - hitboxSize / 2, position + hitboxSize / 2);
         }
 
-        public Collectible(GameObject3D collectibleObj, Vector3 hitboxSize)
+        public Obstacle(GameObject3D collectibleObj, Vector3 hitboxSize)
             : base(collectibleObj)
         {
             this.hitbox = new BoundingBox(collectibleObj.Position - hitboxSize / 2,
@@ -94,7 +94,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
         /// <summary>
-        /// Change the scale (size) of the Collectible object, both the model and its hitbox.
+        /// Change the scale (size) of the Obstacle object, both the model and its hitbox.
         /// </summary>
         /// <param name="scale">A value representing the uniform scaling factor for the entire object.</param>
         public override void ScaleSize(float scale)
@@ -103,7 +103,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
         /// <summary>
-        /// Change the scale (size) of the Collectible object, both the model and its hitbox.
+        /// Change the scale (size) of the Obstacle object, both the model and its hitbox.
         /// </summary>
         /// <param name="scale">A Vector3 representing the scaling factors for each axis.</param>
         public override void ScaleSize(Vector3 scale)
@@ -120,7 +120,7 @@ namespace oldgoldmine_game.Gameplay
             if (CheckPlayerCollision(OldGoldMineGame.player))
             {
                 this.IsActive = false;
-                OldGoldMineGame.Score += 100;
+                OldGoldMineGame.Application.GameOver();
             }
         }
 
@@ -150,30 +150,30 @@ namespace oldgoldmine_game.Gameplay
                 // Pairs of points define the lines (segments) which are the border of the box to draw
                 VertexPositionColor[] lineVertices = new VertexPositionColor[24]
                 {
-                    new VertexPositionColor(vertices[0], Color.Green),
-                    new VertexPositionColor(vertices[1], Color.Green),
-                    new VertexPositionColor(vertices[0], Color.Green),
-                    new VertexPositionColor(vertices[4], Color.Green),
-                    new VertexPositionColor(vertices[0], Color.Green),
-                    new VertexPositionColor(vertices[3], Color.Green),
-                    new VertexPositionColor(vertices[1], Color.Green),
-                    new VertexPositionColor(vertices[2], Color.Green),
-                    new VertexPositionColor(vertices[1], Color.Green),
-                    new VertexPositionColor(vertices[5], Color.Green),
-                    new VertexPositionColor(vertices[2], Color.Green),
-                    new VertexPositionColor(vertices[3], Color.Green),
-                    new VertexPositionColor(vertices[2], Color.Green),
-                    new VertexPositionColor(vertices[6], Color.Green),
-                    new VertexPositionColor(vertices[3], Color.Green),
-                    new VertexPositionColor(vertices[7], Color.Green),
-                    new VertexPositionColor(vertices[7], Color.Green),
-                    new VertexPositionColor(vertices[4], Color.Green),
-                    new VertexPositionColor(vertices[4], Color.Green),
-                    new VertexPositionColor(vertices[5], Color.Green),
-                    new VertexPositionColor(vertices[5], Color.Green),
-                    new VertexPositionColor(vertices[6], Color.Green),
-                    new VertexPositionColor(vertices[6], Color.Green),
-                    new VertexPositionColor(vertices[7], Color.Green)
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[0], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[1], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[2], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[3], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[4], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[5], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[6], Color.Red),
+                    new VertexPositionColor(vertices[7], Color.Red)
                 };
 
                 OldGoldMineGame.basicEffect.CurrentTechnique.Passes[0].Apply();

@@ -17,6 +17,8 @@ namespace oldgoldmine_game.Gameplay
 
         public GameCamera Camera { get { return camera; } }
 
+        public Vector3 Position { get { return camera.Position; } }
+
 
         public void Initialize(GameCamera playerCamera)
         {
