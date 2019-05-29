@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace oldgoldmine_game.Engine
 {
 
-    public class GameObject3D
+    public class GameObject3D : Poolable
     {
         private readonly Model model3d;
 
@@ -13,15 +13,10 @@ namespace oldgoldmine_game.Engine
         protected Vector3 scale;
         protected Quaternion rotation;
 
-        protected bool active = true;
-
 
         public virtual Vector3 Position { get { return position; } set { position = value; updated = false; } }
         public virtual Vector3 Scale { get { return scale; } set { scale = value; updated = false; } }
         public virtual Quaternion Rotation { get { return rotation; } set { rotation = value; updated = false; } }
-
-        // When a GameObject is active, it's rendered on screen and 
-        public bool IsActive { get { return active; } set { active = value; } }
 
         private Matrix objectWorldMatrix;
         private bool updated = false;
@@ -65,12 +60,12 @@ namespace oldgoldmine_game.Engine
         /// GameObject3D copy constructor.
         /// </summary>
         public GameObject3D(GameObject3D other)
+            : base()
         {
             this.model3d = other.model3d;
             this.position = other.position;
             this.scale = other.scale;
             this.rotation = other.rotation;
-            this.active = other.active;
         }
 
         /// <summary>
@@ -188,7 +183,7 @@ namespace oldgoldmine_game.Engine
         /// <param name="camera">The camera that will be used to render the object.</param>
         public virtual void Draw(in GameCamera camera)
         {
-            if (!active)
+            if (!IsActive)
                 return;
 
             if (model3d != null)

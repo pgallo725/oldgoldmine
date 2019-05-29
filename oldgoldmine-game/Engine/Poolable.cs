@@ -1,7 +1,9 @@
 ﻿namespace oldgoldmine_game.Engine
 {
-    interface Poolable
+    public abstract class Poolable
     {
+        bool active = true;
+        public bool IsActive { get { return active; } set { active = value; } }
 
     }
 }

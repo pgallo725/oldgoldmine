@@ -114,7 +114,7 @@ namespace oldgoldmine_game.Gameplay
 
         public void Update()
         {
-            if (!active)
+            if (!IsActive)
                 return;
 
             if (CheckPlayerCollision(OldGoldMineGame.player))
@@ -135,7 +135,7 @@ namespace oldgoldmine_game.Gameplay
 
         public override void Draw(in GameCamera camera)
         {
-            if (!active)
+            if (!IsActive)
                 return;
 
             base.Draw(camera);
