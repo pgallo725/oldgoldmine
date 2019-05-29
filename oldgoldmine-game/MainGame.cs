@@ -72,7 +72,7 @@ namespace oldgoldmine_game
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
-            //OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
+            OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
             graphics.PreferredBackBufferWidth = 1024;
@@ -139,11 +139,13 @@ namespace oldgoldmine_game
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // BasicEffect for rendering out primitives
-            basicEffect = new BasicEffect(GraphicsDevice);
-            basicEffect.Alpha = 1f;
+            basicEffect = new BasicEffect(GraphicsDevice)
+            {
+                Alpha = 1f,
 
-            basicEffect.VertexColorEnabled = true;
-            basicEffect.LightingEnabled = false;
+                VertexColorEnabled = true,
+                LightingEnabled = false
+            };
 
             m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
             m3d_pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
@@ -313,9 +315,10 @@ namespace oldgoldmine_game
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-                    RasterizerState rasterizerState = new RasterizerState();
-                    rasterizerState.CullMode = CullMode.None;
-                    GraphicsDevice.RasterizerState = rasterizerState;
+                    GraphicsDevice.RasterizerState = new RasterizerState
+                    {
+                        CullMode = CullMode.None
+                    };
 
                     gold.Draw(player.Camera);
                     //cart.Draw(player.Camera);
