@@ -42,8 +42,8 @@ namespace oldgoldmine_game
         Collectible gold;
         Obstacle box;
 
-        List<GameObject3D> rails;
-        //ObjectPool<GameObject3D> railPool;
+        Queue<GameObject3D> rails;
+        ObjectPool<GameObject3D> railPool;
 
         Model m3d_woodenCrate;
         Model m3d_pickaxe;
@@ -61,9 +61,9 @@ namespace oldgoldmine_game
         public static int Score { get { return score; } set { score = value; } }
 
         bool freeMovement = false;
-        float nextRailsGenerationPosition = 40f;
-        float popupDistance = 40f;
-        float currentSpeed = 10f;
+        float nextRailsGenerationPosition = 80f;
+        float popupDistance = 80f;
+        float currentSpeed = 50f;
         
         public OldGoldMineGame()
         {
@@ -106,15 +106,22 @@ namespace oldgoldmine_game
             gold = new Collectible(m3d_gold);
             cart = new GameObject3D(m3d_cart);
             box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
-            rails = new List<GameObject3D>();
-            rails.Add(new GameObject3D(m3d_rails));
-            rails.Add(new GameObject3D(m3d_rails, new Vector3(0f, 0f, 20f), Vector3.One, Quaternion.Identity));
+
+            // Instantiate pool of rails and initialize the first segments to be drawn
+            railPool = new ObjectPool<GameObject3D>(new GameObject3D(m3d_rails), 10);
+            rails = new Queue<GameObject3D>(8);
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject3D railSegment = railPool.Get();
+                railSegment.EnableLightingModel();
+                railSegment.Position = new Vector3(0f, 0f, i * 20f);
+                rails.Enqueue(railSegment);
+            }
+
 
             gold.EnableLightingModel();
             cart.EnableLightingModel();
             box.EnableLightingModel();
-            rails[0].EnableLightingModel();
-            rails[1].EnableLightingModel();
 
             gold.Position = new Vector3(-4.5f, 5f, -2f);
             cart.Position = new Vector3(10f, 0.5f, 0f);
@@ -371,8 +378,15 @@ namespace oldgoldmine_game
 
         private void ProceduralRailsGeneration()
         {
-            rails.Add(new GameObject3D(m3d_rails, new Vector3(0f, 0f, nextRailsGenerationPosition),
+            /*rails.Dequeue().IsActive = false;
+            rails.Enqueue(new GameObject3D(m3d_rails, new Vector3(0f, 0f, nextRailsGenerationPosition),
                 Vector3.One, Quaternion.Identity));
+            nextRailsGenerationPosition += 20f;*/
+
+            rails.Dequeue().IsActive = false;
+            GameObject3D newRails = railPool.Get();
+            newRails.Position = new Vector3(0f, 0f, nextRailsGenerationPosition);
+            rails.Enqueue(newRails);
             nextRailsGenerationPosition += 20f;
         }
 
