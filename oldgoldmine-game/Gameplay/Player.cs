@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using oldgoldmine_game.Engine;
 
 
@@ -13,6 +14,7 @@ namespace oldgoldmine_game.Gameplay
         private float horizontalLookAngle = 0.0f;
 
         private GameCamera camera;
+        private Model model;
         internal BoundingSphere hitbox;
 
         public GameCamera Camera { get { return camera; } }
@@ -71,6 +73,11 @@ namespace oldgoldmine_game.Gameplay
         {
             camera.Update();
             hitbox.Center = camera.Position;
+        }
+
+        public void Draw()
+        {
+
         }
 
     }
