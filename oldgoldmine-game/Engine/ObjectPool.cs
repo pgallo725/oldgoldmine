@@ -38,7 +38,7 @@ namespace oldgoldmine_game.Engine
             }
         }
 
-        public T Get()
+        public T GetOne()
         {
             for (int i = 0; i < size; i++)
             {
@@ -49,25 +49,52 @@ namespace oldgoldmine_game.Engine
                 }
             }
 
+            T newObj = prototype.Clone() as T;
+            newObj.IsActive = true;
+
+            pool.Add(newObj);
             size++;
 
-            T pooledObj = prototype.Clone() as T;
-            pooledObj.IsActive = true;
-
-            pool.Add(pooledObj);
-
-            return pooledObj;
+            return newObj;
         }
 
         public T[] GetMany(int n)
         {
-            // TODO: internally build an array of available objects (inactive or allocated) and return it
-            return new T[1]{ null };
+            T[] pooledObjs = new T[n];
+            int found = 0;
+
+            for (int i = 0; i < size && found < n; i++)
+            {
+                if (!pool[i].IsActive)
+                {
+                    pool[i].IsActive = true;
+                    pooledObjs[found] = pool[i];
+                    found++;
+                }
+            }
+
+            while (found < n)
+            {
+                T newObj = prototype.Clone() as T;
+                newObj.IsActive = true;
+
+                pool.Add(newObj);
+                size++;
+
+                pooledObjs[found] = newObj;
+                found++;
+            }
+
+            return pooledObjs;
         }
 
         public void Trim()
         {
-            // TODO: discard all inactive objects to reduce size
+            for (int i = 0; i < size; i++)
+            {
+                if (!pool[i].IsActive)
+                    pool.RemoveAt(i);
+            }
         }
 
     }
