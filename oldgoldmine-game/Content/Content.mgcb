@@ -213,3 +213,10 @@
 /processorParam:TextureFormat=Compressed
 /build:models_3d/rails_segment.dae
 
+#begin ui_elements_2d/SmallFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ui_elements_2d/SmallFont.spritefont
+

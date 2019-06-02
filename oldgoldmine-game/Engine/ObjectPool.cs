@@ -88,7 +88,7 @@ namespace oldgoldmine_game.Engine
             return pooledObjs;
         }
 
-        public void Trim()
+        public void TrimExcess()
         {
             for (int i = 0; i < size; i++)
             {

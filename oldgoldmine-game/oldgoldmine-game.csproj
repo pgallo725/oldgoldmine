@@ -46,7 +46,9 @@
     <Compile Include="Engine\InputManager.cs" />
     <Compile Include="Engine\ObjectPool.cs" />
     <Compile Include="Engine\SolidColorTexture.cs" />
+    <Compile Include="Engine\Timer.cs" />
     <Compile Include="Gameplay\Collectible.cs" />
+    <Compile Include="Gameplay\HUD.cs" />
     <Compile Include="Gameplay\Obstacle.cs" />
     <Compile Include="Gameplay\Player.cs" />
     <Compile Include="Gameplay\ProceduralGenerator.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Button.cs" />
+    <Compile Include="UI\ComponentUI.cs" />
     <Compile Include="UI\Image.cs" />
     <Compile Include="UI\SpriteText.cs" />
   </ItemGroup>

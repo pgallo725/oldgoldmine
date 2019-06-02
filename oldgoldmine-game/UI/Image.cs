@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace oldgoldmine_game.UI
 {
-    class Image
+    class Image : ComponentUI
     {
 
         private Texture2D imageTexture;

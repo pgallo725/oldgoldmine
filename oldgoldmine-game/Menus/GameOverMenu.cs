@@ -16,7 +16,6 @@ namespace oldgoldmine_game.Menus
         {
             this.menuBackground = background;
 
-
             // Game over menu layout setup
             Rectangle resumeButtonRectangle = new Rectangle(device.Viewport.Width / 2 - (int)buttonSize.X / 2,
                 device.Viewport.Height / 2 - (int)buttonSize.Y / 2 - elementSeparation,
@@ -32,18 +31,18 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Update(in OldGoldMineGame application)
+        public override void Update()
         {
             replayButton.Update();
             menuButton.Update();
 
             if (InputManager.PauseKeyPressed)
-                application.ResumeGame();
+                OldGoldMineGame.Application.ResumeGame();
 
             if (replayButton.IsClicked())
-                application.StartGame();
+                OldGoldMineGame.Application.StartGame();
             else if (menuButton.IsClicked())
-                application.ToMainMenu();
+                OldGoldMineGame.Application.ToMainMenu();
         }
 
 

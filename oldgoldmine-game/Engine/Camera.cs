@@ -23,14 +23,12 @@ namespace oldgoldmine_game.Engine
 
 
         // Normalized vectors representing the 6 directions relative to the camera's coordinate system (viewpoint)
-        public Vector3 Forward { get { return Vector3.Normalize(direction); } }
-        public Vector3 Back { get { return Vector3.Normalize(-direction); } }
-        public Vector3 Left { get { return Vector3.Normalize(new Vector3(direction.Z, 0f, -direction.X)); } }
-        public Vector3 Right { get { return Vector3.Normalize(new Vector3(-direction.Z, 0f, direction.X)); } }
-        public Vector3 Up { get { return Vector3.Normalize(new Vector3(direction.X, direction.Z, -direction.Y)); } }        // TODO: Up and Down vectors are
-        public Vector3 Down { get { return Vector3.Normalize(new Vector3(-direction.X, -direction.Z, direction.Y)); } }     // wrong when rotating the camera
-
-
+        public Vector3 Forward { get { return Vector3.Normalize(viewMatrix.Forward); } }
+        public Vector3 Back { get { return Vector3.Normalize(viewMatrix.Backward); } }
+        public Vector3 Left { get { return Vector3.Normalize(viewMatrix.Left); } }
+        public Vector3 Right { get { return Vector3.Normalize(viewMatrix.Right); } }
+        public Vector3 Up { get { return Vector3.Normalize(viewMatrix.Up); } }
+        public Vector3 Down { get { return Vector3.Normalize(viewMatrix.Down); } }
 
 
         /// <summary>
@@ -39,7 +37,7 @@ namespace oldgoldmine_game.Engine
         /// needed to create and initialize the view and projection matrices
         /// </summary>
         public void Initialize(Vector3 camPosition, Vector3 camTarget, float aspectRatio, 
-            float fieldOfView = 60f, float clippingPlaneNear = 1f, float clippingPlaneFar = 500f)
+            float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
         {
             this.position = camPosition;
             this.target = camTarget;

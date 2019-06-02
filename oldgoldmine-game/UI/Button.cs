@@ -4,7 +4,7 @@ using oldgoldmine_game.Engine;
 
 namespace oldgoldmine_game.UI
 {
-    class Button
+    class Button : ComponentUI
     {
         private Rectangle buttonArea;
         private SpriteText buttonText;

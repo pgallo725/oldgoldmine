@@ -16,7 +16,7 @@ namespace oldgoldmine_game.Menus
             SpriteFont font, Texture2D normalButton, Texture2D highlightedButton);
 
 
-        public abstract void Update(in OldGoldMineGame application);
+        public abstract void Update();
 
 
         public abstract void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch);

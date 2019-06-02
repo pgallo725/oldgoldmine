@@ -17,7 +17,8 @@ namespace oldgoldmine_game.Gameplay
         ObjectPool<GameObject3D> railsPool;
 
 
-        public ProceduralGenerator(in Queue<GameObject3D> rails, Model rail, float railLength, float popupDistance = 100f)
+        public ProceduralGenerator(in Queue<GameObject3D> rails, Model rail, float railLength,
+            in Queue<Collectible> collectibles, Model collectible, float popupDistance = 100f)
         {
             this.railSegmentLength = railLength;
             this.popupDistance = popupDistance;
@@ -33,7 +34,7 @@ namespace oldgoldmine_game.Gameplay
             }
         }
 
-        public void Update(Vector3 playerPosition, in Queue<GameObject3D> rails)
+        public void Update(Vector3 playerPosition, in Queue<GameObject3D> rails, in Queue<Collectible> collectibles)
         {
             if (playerPosition.Z >= nextRailsGenerationPosition - popupDistance)
             {

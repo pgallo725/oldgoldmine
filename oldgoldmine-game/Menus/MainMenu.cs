@@ -18,7 +18,6 @@ namespace oldgoldmine_game.Menus
         {
             this.menuBackground = background;
 
-
             // Main menu layout setup
             Rectangle playButtonRectangle = new Rectangle(device.Viewport.Width/2 - (int)buttonSize.X/2,
                 device.Viewport.Height/2 - (int)buttonSize.Y/2 - elementSeparation,
@@ -40,15 +39,15 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Update(in OldGoldMineGame application)
+        public override void Update()
         {
             playButton.Update();
             exitButton.Update();
 
             if (playButton.IsClicked())
-                application.StartGame();
+                OldGoldMineGame.Application.StartGame();
             else if (exitButton.IsClicked())
-                application.Exit();
+                OldGoldMineGame.Application.Exit();
         }
 
 

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace oldgoldmine_game.UI
 {
-    class SpriteText
+    class SpriteText : ComponentUI
     {
 
         public enum TextAlignment

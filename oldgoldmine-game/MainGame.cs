@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
+using oldgoldmine_game.UI;
 using oldgoldmine_game.Gameplay;
 
 namespace oldgoldmine_game
@@ -27,42 +28,49 @@ namespace oldgoldmine_game
         public static BasicEffect basicEffect;
 
         public static Player player;
+        public static Timer timer;
 
         private static OldGoldMineGame application;
         public static OldGoldMineGame Application { get { return application; } }
 
         GameState gameState;
 
+        HUD hud = new HUD();
         MainMenu mainMenu = new MainMenu();
         PauseMenu pauseMenu = new PauseMenu();
         GameOverMenu deathMenu = new GameOverMenu();
+        
 
+        Queue<GameObject3D> rails;
+        Queue<Collectible> collectibles;
+        ProceduralGenerator levelGenerator;
 
-        GameObject3D cart;
         Collectible gold;
         Obstacle box;
 
-        Queue<GameObject3D> rails;
-        ProceduralGenerator levelGenerator;
-        
 
         Model m3d_woodenCrate;
-        Model m3d_pickaxe;
-        Model m3d_lantern;
-        Model m3d_sack;
         Model m3d_gold;
         Model m3d_cart;
         Model m3d_rails;
 
         Texture2D buttonTextureNormal;
         Texture2D buttonTextureHighlighted;
-        SpriteFont menuFont;
+        SpriteFont largeFont;
+        SpriteFont smallFont;
 
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
 
         bool freeMovement = false;
-        float currentSpeed = 20f;
+
+        private float currentSpeed = 20f;
+        public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
+
+        const float speedIncreaseInterval = 5f;
+        const float speedIncreaseAmount = 2f;
+        const float maxSpeed = 200f;
+        private float lastSpeedUpdate = 0f;
         
         public OldGoldMineGame()
         {
@@ -90,37 +98,42 @@ namespace oldgoldmine_game
         {
             base.Initialize();
 
-            // Initialize player and Player objects
+
+            // Initialize Camera and Player objects
             player = new Player();
             GameCamera camera = new GameCamera();
-            camera.Initialize(new Vector3(0f, 1.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
-            player.Initialize(camera);
+            camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
+            player.Initialize(camera, 
+                new GameObject3D(m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                new Vector3(0f, -2.4f, -0.75f));
 
             // Initialize menus
-            mainMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
-            pauseMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
-            deathMenu.Initialize(GraphicsDevice, null, menuFont, buttonTextureNormal, buttonTextureHighlighted);
+            mainMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+            pauseMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+            deathMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+
+            // Setup HUD
+            timer = new Timer();
+            hud.Initialize(Window, smallFont, largeFont);
+            
 
             // Create GameObjects from the imported 3D models and set their position, rotation and scale
             gold = new Collectible(m3d_gold);
-            cart = new GameObject3D(m3d_cart);
             box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
 
             // Instantiate and initialize the pool of rail segments to be drawn
             rails = new Queue<GameObject3D>();
-            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f, 150f);
+            collectibles = new Queue<Collectible>();
+
+            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f, in collectibles, m3d_gold, 150f);
 
 
+            // Prepare 3D game objects for the scene
             gold.EnableLightingModel();
-            cart.EnableLightingModel();
             box.EnableLightingModel();
-
             gold.Position = new Vector3(0f, 1.25f, 20f);
-            cart.Position = new Vector3(10f, 0.5f, 0f);
             box.Position = new Vector3(10f, 0.5f, -3f);
-
             gold.ScaleSize(0.25f);
-            cart.ScaleSize(2f);
 
 
             gameState = GameState.MainMenu;
@@ -146,17 +159,17 @@ namespace oldgoldmine_game
                 LightingEnabled = false
             };
 
+            // Load 3D models for the game
             m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
-            m3d_pickaxe = Content.Load<Model>("models_3d/pickaxe_lowpoly");
-            m3d_lantern = Content.Load<Model>("models_3d/lantern_lowpoly");
-            m3d_sack = Content.Load<Model>("models_3d/sack_lowpoly");
             m3d_gold = Content.Load<Model>("models_3d/goldOre");
             m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
             m3d_rails = Content.Load<Model>("models_3d/rails_segment");
 
+            // Load 2D elements for UI graphics
             buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
             buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
-            menuFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
+            largeFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
+            smallFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
         }
 
         /// <summary>
@@ -184,7 +197,7 @@ namespace oldgoldmine_game
             {
                 case GameState.MainMenu:
                 {
-                    mainMenu.Update(this);
+                    mainMenu.Update();
                     break;
                 }
                     
@@ -196,9 +209,21 @@ namespace oldgoldmine_game
                     if (InputManager.DebugKeyPressed)
                         freeMovement = true;
 
-                    float moveSpeed = currentSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float rotationSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float lookAroundSpeed = 80f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    timer.Update(gameTime);
+
+                    if (timer.time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
+                    {
+                        Speed = MathHelper.Clamp(Speed + speedIncreaseAmount, 0, maxSpeed);
+                        lastSpeedUpdate = (float)gameTime.TotalGameTime.TotalSeconds;
+                        hud.UpdateSpeed(Speed);
+                    }
+
+                    hud.UpdateTimer(timer);
+                    hud.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
+                    hud.UpdateScore(Score);     // TODO: do it only when really needed (on collectible pickup)
+
+                    float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    float lookAroundSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (freeMovement)
                     {
@@ -231,37 +256,17 @@ namespace oldgoldmine_game
                         {
                             player.Move(moveSpeed, player.Camera.Down);
                         }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                        {
-                            player.RotateUpDown(rotationSpeed);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                        {
-                            player.RotateUpDown(-rotationSpeed);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                        {
-                            player.RotateLeftRight(-rotationSpeed);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                        {
-                            player.RotateLeftRight(rotationSpeed);
-                        }
                     }
                     else
                     {
                         player.Move(moveSpeed, Vector3.Backward);
                     }
 
-                    player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
-                    player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
+                    player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed, freeMovement);
+                    player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
 
                     player.Update();
-                    levelGenerator.Update(player.Position, rails);
+                    levelGenerator.Update(player.Position, rails, collectibles);
 
                     gold.Update();
                     box.Update();
@@ -271,13 +276,13 @@ namespace oldgoldmine_game
 
                 case GameState.Paused:
                 {
-                    pauseMenu.Update(this);
+                    pauseMenu.Update();
                     break;
                 }
 
                 case GameState.GameOver:
                 {
-                    deathMenu.Update(this);
+                    deathMenu.Update();
                     break;
                 }
 
@@ -315,8 +320,10 @@ namespace oldgoldmine_game
                         CullMode = CullMode.None
                     };
 
+                    // Draw 3D objects in the scene, starting from the player
+
+                    player.Draw();
                     gold.Draw(player.Camera);
-                    //cart.Draw(player.Camera);
                     box.Draw(player.Camera);
 
                     foreach(GameObject3D rail in rails)
@@ -324,21 +331,8 @@ namespace oldgoldmine_game
                         rail.Draw(player.Camera);
                     }
 
-
-                    spriteBatch.Begin();
-
-                    double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
-                    spriteBatch.DrawString(menuFont,                            // Print framerate information
-                        fps.ToString(" 0.# FPS"),
-                        new Vector2(5, 5),
-                        fps < 60f ? Color.Red : Color.Green);
-
-                    spriteBatch.DrawString(menuFont,                            // Show score
-                        score.ToString(" Score: 0.#"),
-                        new Vector2(5, 50),
-                        Color.White);
-
-                    spriteBatch.End();
+                    // Draw the HUD on top of the rendered scene
+                    hud.Draw(spriteBatch);
 
                     break;
                 }
@@ -362,7 +356,6 @@ namespace oldgoldmine_game
 
             base.Draw(gameTime);
         }
-
 
 
         public void StartGame()
