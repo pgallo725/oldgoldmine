@@ -67,8 +67,7 @@ namespace oldgoldmine_game
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
 
-        const float speedIncreaseInterval = 5f;
-        const float speedIncreaseAmount = 2f;
+        const float speedIncreaseInterval = 4f;
         const float maxSpeed = 200f;
         private float lastSpeedUpdate = 0f;
         
@@ -78,7 +77,7 @@ namespace oldgoldmine_game
             Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
-            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
+            //this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
@@ -213,7 +212,7 @@ namespace oldgoldmine_game
 
                     if (timer.time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
                     {
-                        Speed = MathHelper.Clamp(Speed + speedIncreaseAmount, 0, maxSpeed);
+                        Speed = MathHelper.Clamp(Speed + 1f, 0, maxSpeed);
                         lastSpeedUpdate = (float)gameTime.TotalGameTime.TotalSeconds;
                         hud.UpdateSpeed(Speed);
                     }
@@ -260,12 +259,22 @@ namespace oldgoldmine_game
                     else
                     {
                         player.Move(moveSpeed, Vector3.Backward);
+
+                        if (Keyboard.GetState().IsKeyDown(Keys.D))
+                        {
+                            player.UpdateRightMovement(gameTime);
+                        }
+
+                        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                        {
+                            player.Jump();
+                        }
                     }
 
                     player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed, freeMovement);
                     player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
 
-                    player.Update();
+                    player.Update(gameTime);
                     levelGenerator.Update(player.Position, rails, collectibles);
 
                     gold.Update();
