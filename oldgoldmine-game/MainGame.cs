@@ -6,6 +6,7 @@ using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
 using oldgoldmine_game.UI;
 using oldgoldmine_game.Gameplay;
+using Microsoft.Win32;
 
 namespace oldgoldmine_game
 {
@@ -440,5 +441,25 @@ namespace oldgoldmine_game
             }
         }
 
+        public void SaveScore(int score)
+        {
+            const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
+            Registry.SetValue(key, "Best_Score", score);
+        }
+
+        public int LoadScore()
+        {
+            const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
+            int? score = 0;
+            try {
+                score = (int)Registry.GetValue(key, "Best_Score", 0); //without ? it's not nullable
+                if (score == null)
+                    score = 0;
+            }
+            catch (System.Exception) {
+                //nothing
+            }            
+            return score.Value;
+        }
     }
 }
