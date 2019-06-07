@@ -34,7 +34,7 @@ namespace oldgoldmine_game.Menus
             playButton = new Button(playButtonRectangle, font, "PLAY", normalButton, highlightedButton);
             exitButton = new Button(exitButtonRectangle, font, "QUIT", normalButton, highlightedButton);
 
-            highscoreText = new SpriteText(font, "Highscore: 17520", Color.LightGoldenrodYellow,
+            highscoreText = new SpriteText(font, "Highscore: " + OldGoldMineGame.BestScore, Color.LightGoldenrodYellow,
                 highscoreTextPosition, SpriteText.TextAlignment.MiddleCenter);
         }
 

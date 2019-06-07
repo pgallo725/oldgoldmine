@@ -62,6 +62,8 @@ namespace oldgoldmine_game
 
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
+        private static int bestScore = 0;
+        public static int BestScore { get { return bestScore; } set { bestScore = value; } }
 
         bool freeMovement = false;
 
@@ -106,6 +108,8 @@ namespace oldgoldmine_game
             player.Initialize(camera, 
                 new GameObject3D(m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                 new Vector3(0f, -2.4f, -0.75f));
+
+            BestScore = LoadScore();
 
             // Initialize menus
             mainMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
@@ -395,6 +399,7 @@ namespace oldgoldmine_game
             if (gameState == GameState.MainMenu)
             {
                 // TODO: reload the entire scene to its initial state
+                Score = 0;
                 gameState = GameState.Running;
                 IsMouseVisible = false;
                 // anything else ?
@@ -425,6 +430,10 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Running)
             {
+                if (Score > BestScore)
+                {
+                    SaveScore(Score);
+                } 
                 gameState = GameState.GameOver;
                 IsMouseVisible = true;
                 // TODO: destroy the player object
