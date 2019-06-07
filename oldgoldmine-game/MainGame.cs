@@ -260,12 +260,34 @@ namespace oldgoldmine_game
                     {
                         player.Move(moveSpeed, Vector3.Backward);
 
-                        if (Keyboard.GetState().IsKeyDown(Keys.D))
+                        if (InputManager.RightKeyHold)
                         {
-                            player.UpdateRightMovement(gameTime);
+                            player.UpdateSideMovement(gameTime, Vector3.Right);
+                        }
+                        else if (InputManager.RightKeyReleased)
+                        {
+                            player.ReverseSideMovement(Vector3.Left);
                         }
 
-                        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                        if (InputManager.LeftKeyHold)
+                        {
+                            player.UpdateSideMovement(gameTime, Vector3.Left);
+                        }
+                        else if (InputManager.LeftKeyReleased)
+                        {
+                            player.ReverseSideMovement(Vector3.Right);
+                        }
+
+                        if (InputManager.DownKeyHold)
+                        {
+                            player.UpdateCrouchMovement(gameTime);
+                        }
+                        else if (InputManager.DownKeyReleased)
+                        {
+                            player.ReverseCrouch();
+                        }
+
+                        if (InputManager.JumpKeyPressed)
                         {
                             player.Jump();
                         }

@@ -7,8 +7,8 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Player
     {
-        private const float maxVerticalAngle = 15f;
-        private const float maxHorizontalAngle = 40f;
+        private const float maxVerticalAngle = 12f;
+        private const float maxHorizontalAngle = 33f;
 
         private float verticalLookAngle = 0.0f;
         private float horizontalLookAngle = 0.0f;
@@ -34,25 +34,40 @@ namespace oldgoldmine_game.Gameplay
             CrouchReverse
         }
 
-        private const float jumpHeight = 8f;
-        private const float jumpVelocity = 15f;
+        // Current animation state
+        private AnimationState state = AnimationState.Idle;
+
+
+        // Jump animation parameters
+        private const float jumpHeight = 9f;
+        private const float jumpVelocity = 16f;
         private readonly float jumpAcceleration;
         private readonly float jumpDuration;
 
+        // Jump animation status variables
         private float jumpTimepoint = 0f;
         private float currentJumpPosition = 0f;
 
 
-        private readonly float rightMovementOffset = -1.5f;
-        private readonly float rightMovementRotationOffset = -15f;
-        private readonly float rightMovementAnimDuration = 0.25f;
-        private float rightMovementTimepoint = 0f;
+        // Side movement animation parameters
+        private const float sideMovementOffset = -1.5f;
+        private const float sideMovementRotationOffset = -15f;
+        private const float sideMovementAnimDuration = 0.2f;
+
+        // Side movement animation status variables
+        private float sideMovementTimepoint = 0f;
         private float currentRotation = 0f;
-        private float currentRightMovement = 0f;
+        private float currentSidePosition = 0f;
 
-        private AnimationState state = AnimationState.Idle;
 
-        private Vector3 straightPlayerPosition;
+        // Crouch animation parameters
+        private const float crouchAnimDuration = 0.2f;
+        private const float crouchVerticalPosition = 1.75f;
+        private const float normalVerticalPosition = 2.5f;
+
+        // Crouch animation status variables
+        private float crouchTimepoint = 0f;
+        private float currentVerticalPosition = normalVerticalPosition;
 
 
         public Player()
@@ -66,8 +81,6 @@ namespace oldgoldmine_game.Gameplay
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position, 1f);
-
-            this.straightPlayerPosition = playerCamera.Position;
         }
 
         public void Initialize(GameCamera playerCamera, float hitboxRadius)
@@ -75,8 +88,6 @@ namespace oldgoldmine_game.Gameplay
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position, hitboxRadius);
-
-            this.straightPlayerPosition = playerCamera.Position;
         }
 
         public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset)
@@ -86,8 +97,6 @@ namespace oldgoldmine_game.Gameplay
             this.model.EnableLightingModel();
             this.model.Position = playerCamera.Position + modelOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position, 1f);
-
-            this.straightPlayerPosition = playerCamera.Position;
         }
 
         public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset, float hitboxRadius)
@@ -97,8 +106,6 @@ namespace oldgoldmine_game.Gameplay
             this.model.EnableLightingModel();
             this.model.Position = playerCamera.Position + modelOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position, hitboxRadius);
-
-            this.straightPlayerPosition = playerCamera.Position;
         }
 
 
@@ -150,6 +157,16 @@ namespace oldgoldmine_game.Gameplay
         public void Update(GameTime gameTime)
         {
             this.UpdateJump(gameTime);
+
+            // Update "automatic" animations 
+            // (reversing previous movements when the key is released)
+            if (state == AnimationState.RightMovementReverse)
+                ReverseSideMovement(gameTime,Vector3.Right);
+            else if (state == AnimationState.LeftMovementReverse)
+                ReverseSideMovement(gameTime, Vector3.Left);
+            else if (state == AnimationState.CrouchReverse)
+                UpdateCrouchMovement(gameTime);
+
             camera.Update();
             hitbox.Center = camera.Position;
         }
@@ -163,64 +180,139 @@ namespace oldgoldmine_game.Gameplay
 
         
 
-        public void UpdateRightMovement(GameTime gameTime)
+        public void UpdateSideMovement(GameTime gameTime, Vector3 direction)
         {
-            if (state == AnimationState.Idle)
+            if (state == AnimationState.Idle && direction == Vector3.Right)
                 state = AnimationState.RightMovement;
+            else if (state == AnimationState.Idle && direction == Vector3.Left)
+                state = AnimationState.LeftMovement;
 
-            if (state == AnimationState.RightMovement)
+            if ((state == AnimationState.RightMovement && direction == Vector3.Right) ||
+                (state == AnimationState.LeftMovement && direction == Vector3.Left))
             {
-                rightMovementTimepoint = MathHelper.Clamp(
-                rightMovementTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
-                0f, rightMovementAnimDuration);
+                sideMovementTimepoint = MathHelper.Clamp(
+                sideMovementTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, sideMovementAnimDuration);
 
-                float interpolatedRotation = MathHelper.Lerp(0f, rightMovementRotationOffset,
-                    rightMovementTimepoint / rightMovementAnimDuration);
+                float interpolatedRotation = MathHelper.Lerp(0f, sideMovementRotationOffset,
+                    sideMovementTimepoint / sideMovementAnimDuration);
 
-                float interpolatedRightMovement = MathHelper.Lerp(0f, rightMovementOffset,
-                    rightMovementTimepoint / rightMovementAnimDuration);
+                float interpolatedPosition = MathHelper.Lerp(0f, sideMovementOffset,
+                    sideMovementTimepoint / sideMovementAnimDuration);
 
                 if (model != null)
                 {
-                    model.RotateAroundAxis(Vector3.Forward, interpolatedRotation - currentRotation);
-                    model.MovePosition(Vector3.Right * (interpolatedRightMovement - currentRightMovement));
+                    model.RotateAroundAxis(Vector3.Forward, direction.X * (interpolatedRotation - currentRotation));
+                    model.MovePosition(direction * (interpolatedPosition - currentSidePosition));
                 }
 
-                camera.Move(Vector3.Right * (interpolatedRightMovement - currentRightMovement));
+                camera.Move(direction * (interpolatedPosition - currentSidePosition));
 
                 currentRotation = interpolatedRotation;
-                currentRightMovement = interpolatedRightMovement;
+                currentSidePosition = interpolatedPosition;
             }
-            else if (state == AnimationState.RightMovementReverse)
+        }
+
+        private void ReverseSideMovement(GameTime gameTime, Vector3 direction)
+        {
+            if ((state == AnimationState.RightMovementReverse && direction == Vector3.Right) ||
+                (state == AnimationState.LeftMovementReverse && direction == Vector3.Left))
             {
-                rightMovementTimepoint = MathHelper.Clamp(
-                rightMovementTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
-                0f, rightMovementAnimDuration);
+                sideMovementTimepoint = MathHelper.Clamp(
+                sideMovementTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, sideMovementAnimDuration);
 
-                float interpolatedRotation = MathHelper.Lerp(rightMovementOffset, 0f,
-                    rightMovementTimepoint / rightMovementAnimDuration);
+                float interpolatedRotation = MathHelper.Lerp(sideMovementRotationOffset, 0f,
+                    sideMovementTimepoint / sideMovementAnimDuration);
 
-                float interpolatedRightMovement = MathHelper.Lerp(rightMovementOffset, 0f,
-                    rightMovementTimepoint / rightMovementAnimDuration);
+                float interpolatedPosition = MathHelper.Lerp(sideMovementOffset, 0f,
+                    sideMovementTimepoint / sideMovementAnimDuration);
 
                 if (model != null)
                 {
-                    model.RotateAroundAxis(Vector3.Forward, interpolatedRotation - currentRotation);
-                    model.MovePosition(Vector3.Right * (interpolatedRightMovement - currentRightMovement));
+                    model.RotateAroundAxis(Vector3.Forward, direction.X * (interpolatedRotation - currentRotation));
+                    model.MovePosition(direction * (interpolatedPosition - currentSidePosition));
                 }
 
-                camera.Move(Vector3.Right * (interpolatedRightMovement - currentRightMovement));
+                camera.Move(direction * (interpolatedPosition - currentSidePosition));
 
                 currentRotation = interpolatedRotation;
-                currentRightMovement = interpolatedRightMovement;
+                currentSidePosition = interpolatedPosition;
 
-                if (rightMovementTimepoint == rightMovementAnimDuration)
+                if (sideMovementTimepoint == sideMovementAnimDuration)
                 {
                     state = AnimationState.Idle;
-                    rightMovementTimepoint = 0f;
+                    sideMovementTimepoint = 0f;
                 }
             }
         }
+
+
+        public void ReverseSideMovement(Vector3 reverseDirection)
+        {
+            if (state == AnimationState.RightMovement && reverseDirection == Vector3.Left)
+            {
+                state = AnimationState.RightMovementReverse;
+                sideMovementTimepoint = sideMovementAnimDuration - sideMovementTimepoint;
+            }
+            else if (state == AnimationState.LeftMovement && reverseDirection == Vector3.Right)
+            {
+                state = AnimationState.LeftMovementReverse;
+                sideMovementTimepoint = sideMovementAnimDuration - sideMovementTimepoint;
+            }
+        }
+
+
+
+        public void UpdateCrouchMovement(GameTime gameTime)
+        {
+            if (state == AnimationState.Idle)
+                state = AnimationState.Crouch;
+
+            if (state == AnimationState.Crouch)
+            {
+                crouchTimepoint = MathHelper.Clamp(
+                crouchTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, crouchAnimDuration);
+
+                float interpolatedPosition = MathHelper.Lerp(normalVerticalPosition,
+                    crouchVerticalPosition, crouchTimepoint / crouchAnimDuration);
+
+                camera.Move(Vector3.Up * (interpolatedPosition - currentVerticalPosition));
+
+                currentVerticalPosition = interpolatedPosition;
+            }
+            else if (state == AnimationState.CrouchReverse)
+            {
+                crouchTimepoint = MathHelper.Clamp(
+                crouchTimepoint + (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, crouchAnimDuration);
+
+                float interpolatedPosition = MathHelper.Lerp(crouchVerticalPosition,
+                    normalVerticalPosition, crouchTimepoint / crouchAnimDuration);
+
+                camera.Move(Vector3.Up * (interpolatedPosition - currentVerticalPosition));
+
+                currentVerticalPosition = interpolatedPosition;
+
+                if (currentVerticalPosition == normalVerticalPosition)
+                {
+                    state = AnimationState.Idle;
+                    crouchTimepoint = 0f;
+                }
+            }
+        }
+
+
+        public void ReverseCrouch()
+        {
+            if (state == AnimationState.Crouch)
+            {
+                state = AnimationState.CrouchReverse;
+                crouchTimepoint = 0f;
+            }
+        }
+
 
 
         public void Jump()
