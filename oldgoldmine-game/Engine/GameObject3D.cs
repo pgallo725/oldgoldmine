@@ -8,7 +8,7 @@ namespace oldgoldmine_game.Engine
 
     public class GameObject3D : Poolable
     {
-        private readonly Model model3d;
+        protected readonly Model model3d;
 
         protected Vector3 position;
         protected Vector3 scale;

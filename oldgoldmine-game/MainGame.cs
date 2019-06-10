@@ -44,9 +44,9 @@ namespace oldgoldmine_game
 
         Queue<GameObject3D> rails;
         Queue<Collectible> collectibles;
+        Queue<Obstacle> obstacles;
         ProceduralGenerator levelGenerator;
 
-        Collectible gold;
         Obstacle box;
 
 
@@ -121,23 +121,17 @@ namespace oldgoldmine_game
             hud.Initialize(Window, smallFont, largeFont);
             
 
-            // Create GameObjects from the imported 3D models and set their position, rotation and scale
-            gold = new Collectible(m3d_gold);
-            box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
-
             // Instantiate and initialize the pool of rail segments to be drawn
             rails = new Queue<GameObject3D>();
             collectibles = new Queue<Collectible>();
 
-            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f, in collectibles, m3d_gold, 150f);
+            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f, in collectibles, m3d_gold, 0.25f, 150f);
 
 
-            // Prepare 3D game objects for the scene
-            gold.EnableLightingModel();
+            // Create GameObjects from the imported 3D models and set their position, rotation and scale
+            box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
             box.EnableLightingModel();
-            gold.Position = new Vector3(0f, 1.25f, 20f);
             box.Position = new Vector3(10f, 0.5f, -3f);
-            gold.ScaleSize(0.25f);
 
 
             gameState = GameState.MainMenu;
@@ -227,7 +221,7 @@ namespace oldgoldmine_game
                     hud.UpdateScore(Score);     // TODO: do it only when really needed (on collectible pickup)
 
                     float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float lookAroundSpeed = 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (freeMovement)
                     {
@@ -302,9 +296,13 @@ namespace oldgoldmine_game
                     player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
 
                     player.Update(gameTime);
-                    levelGenerator.Update(player.Position, rails, collectibles);
+                    levelGenerator.Update(player.Position, rails, collectibles, obstacles);
 
-                    gold.Update();
+                    foreach (Collectible gold in collectibles)
+                    {
+                        gold.Update();
+                    }
+
                     box.Update();
 
                     break;
@@ -359,12 +357,16 @@ namespace oldgoldmine_game
                     // Draw 3D objects in the scene, starting from the player
 
                     player.Draw();
-                    gold.Draw(player.Camera);
                     box.Draw(player.Camera);
 
                     foreach(GameObject3D rail in rails)
                     {
                         rail.Draw(player.Camera);
+                    }
+
+                    foreach (Collectible gold in collectibles)
+                    {
+                        gold.Draw(player.Camera);
                     }
 
                     // Draw the HUD on top of the rendered scene
@@ -467,7 +469,7 @@ namespace oldgoldmine_game
             }
             catch (System.Exception) {
                 //nothing
-            }            
+            }
             return score.Value;
         }
     }

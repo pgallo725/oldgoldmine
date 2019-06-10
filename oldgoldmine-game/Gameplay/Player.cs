@@ -41,12 +41,15 @@ namespace oldgoldmine_game.Gameplay
         // Jump animation parameters
         private const float jumpHeight = 9f;
         private const float jumpVelocity = 16f;
+        private const float jumpCooldown = 0.2f;
         private readonly float jumpAcceleration;
         private readonly float jumpDuration;
+        
 
         // Jump animation status variables
         private float jumpTimepoint = 0f;
         private float currentJumpPosition = 0f;
+        private float timeBeforeNextJump = 0f;
 
 
         // Side movement animation parameters
@@ -156,6 +159,10 @@ namespace oldgoldmine_game.Gameplay
 
         public void Update(GameTime gameTime)
         {
+            timeBeforeNextJump = MathHelper.Clamp(
+                timeBeforeNextJump - (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, float.MaxValue);
+
             this.UpdateJump(gameTime);
 
             // Update "automatic" animations 
@@ -317,7 +324,7 @@ namespace oldgoldmine_game.Gameplay
 
         public void Jump()
         {
-            if (state == AnimationState.Idle)
+            if (state == AnimationState.Idle && timeBeforeNextJump == 0f)
             {
                 state = AnimationState.Jump;
                 jumpTimepoint = 0f;
@@ -344,7 +351,10 @@ namespace oldgoldmine_game.Gameplay
                 currentJumpPosition = interpolatedJumpPosition;
 
                 if (interpolatedJumpPosition == 0f)
+                {
                     state = AnimationState.Idle;        // Stop jump animation when the rail is hit again
+                    timeBeforeNextJump = jumpCooldown;
+                }
             }
         }
     }

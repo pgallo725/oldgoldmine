@@ -60,7 +60,7 @@ namespace oldgoldmine_game.Engine
             leftKeyHold = (keyboardState.IsKeyDown(Keys.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickLeft));
             rightKeyHold = (keyboardState.IsKeyDown(Keys.D) || gamepadState.IsButtonDown(Buttons.LeftThumbstickRight));
             downKeyHold = (keyboardState.IsKeyDown(Keys.S) || gamepadState.IsButtonDown(Buttons.LeftThumbstickDown));
-            jumpPressed = !jumpPressed && (keyboardState.IsKeyDown(Keys.Space) || gamepadState.IsButtonDown(Buttons.A));
+            jumpPressed = !jumpWasPressed && (keyboardState.IsKeyDown(Keys.Space) || gamepadState.IsButtonDown(Buttons.A));
             jumpWasPressed = (keyboardState.IsKeyDown(Keys.Space) || gamepadState.IsButtonDown(Buttons.A));
 
             pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));

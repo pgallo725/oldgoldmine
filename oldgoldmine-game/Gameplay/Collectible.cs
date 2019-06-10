@@ -51,6 +51,8 @@ namespace oldgoldmine_game.Gameplay
         public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
             : base(model, position, scale, rotation)
         {
+            base.Scale = Vector3.One;   // to ensure consistency with the hitbox size
+
             CreateBoundingBoxFromModel(model);
 
             this.Position = position;
@@ -68,6 +70,18 @@ namespace oldgoldmine_game.Gameplay
         {
             this.hitbox = new BoundingBox(collectibleObj.Position - hitboxSize / 2,
                 collectibleObj.Position + hitboxSize / 2);
+        }
+
+        private Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
+            : base(model, position, scale, rotation)
+        {
+            this.hitbox = hitbox;
+        }
+
+        private Collectible(GameObject3D collectibleObj, BoundingBox hitbox)
+            : base(collectibleObj)
+        {
+            this.hitbox = hitbox;
         }
 
 
@@ -180,6 +194,12 @@ namespace oldgoldmine_game.Gameplay
                 OldGoldMineGame.graphics.GraphicsDevice.
                     DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, lineVertices, 0, 12);
             }
+        }
+
+
+        public override object Clone()
+        {
+            return new Collectible(this.model3d, this.position, this.scale, this.rotation, this.hitbox);
         }
 
     }
