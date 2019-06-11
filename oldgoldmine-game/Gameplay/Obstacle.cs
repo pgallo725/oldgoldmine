@@ -70,6 +70,18 @@ namespace oldgoldmine_game.Gameplay
                 collectibleObj.Position + hitboxSize / 2);
         }
 
+        private Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
+            : base(model, position, scale, rotation)
+        {
+            this.hitbox = hitbox;
+        }
+
+        private Obstacle(GameObject3D collectibleObj, BoundingBox hitbox)
+            : base(collectibleObj)
+        {
+            this.hitbox = hitbox;
+        }
+
 
         // Create the bounding box by taking the bounds of all the model meshes
         // and merging them together into a single bounding box
@@ -180,6 +192,11 @@ namespace oldgoldmine_game.Gameplay
                 OldGoldMineGame.graphics.GraphicsDevice.
                     DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, lineVertices, 0, 12);
             }
+        }
+
+        public override object Clone()
+        {
+            return new Obstacle(this.model3d, this.position, this.scale, this.rotation, this.hitbox);
         }
 
     }

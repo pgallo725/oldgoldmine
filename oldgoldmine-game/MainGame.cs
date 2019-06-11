@@ -47,9 +47,6 @@ namespace oldgoldmine_game
         Queue<Obstacle> obstacles;
         ProceduralGenerator levelGenerator;
 
-        Obstacle box;
-
-
         Model m3d_woodenCrate;
         Model m3d_gold;
         Model m3d_cart;
@@ -107,7 +104,7 @@ namespace oldgoldmine_game
             camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
             player.Initialize(camera, 
                 new GameObject3D(m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
-                new Vector3(0f, -2.4f, -0.75f));
+                new Vector3(0f, -2.4f, -0.75f), 1.2f);
 
             BestScore = LoadScore();
 
@@ -121,21 +118,18 @@ namespace oldgoldmine_game
             hud.Initialize(Window, smallFont, largeFont);
             
 
-            // Instantiate and initialize the pool of rail segments to be drawn
+            // Instantiate and initialize the pool of items for the procedural generator
             rails = new Queue<GameObject3D>();
             collectibles = new Queue<Collectible>();
+            obstacles = new Queue<Obstacle>();
 
-            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f, in collectibles, m3d_gold, 0.25f, 150f);
-
-
-            // Create GameObjects from the imported 3D models and set their position, rotation and scale
-            box = new Obstacle(new GameObject3D(m3d_woodenCrate), new Vector3(2.2f, 2.2f, 2.2f));
-            box.EnableLightingModel();
-            box.Position = new Vector3(10f, 0.5f, -3f);
+            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f,
+                in collectibles, m3d_gold, 0.25f,
+                in obstacles, m3d_woodenCrate, new Vector3(2f, 2f, 2f),
+                150f);
 
 
             gameState = GameState.MainMenu;
-
             IsMouseVisible = true;
         }
 
@@ -303,7 +297,10 @@ namespace oldgoldmine_game
                         gold.Update();
                     }
 
-                    box.Update();
+                    foreach (Obstacle obstacle in obstacles)
+                    {
+                        obstacle.Update();
+                    }
 
                     break;
                 }
@@ -357,7 +354,6 @@ namespace oldgoldmine_game
                     // Draw 3D objects in the scene, starting from the player
 
                     player.Draw();
-                    box.Draw(player.Camera);
 
                     foreach(GameObject3D rail in rails)
                     {
@@ -367,6 +363,11 @@ namespace oldgoldmine_game
                     foreach (Collectible gold in collectibles)
                     {
                         gold.Draw(player.Camera);
+                    }
+
+                    foreach (Obstacle obstacle in obstacles)
+                    {
+                        obstacle.Draw(player.Camera);
                     }
 
                     // Draw the HUD on top of the rendered scene
@@ -434,6 +435,7 @@ namespace oldgoldmine_game
             {
                 if (Score > BestScore)
                 {
+                    BestScore = Score;
                     SaveScore(Score);
                 } 
                 gameState = GameState.GameOver;

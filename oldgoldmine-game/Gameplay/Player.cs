@@ -15,6 +15,8 @@ namespace oldgoldmine_game.Gameplay
 
         private GameCamera camera;
         private GameObject3D model;
+
+        private readonly Vector3 hitboxOffset = new Vector3(0f, 0f, -0.5f);
         internal BoundingSphere hitbox;
 
         public GameCamera Camera { get { return camera; } }
@@ -83,14 +85,14 @@ namespace oldgoldmine_game.Gameplay
         {
             this.camera = playerCamera;
             this.model = null;
-            this.hitbox = new BoundingSphere(playerCamera.Position, 1f);
+            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
 
         public void Initialize(GameCamera playerCamera, float hitboxRadius)
         {
             this.camera = playerCamera;
             this.model = null;
-            this.hitbox = new BoundingSphere(playerCamera.Position, hitboxRadius);
+            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }
 
         public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset)
@@ -99,7 +101,7 @@ namespace oldgoldmine_game.Gameplay
             this.model = playerModel;
             this.model.EnableLightingModel();
             this.model.Position = playerCamera.Position + modelOffset;
-            this.hitbox = new BoundingSphere(playerCamera.Position, 1f);
+            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
 
         public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset, float hitboxRadius)
@@ -108,7 +110,7 @@ namespace oldgoldmine_game.Gameplay
             this.model = playerModel;
             this.model.EnableLightingModel();
             this.model.Position = playerCamera.Position + modelOffset;
-            this.hitbox = new BoundingSphere(playerCamera.Position, hitboxRadius);
+            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }
 
 
@@ -175,7 +177,7 @@ namespace oldgoldmine_game.Gameplay
                 UpdateCrouchMovement(gameTime);
 
             camera.Update();
-            hitbox.Center = camera.Position;
+            hitbox.Center = camera.Position + hitboxOffset;
         }
 
 
