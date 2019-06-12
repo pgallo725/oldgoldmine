@@ -6,8 +6,8 @@ namespace oldgoldmine_game.Menus
 {
     abstract class Menu
     {
-        protected readonly Vector2 buttonSize = new Vector2(400, 120);
-        protected const int elementSeparation = 70;
+        protected Vector2 buttonSize = new Vector2(400, 120);
+        protected int elementSeparation = 70;
 
         protected Texture2D menuBackground;
 

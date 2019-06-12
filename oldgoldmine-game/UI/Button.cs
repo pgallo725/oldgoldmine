@@ -108,7 +108,8 @@ namespace oldgoldmine_game.UI
             spriteBatch.Draw(highlighted ? highlightedButtonTexture : normalButtonTexture,
                 destinationRectangle: buttonArea, Color.BurlyWood);
 
-            buttonText.Draw(spriteBatch);
+            if (buttonText != null)
+                buttonText.Draw(spriteBatch);
         }
     }
 }
