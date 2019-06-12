@@ -45,7 +45,7 @@ namespace oldgoldmine_game.Menus
             exitButton.Update();
 
             if (playButton.IsClicked())
-                OldGoldMineGame.Application.StartGame();
+                OldGoldMineGame.Application.NewGame();
             else if (exitButton.IsClicked())
                 OldGoldMineGame.Application.Exit();
         }

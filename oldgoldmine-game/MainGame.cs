@@ -18,6 +18,7 @@ namespace oldgoldmine_game
         public enum GameState
         {
             MainMenu,
+            NewGame,
             Running,
             Paused,
             GameOver
@@ -38,6 +39,7 @@ namespace oldgoldmine_game
 
         HUD hud = new HUD();
         MainMenu mainMenu = new MainMenu();
+        GameCustomization customizationMenu = new GameCustomization();
         PauseMenu pauseMenu = new PauseMenu();
         GameOverMenu deathMenu = new GameOverMenu();
         
@@ -110,8 +112,10 @@ namespace oldgoldmine_game
 
             // Initialize menus
             mainMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+            customizationMenu.Initialize(GraphicsDevice, null, smallFont, buttonTextureNormal, buttonTextureHighlighted);
             pauseMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
             deathMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+            
 
             // Setup HUD
             timer = new Timer();
@@ -192,7 +196,13 @@ namespace oldgoldmine_game
                     mainMenu.Update();
                     break;
                 }
-                    
+
+                case GameState.NewGame:
+                {
+                    customizationMenu.Update();
+                    break;
+                }
+
                 case GameState.Running:
                 {
                     if (InputManager.PauseKeyPressed)
@@ -339,6 +349,12 @@ namespace oldgoldmine_game
                     break;
                 }
 
+                case GameState.NewGame:
+                {
+                    customizationMenu.Draw(GraphicsDevice, spriteBatch);
+                    break;
+                }
+
                 case GameState.Running:
                 {
                     GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -397,9 +413,20 @@ namespace oldgoldmine_game
         }
 
 
-        public void StartGame()
+
+        public void NewGame()
         {
             if (gameState == GameState.MainMenu)
+            {
+                gameState = GameState.NewGame;
+                IsMouseVisible = true;
+                // anything else ?
+            }
+        }
+
+        public void StartGame()
+        {
+            if (gameState == GameState.NewGame)
             {
                 // TODO: reload the entire scene to its initial state
                 Score = 0;
@@ -453,6 +480,7 @@ namespace oldgoldmine_game
                 // anything else ?
             }
         }
+
 
         public void SaveScore(int score)
         {
