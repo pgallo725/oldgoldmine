@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using oldgoldmine_game.UI;
 
@@ -9,6 +10,8 @@ namespace oldgoldmine_game.Menus
     {
         private Button startButton;
         private Button backButton;
+
+        private ToggleSelector difficultyToggle;
 
         private SpriteText titleText;
 
@@ -36,6 +39,10 @@ namespace oldgoldmine_game.Menus
 
             titleText = new SpriteText(font, "CUSTOMIZE YOUR GAME", Color.DarkOrange,
                 titlePosition, SpriteText.TextAlignment.MiddleCenter);
+
+            difficultyToggle = new ToggleSelector(device.Viewport.Bounds.Size / new Point(2), new Point(80, 80),
+                normalButton, highlightedButton, normalButton, highlightedButton,
+                font, new List<string>() { "Easy", "Medium", "Hard" }, 100);
         }
 
 
@@ -43,6 +50,7 @@ namespace oldgoldmine_game.Menus
         {
             startButton.Update();
             backButton.Update();
+            difficultyToggle.Update();
 
             if (startButton.IsClicked())
                 OldGoldMineGame.Application.StartGame();
@@ -62,6 +70,8 @@ namespace oldgoldmine_game.Menus
 
             startButton.Draw(spriteBatch);
             backButton.Draw(spriteBatch);
+
+            difficultyToggle.Draw(spriteBatch);
 
             titleText.Draw(spriteBatch);
 

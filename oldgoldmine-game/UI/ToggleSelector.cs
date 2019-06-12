@@ -15,10 +15,11 @@ namespace oldgoldmine_game.UI
         private SpriteText label;
 
         private List<string> textValues;
-        private int value;
+        private int index;
 
         public List<string> Values { get { return textValues; } }
-        public int SelectedValue { get { return value; } set { this.value = value; } }
+        public int SelectedValueIndex { get { return index; } set { this.index = value; } }
+        public string SelectedValue { get { return Values[index]; } }
 
 
 
@@ -42,7 +43,22 @@ namespace oldgoldmine_game.UI
             Texture2D rightButtonNormal, Texture2D rightButtonHighlighted,
             SpriteFont font, List<string> textValues, int textWidth = 0)
         {
+            leftButton = new Button(position - new Point(textWidth / 2 + buttonSize.X / 2, 0),
+                buttonSize, null, leftButtonNormal, leftButtonHighlighted);
 
+            rightButton = new Button(position + new Point(textWidth / 2 + buttonSize.X / 2, 0),
+                buttonSize, null, rightButtonNormal, rightButtonHighlighted);
+
+            this.index = 0;
+            this.textValues = textValues;
+            if (this.textValues != null && this.textValues.Count > 0)
+            {
+                label = new SpriteText(font, textValues[index], position.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+            }
+            else
+            {
+                label = new SpriteText(font, "", position.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+            }
         }
 
         public ToggleSelector(Point position, 
@@ -59,8 +75,29 @@ namespace oldgoldmine_game.UI
             rightButton.Update();
 
 
+            if (leftButton.IsClicked())
+                LeftButtonClick();
+            else if (rightButton.IsClicked())
+                RightButtonClick();
         }
 
+        private void LeftButtonClick()
+        {
+            if (index > 0)
+            {
+                index--;
+                label.Text = textValues[index];
+            }
+        }
+
+        private void RightButtonClick()
+        {
+            if (index < textValues.Count - 1)
+            {
+                index++;
+                label.Text = textValues[index];
+            }
+        }
 
         public void Draw(in SpriteBatch spriteBatch)
         {
