@@ -13,20 +13,20 @@ namespace oldgoldmine_game.Gameplay
         SpriteText speedText;
 
 
-        public void Initialize(in GameWindow window, SpriteFont smallFont, SpriteFont largeFont)
+        public void Initialize(in GameWindow window)
         {
             // HUD elements setup
-            timerText = new SpriteText(largeFont, "00:00:00", Color.White,
-                new Vector2(window.ClientBounds.Width / 2, 5), SpriteText.TextAlignment.TopCenter);
+            timerText = new SpriteText(OldGoldMineGame.resources.hudFont, "00:00:00", Color.White,
+                new Vector2(window.ClientBounds.Width / 2, 5), SpriteText.TextAnchor.TopCenter);
 
-            framerateText = new SpriteText(smallFont, "0 FPS", Color.LightGreen,
-                new Vector2(window.ClientBounds.Width - 10, 5), SpriteText.TextAlignment.TopRight);
+            framerateText = new SpriteText(OldGoldMineGame.resources.debugInfoFont, "0 FPS", Color.LightGreen,
+                new Vector2(window.ClientBounds.Width - 10, 5), SpriteText.TextAnchor.TopRight);
 
-            scoreText = new SpriteText(largeFont, "Score: 0", Color.White,
-                new Vector2(15, 5), SpriteText.TextAlignment.TopLeft);
+            scoreText = new SpriteText(OldGoldMineGame.resources.hudFont, "Score: 0", Color.White,
+                new Vector2(15, 5), SpriteText.TextAnchor.TopLeft);
 
-            speedText = new SpriteText(largeFont, "Speed: 20 Km/h", Color.White,
-                new Vector2(15, 50), SpriteText.TextAlignment.TopLeft);
+            speedText = new SpriteText(OldGoldMineGame.resources.hudFont, "Speed: 20 Km/h", Color.White,
+                new Vector2(15, 50), SpriteText.TextAnchor.TopLeft);
         }
 
 

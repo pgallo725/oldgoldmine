@@ -6,7 +6,7 @@ using oldgoldmine_game.UI;
 
 namespace oldgoldmine_game.Menus
 {
-    class GameCustomization : Menu
+    class CustomizationMenu : Menu
     {
         private Button startButton;
         private Button backButton;
@@ -16,8 +16,7 @@ namespace oldgoldmine_game.Menus
         private SpriteText titleText;
 
 
-        public override void Initialize(GraphicsDevice device, Texture2D background,
-            SpriteFont font, Texture2D normalButton, Texture2D highlightedButton)
+        public override void Initialize(GraphicsDevice device, Texture2D background)
         {
             this.menuBackground = background;
             this.buttonSize = new Vector2(240, 80);
@@ -34,11 +33,12 @@ namespace oldgoldmine_game.Menus
             Vector2 titlePosition = new Vector2(device.Viewport.Width / 2, elementSeparation);
 
 
-            startButton = new Button(startButtonRectangle, font, "START", normalButton, highlightedButton);
+            startButton = new Button(startButtonRectangle, font, "START", 
+                OldGoldMineGame.resources.menuButtonTextureNormal, OldGoldMineGame.resources.menuButtonTextureHighlighted);
             backButton = new Button(backButtonRectangle, font, "BACK", normalButton, highlightedButton);
 
             titleText = new SpriteText(font, "CUSTOMIZE YOUR GAME", Color.DarkOrange,
-                titlePosition, SpriteText.TextAlignment.MiddleCenter);
+                titlePosition, SpriteText.TextAnchor.MiddleCenter);
 
             difficultyToggle = new ToggleSelector(device.Viewport.Bounds.Size / new Point(2), new Point(80, 80),
                 normalButton, highlightedButton, normalButton, highlightedButton,

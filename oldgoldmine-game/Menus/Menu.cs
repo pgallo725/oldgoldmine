@@ -12,8 +12,7 @@ namespace oldgoldmine_game.Menus
         protected Texture2D menuBackground;
 
 
-        public abstract void Initialize(GraphicsDevice device, Texture2D background,
-            SpriteFont font, Texture2D normalButton, Texture2D highlightedButton);
+        public abstract void Initialize(GraphicsDevice device, Texture2D background);
 
 
         public abstract void Update();

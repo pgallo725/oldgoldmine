@@ -55,7 +55,7 @@
     <Compile Include="Gameplay\Player.cs" />
     <Compile Include="Gameplay\ProceduralGenerator.cs" />
     <Compile Include="MainGame.cs" />
-    <Compile Include="Menus\GameCustomization.cs" />
+    <Compile Include="Menus\CustomizationMenu.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
@@ -63,7 +63,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Button.cs" />
-    <Compile Include="UI\ComponentUI.cs" />
+    <Compile Include="UI\IComponentUI.cs" />
     <Compile Include="UI\Image.cs" />
     <Compile Include="UI\SpriteText.cs" />
     <Compile Include="UI\ToggleSelector.cs" />

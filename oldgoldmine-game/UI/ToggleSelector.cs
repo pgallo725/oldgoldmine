@@ -7,20 +7,21 @@ using oldgoldmine_game.Engine;
 
 namespace oldgoldmine_game.UI
 {
-    class ToggleSelector : ComponentUI
+    class ToggleSelector : IComponentUI
     {
         private Button leftButton;
         private Button rightButton;
 
         private SpriteText label;
 
-        private List<string> textValues;
+        private List<string> values;
         private int index;
 
-        public List<string> Values { get { return textValues; } }
+        public List<string> Values { get { return values; } }
         public int SelectedValueIndex { get { return index; } set { this.index = value; } }
-        public string SelectedValue { get { return Values[index]; } }
+        public string SelectedValue { get { return values[index]; } }
 
+        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
         public ToggleSelector(Rectangle elementArea, 
@@ -50,15 +51,21 @@ namespace oldgoldmine_game.UI
                 buttonSize, null, rightButtonNormal, rightButtonHighlighted);
 
             this.index = 0;
-            this.textValues = textValues;
-            if (this.textValues != null && this.textValues.Count > 0)
+            this.values = textValues;
+
+            if (this.values != null && this.values.Count > 0)
             {
-                label = new SpriteText(font, textValues[index], position.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+                label = new SpriteText(font, textValues[index], position.ToVector2(), SpriteText.TextAnchor.MiddleCenter);
             }
             else
             {
-                label = new SpriteText(font, "", position.ToVector2(), SpriteText.TextAlignment.MiddleCenter);
+                label = new SpriteText(font, "", position.ToVector2(), SpriteText.TextAnchor.MiddleCenter);
             }
+
+            leftButton.Enabled = false;
+
+            if (this.values == null || this.values.Count <= 1)
+                rightButton.Enabled = false;
         }
 
         public ToggleSelector(Point position, 
@@ -69,11 +76,13 @@ namespace oldgoldmine_game.UI
         }
 
 
+        /// <summary>
+        /// Update the ToggleSelector status in the current frame
+        /// </summary>
         public void Update()
         {
             leftButton.Update();
             rightButton.Update();
-
 
             if (leftButton.IsClicked())
                 LeftButtonClick();
@@ -81,30 +90,43 @@ namespace oldgoldmine_game.UI
                 RightButtonClick();
         }
 
+
         private void LeftButtonClick()
         {
             if (index > 0)
             {
                 index--;
-                label.Text = textValues[index];
+                label.Text = values[index];
+
+                rightButton.Enabled = true;
+
+                if (index == 0)
+                    leftButton.Enabled = false;
             }
         }
 
         private void RightButtonClick()
         {
-            if (index < textValues.Count - 1)
+            if (index < values.Count - 1)
             {
                 index++;
-                label.Text = textValues[index];
+                label.Text = values[index];
+
+                leftButton.Enabled = true;
+
+                if (index == values.Count - 1)
+                    rightButton.Enabled = false;
             }
         }
+
 
         public void Draw(in SpriteBatch spriteBatch)
         {
             leftButton.Draw(spriteBatch);
             rightButton.Draw(spriteBatch);
 
-            label.Draw(spriteBatch);
+            if (label != null)
+                label.Draw(spriteBatch);
         }
     }
 }

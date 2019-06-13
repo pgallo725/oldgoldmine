@@ -29,17 +29,67 @@ namespace oldgoldmine_game
         public static SpriteBatch spriteBatch;
         public static BasicEffect basicEffect;
 
+
+        public struct GameResources
+        {
+            /* 3D models for the game */
+
+            public Model m3d_woodenCrate;
+            public Model m3d_gold;
+            public Model m3d_cart;
+            public Model m3d_rails;
+
+
+            /* Textures and fonts for MenuButton items */
+
+            public Texture2D menuButtonTextureNormal;
+            public Texture2D menuButtonTextureHighlighted;
+            public Texture2D menuButtonTexturePressed;
+
+            public SpriteFont menuButtonFont;
+
+
+            /* Textures and fonts for ToggleSelector items */
+
+            public Texture2D leftArrowButtonTextureNormal;
+            public Texture2D leftArrowButtonTextureHighlighted;
+            public Texture2D leftArrowButtonTexturePressed;
+
+            public Texture2D rightArrowButtonTextureNormal;
+            public Texture2D rightArrowButtonTextureHighlighted;
+            public Texture2D rightArrowButtonTexturePressed;
+
+            public Texture2D plusButtonTextureNormal;
+            public Texture2D plusButtonTextureHighlighted;
+            public Texture2D plusButtonTexturePressed;
+
+            public Texture2D minusButtonTextureNormal;
+            public Texture2D minusButtonTextureHighlighted;
+            public Texture2D minusButtonTexturePressed;
+
+            public SpriteFont settingSelectorFont;
+
+
+            /* Other fonts */
+
+            public SpriteFont menuTitleFont;
+            public SpriteFont hudFont;
+            public SpriteFont debugInfoFont;
+        }
+
         public static Player player;
         public static Timer timer;
 
         private static OldGoldMineGame application;
         public static OldGoldMineGame Application { get { return application; } }
 
+        public static GameResources resources = new GameResources();
+
         GameState gameState;
 
         HUD hud = new HUD();
         MainMenu mainMenu = new MainMenu();
-        GameCustomization customizationMenu = new GameCustomization();
+        CustomizationMenu customMenu = new CustomizationMenu();
         PauseMenu pauseMenu = new PauseMenu();
         GameOverMenu deathMenu = new GameOverMenu();
         
@@ -48,16 +98,7 @@ namespace oldgoldmine_game
         Queue<Collectible> collectibles;
         Queue<Obstacle> obstacles;
         ProceduralGenerator levelGenerator;
-
-        Model m3d_woodenCrate;
-        Model m3d_gold;
-        Model m3d_cart;
-        Model m3d_rails;
-
-        Texture2D buttonTextureNormal;
-        Texture2D buttonTextureHighlighted;
-        SpriteFont largeFont;
-        SpriteFont smallFont;
+        
 
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
@@ -73,6 +114,7 @@ namespace oldgoldmine_game
         const float maxSpeed = 200f;
         private float lastSpeedUpdate = 0f;
         
+
         public OldGoldMineGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -83,8 +125,8 @@ namespace oldgoldmine_game
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 576;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
 
             Window.Title = "The Old Gold Mine (Pre-Alpha)";
         }
@@ -105,21 +147,21 @@ namespace oldgoldmine_game
             GameCamera camera = new GameCamera();
             camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
             player.Initialize(camera, 
-                new GameObject3D(m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                 new Vector3(0f, -2.4f, -0.75f), 1.2f);
 
             BestScore = LoadScore();
 
             // Initialize menus
-            mainMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
-            customizationMenu.Initialize(GraphicsDevice, null, smallFont, buttonTextureNormal, buttonTextureHighlighted);
-            pauseMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
-            deathMenu.Initialize(GraphicsDevice, null, largeFont, buttonTextureNormal, buttonTextureHighlighted);
+            mainMenu.Initialize(GraphicsDevice, null);
+            customMenu.Initialize(GraphicsDevice, null);
+            pauseMenu.Initialize(GraphicsDevice, null);
+            deathMenu.Initialize(GraphicsDevice, null);
             
 
             // Setup HUD
             timer = new Timer();
-            hud.Initialize(Window, smallFont, largeFont);
+            hud.Initialize(Window);
             
 
             // Instantiate and initialize the pool of items for the procedural generator
@@ -127,9 +169,9 @@ namespace oldgoldmine_game
             collectibles = new Queue<Collectible>();
             obstacles = new Queue<Obstacle>();
 
-            levelGenerator = new ProceduralGenerator(in rails, m3d_rails, 20f,
-                in collectibles, m3d_gold, 0.25f,
-                in obstacles, m3d_woodenCrate, new Vector3(2f, 2f, 2f),
+            levelGenerator = new ProceduralGenerator(in rails, resources.m3d_rails, 20f,
+                in collectibles, resources.m3d_gold, 0.25f,
+                in obstacles, resources.m3d_woodenCrate, new Vector3(2f, 2f, 2f),
                 150f);
 
 
@@ -156,16 +198,18 @@ namespace oldgoldmine_game
             };
 
             // Load 3D models for the game
-            m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
-            m3d_gold = Content.Load<Model>("models_3d/goldOre");
-            m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
-            m3d_rails = Content.Load<Model>("models_3d/rails_segment");
+            resources.m3d_woodenCrate = Content.Load<Model>("models_3d/woodenCrate");
+            resources.m3d_gold = Content.Load<Model>("models_3d/goldOre");
+            resources.m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
+            resources.m3d_rails = Content.Load<Model>("models_3d/rails_segment");
 
-            // Load 2D elements for UI graphics
-            buttonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
-            buttonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
-            largeFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
-            smallFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
+            // Load 2D assets for UI elements
+            resources.menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
+            resources.menuButtonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
+            resources.menuButtonFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
+            resources.debugInfoFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
+
+            resources.hudFont = resources.menuButtonFont;   // tmp
         }
 
         /// <summary>
@@ -199,7 +243,7 @@ namespace oldgoldmine_game
 
                 case GameState.NewGame:
                 {
-                    customizationMenu.Update();
+                    customMenu.Update();
                     break;
                 }
 
@@ -351,7 +395,7 @@ namespace oldgoldmine_game
 
                 case GameState.NewGame:
                 {
-                    customizationMenu.Draw(GraphicsDevice, spriteBatch);
+                    customMenu.Draw(GraphicsDevice, spriteBatch);
                     break;
                 }
 

@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace oldgoldmine_game.UI
 {
-    class SpriteText : ComponentUI
+    class SpriteText : IComponentUI
     {
 
-        public enum TextAlignment
+        public enum TextAnchor
         {
             TopLeft,
             TopCenter,
@@ -25,40 +25,79 @@ namespace oldgoldmine_game.UI
         private Color color;
         private Vector2 position;
         private Vector2 alignmentOffset;
-        private TextAlignment alignment;
+        private TextAnchor anchorPoint;
 
+
+        /// <summary>
+        /// The text string rendered by this element
+        /// </summary>
         public string Text { get { return text; } set { text = value; UpdateAlignmentOffset(); } }
+
+        /// <summary>
+        /// The SpriteFont used to render the text
+        /// </summary>
         public SpriteFont Font { get { return font; } set { font = value; UpdateAlignmentOffset(); } }
+
+        /// <summary>
+        /// The color of the label's text
+        /// </summary>
         public Color Color { get { return color; } set { color = value; } }
+
+        /// <summary>
+        /// The position of the anchor point of this text element
+        /// </summary>
         public Vector2 Position { get { return position; } set { position = value; } }
-        public TextAlignment Alignment { get { return alignment; } set { alignment = value; UpdateAlignmentOffset(); } }
+
+        /// <summary>
+        /// Defines how the text is anchored to the point defined by the Position value
+        /// </summary>
+        public TextAnchor AnchorPoint { get { return anchorPoint; } set { anchorPoint = value; UpdateAlignmentOffset(); } }
 
         
+        /// <summary>
+        /// Construct an empty SpriteText element, at default coordinates
+        /// </summary>
+        /// <param name="font">The SpriteFont used to render the text.</param>
         public SpriteText(SpriteFont font)
         {
             this.font = font;
             this.text = string.Empty;
             this.position = Vector2.Zero;
             this.alignmentOffset = Vector2.Zero;
-            this.alignment = TextAlignment.TopLeft;
+            this.anchorPoint = TextAnchor.MiddleCenter;
             this.color = Color.White;
         }
 
-        public SpriteText(SpriteFont font, string text, Vector2 position, TextAlignment alignment = TextAlignment.TopLeft)
+        /// <summary>
+        /// Construct a SpriteText element with specified font, text and position/alignment
+        /// </summary>
+        /// <param name="font">The SpriteFont used to render the text.</param>
+        /// <param name="text">The text to be shown in this element.</param>
+        /// <param name="position">The position of the anchor point of this text.</param>
+        /// <param name="anchorPoint">The type of anchor point specified by Position.</param>
+        public SpriteText(SpriteFont font, string text, Vector2 position, TextAnchor anchorPoint = TextAnchor.MiddleCenter)
         {
             this.font = font;
             this.text = text;
             this.position = position;
-            this.Alignment = alignment;
+            this.AnchorPoint = anchorPoint;
             this.color = Color.White;
         }
 
-        public SpriteText(SpriteFont font, string text, Color color, Vector2 position, TextAlignment alignment = TextAlignment.TopLeft)
+        /// <summary>
+        /// Construct a SpriteText element with specified font, color, text and position/alignment
+        /// </summary>
+        /// <param name="font">The SpriteFont used to render the text.</param>
+        /// <param name="text">The text to be shown in this element.</param>
+        /// <param name="color">The color in which the text will be rendered.</param>
+        /// <param name="position">The position of the anchor point of this text.</param>
+        /// <param name="anchorPoint">The type of anchor point specified by Position.</param>
+        public SpriteText(SpriteFont font, string text, Color color, Vector2 position, TextAnchor anchorPoint = TextAnchor.MiddleCenter)
         {
             this.font = font;
             this.text = text;
             this.position = position;
-            this.Alignment = alignment;
+            this.AnchorPoint = anchorPoint;
             this.color = color;
         }
 
@@ -70,41 +109,41 @@ namespace oldgoldmine_game.UI
             Vector2 textSize = font.MeasureString(text);
 
             // Calculate the offset needed to properly align the text
-            switch (alignment)
+            switch (anchorPoint)
             {
-                case TextAlignment.TopLeft:
+                case TextAnchor.TopLeft:
                     alignmentOffset = Vector2.Zero;
                     break;
 
-                case TextAlignment.TopCenter:
+                case TextAnchor.TopCenter:
                     alignmentOffset = new Vector2(-textSize.X / 2, 0f);
                     break;
 
-                case TextAlignment.TopRight:
+                case TextAnchor.TopRight:
                     alignmentOffset = new Vector2(-textSize.X, 0f);
                     break;
 
-                case TextAlignment.MiddleLeft:
+                case TextAnchor.MiddleLeft:
                     alignmentOffset = new Vector2(0f, -textSize.Y / 2);
                     break;
 
-                case TextAlignment.MiddleCenter:
+                case TextAnchor.MiddleCenter:
                     alignmentOffset = -textSize / 2;
                     break;
 
-                case TextAlignment.MiddleRight:
+                case TextAnchor.MiddleRight:
                     alignmentOffset = new Vector2(-textSize.X, -textSize.Y / 2);
                     break;
 
-                case TextAlignment.BottomLeft:
+                case TextAnchor.BottomLeft:
                     alignmentOffset = new Vector2(0f, -textSize.Y);
                     break;
 
-                case TextAlignment.BottomCenter:
+                case TextAnchor.BottomCenter:
                     alignmentOffset = new Vector2(textSize.X / 2, -textSize.Y);
                     break;
 
-                case TextAlignment.BottomRight:
+                case TextAnchor.BottomRight:
                     alignmentOffset = -textSize;
                     break;
             }
