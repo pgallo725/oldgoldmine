@@ -20,6 +20,7 @@ namespace oldgoldmine_game.Menus
 
 
         public abstract void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch);
+        public abstract void Show();
     }
 
 }

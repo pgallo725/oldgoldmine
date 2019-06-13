@@ -69,6 +69,7 @@ namespace oldgoldmine_game
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
 
+
         const float speedIncreaseInterval = 4f;
         const float maxSpeed = 200f;
         private float lastSpeedUpdate = 0f;
@@ -83,10 +84,11 @@ namespace oldgoldmine_game
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 576;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
+            //graphics.IsFullScreen = true; //abilitare alla consegna
 
-            Window.Title = "The Old Gold Mine (Pre-Alpha)";
+            Window.Title = "The Old Gold Mine (Alpha)";
         }
 
         /// <summary>
@@ -300,6 +302,7 @@ namespace oldgoldmine_game
                     player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
 
                     player.Update(gameTime);
+                        
                     levelGenerator.Update(player.Position, rails, collectibles, obstacles);
 
                     foreach (Collectible gold in collectibles)
@@ -475,6 +478,7 @@ namespace oldgoldmine_game
         {
             if (gameState != GameState.MainMenu)
             {
+                mainMenu.Show();
                 gameState = GameState.MainMenu;
                 IsMouseVisible = true;
                 // anything else ?

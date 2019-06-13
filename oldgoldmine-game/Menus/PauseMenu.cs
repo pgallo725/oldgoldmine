@@ -61,6 +61,9 @@ namespace oldgoldmine_game.Menus
 
             spriteBatch.End();
         }
-
+        public override void Show()
+        {
+            return;
+        }
     }
 }

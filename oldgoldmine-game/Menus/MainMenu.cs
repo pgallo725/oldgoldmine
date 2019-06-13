@@ -34,8 +34,8 @@ namespace oldgoldmine_game.Menus
             playButton = new Button(playButtonRectangle, font, "PLAY", normalButton, highlightedButton);
             exitButton = new Button(exitButtonRectangle, font, "QUIT", normalButton, highlightedButton);
 
-            highscoreText = new SpriteText(font, "Highscore: " + OldGoldMineGame.BestScore, Color.LightGoldenrodYellow,
-                highscoreTextPosition, SpriteText.TextAlignment.MiddleCenter);
+            highscoreText = new SpriteText(font, "Highscore: " + OldGoldMineGame.BestScore, Color.LightGoldenrodYellow, 
+                highscoreTextPosition, SpriteText.TextAlignment.MiddleCenter); 
         }
 
 
@@ -67,6 +67,9 @@ namespace oldgoldmine_game.Menus
 
             spriteBatch.End();
         }
-
+        public override void Show()
+        {
+            highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
+        }
     }
 }
