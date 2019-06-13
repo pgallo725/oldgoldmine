@@ -67,6 +67,9 @@ namespace oldgoldmine_game.Menus
 
             spriteBatch.End();
         }
-
+        public override void Show()
+        {
+            highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
+        }
     }
 }

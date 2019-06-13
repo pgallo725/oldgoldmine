@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 
+
 namespace oldgoldmine_game.Engine
 {
 
@@ -54,14 +55,22 @@ namespace oldgoldmine_game.Engine
             mouseLeftClickSingle = !mouseLeftClickHold && mouseState.LeftButton == ButtonState.Pressed;
             mouseLeftClickHold = mouseState.LeftButton == ButtonState.Pressed;
 
-            leftKeyReleased = leftKeyHold && (keyboardState.IsKeyUp(Keys.A) || gamepadState.IsButtonUp(Buttons.LeftThumbstickLeft));
-            rightKeyReleased = rightKeyHold && (keyboardState.IsKeyUp(Keys.D) || gamepadState.IsButtonUp(Buttons.LeftThumbstickRight));
-            downKeyReleased = downKeyHold && (keyboardState.IsKeyUp(Keys.S) || gamepadState.IsButtonUp(Buttons.LeftThumbstickDown));
-            leftKeyHold = (keyboardState.IsKeyDown(Keys.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickLeft));
-            rightKeyHold = (keyboardState.IsKeyDown(Keys.D) || gamepadState.IsButtonDown(Buttons.LeftThumbstickRight));
-            downKeyHold = (keyboardState.IsKeyDown(Keys.S) || gamepadState.IsButtonDown(Buttons.LeftThumbstickDown));
-            jumpPressed = !jumpWasPressed && (keyboardState.IsKeyDown(Keys.Space) || gamepadState.IsButtonDown(Buttons.A));
-            jumpWasPressed = (keyboardState.IsKeyDown(Keys.Space) || gamepadState.IsButtonDown(Buttons.A));
+            leftKeyReleased = leftKeyHold && (keyboardState.IsKeyUp(Keys.A) || keyboardState.IsKeyUp(Keys.Left) 
+                || gamepadState.IsButtonUp(Buttons.LeftThumbstickLeft));
+            rightKeyReleased = rightKeyHold && (keyboardState.IsKeyUp(Keys.D) || keyboardState.IsKeyUp(Keys.Right) 
+                || gamepadState.IsButtonUp(Buttons.LeftThumbstickRight));
+            downKeyReleased = downKeyHold && (keyboardState.IsKeyUp(Keys.S) || keyboardState.IsKeyUp(Keys.LeftControl) || keyboardState.IsKeyUp(Keys.Down) ||
+                gamepadState.IsButtonUp(Buttons.LeftThumbstickDown));
+            leftKeyHold = (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left) || 
+                gamepadState.IsButtonDown(Buttons.LeftThumbstickLeft));
+            rightKeyHold = (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right) || 
+                gamepadState.IsButtonDown(Buttons.LeftThumbstickRight));
+            downKeyHold = (keyboardState.IsKeyDown(Keys.S) || keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.Down) || 
+                gamepadState.IsButtonDown(Buttons.LeftThumbstickDown));
+            jumpPressed = !jumpWasPressed && (keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W) 
+                || gamepadState.IsButtonDown(Buttons.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickUp));
+            jumpWasPressed = (keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W) ||
+                gamepadState.IsButtonDown(Buttons.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickUp));
 
             pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
             pauseWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));

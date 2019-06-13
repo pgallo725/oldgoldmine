@@ -15,7 +15,7 @@ namespace oldgoldmine_game.Gameplay
         private readonly float railSegmentLength;
         private readonly float popupDistance;
 
-        float nextRailsGenerationPosition = 0f;
+        internal float nextRailsGenerationPosition = 0f;
 
 
         private readonly Vector3 leftObstacleOffset = new Vector3(1.2f, 1.3f, 0f);
@@ -28,7 +28,7 @@ namespace oldgoldmine_game.Gameplay
         private readonly Vector3 rightCollectibleOffset = new Vector3(-2f, 1.7f, 0f);
         private readonly Vector3 topCollectibleOffset = new Vector3(0f, 4f, 0f);
 
-        float nextGenerationPosition = 20f;
+        float nextGenerationPosition = 80f;
 
 
         private const float garbageCollectionDistance = 10f;
@@ -147,7 +147,7 @@ namespace oldgoldmine_game.Gameplay
                 
             }
             
-            nextGenerationPosition += 10f;
+            nextGenerationPosition += 20f;
         }
     }
 }
