@@ -4,12 +4,94 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
-using oldgoldmine_game.UI;
 using oldgoldmine_game.Gameplay;
 using Microsoft.Win32;
 
 namespace oldgoldmine_game
 {
+    public struct GameResources
+    {
+        /* 3D models for the game */
+
+        public Model m3d_woodenCrate;
+        public Model m3d_gold;
+        public Model m3d_cart;
+        public Model m3d_rails;
+
+
+        public struct ButtonTexturePack
+        {
+            public Texture2D normal;
+            public Texture2D highlighted;
+            public Texture2D pressed;
+            public Texture2D disabled;
+
+            /// <summary>
+            /// Create a new texture pack to define the look of a Button
+            /// </summary>
+            /// <param name="normal">Texture of the button used when in the Normal state.</param>
+            /// <param name="highlighted">Texture used to replace the normal look of the button when highlighted.</param>
+            /// <param name="pressed">Texture used to replace the normal look when the button is pressed.</param>
+            /// <param name="disabled">Texture used to replace the normal look when the button is disabled.</param>
+            public ButtonTexturePack(Texture2D normal, Texture2D highlighted = null,
+                Texture2D pressed = null, Texture2D disabled = null)
+            {
+                this.normal = normal;
+                this.highlighted = highlighted != null ? highlighted : normal;
+                this.pressed = pressed != null ? pressed : normal;
+                this.disabled = disabled != null ? disabled : normal;
+            }
+
+            // 0: Normal, 1: Highlighted, 2: Pressed, 3: Disabled
+            public Texture2D this[int i]
+            {
+                get
+                {
+                    switch (i)
+                    {
+                        case 0: return this.normal;
+                        case 1: return this.highlighted;
+                        case 2: return this.pressed;
+                        case 3: return this.disabled;
+                        default: throw new System.IndexOutOfRangeException();
+                    }
+                }
+
+                set
+                {
+                    switch (i)
+                    {
+                        case 0: this.normal = value; break;
+                        case 1: this.highlighted = value; break;
+                        case 2: this.pressed = value; break;
+                        case 3: this.disabled = value; break;
+                        default: throw new System.IndexOutOfRangeException();
+                    }
+                }
+            }
+        }
+
+
+        /* UI elements texture packs */
+
+        public ButtonTexturePack menuButtonTextures;
+        public ButtonTexturePack standardButtonTextures;
+        public ButtonTexturePack leftArrowButtonTextures;
+        public ButtonTexturePack rightArrowButtonTextures;
+        public ButtonTexturePack plusButtonTextures;
+        public ButtonTexturePack minusButtonTextures;
+        public ButtonTexturePack textboxTextures;
+
+
+        /* Fonts */
+
+        public SpriteFont menuButtonFont;
+        public SpriteFont settingSelectorFont;
+        public SpriteFont menuTitleFont;
+        public SpriteFont hudFont;
+        public SpriteFont debugInfoFont;
+    }
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -29,53 +111,6 @@ namespace oldgoldmine_game
         public static SpriteBatch spriteBatch;
         public static BasicEffect basicEffect;
 
-
-        public struct GameResources
-        {
-            /* 3D models for the game */
-
-            public Model m3d_woodenCrate;
-            public Model m3d_gold;
-            public Model m3d_cart;
-            public Model m3d_rails;
-
-
-            /* Textures and fonts for MenuButton items */
-
-            public Texture2D menuButtonTextureNormal;
-            public Texture2D menuButtonTextureHighlighted;
-            public Texture2D menuButtonTexturePressed;
-
-            public SpriteFont menuButtonFont;
-
-
-            /* Textures and fonts for ToggleSelector items */
-
-            public Texture2D leftArrowButtonTextureNormal;
-            public Texture2D leftArrowButtonTextureHighlighted;
-            public Texture2D leftArrowButtonTexturePressed;
-
-            public Texture2D rightArrowButtonTextureNormal;
-            public Texture2D rightArrowButtonTextureHighlighted;
-            public Texture2D rightArrowButtonTexturePressed;
-
-            public Texture2D plusButtonTextureNormal;
-            public Texture2D plusButtonTextureHighlighted;
-            public Texture2D plusButtonTexturePressed;
-
-            public Texture2D minusButtonTextureNormal;
-            public Texture2D minusButtonTextureHighlighted;
-            public Texture2D minusButtonTexturePressed;
-
-            public SpriteFont settingSelectorFont;
-
-
-            /* Other fonts */
-
-            public SpriteFont menuTitleFont;
-            public SpriteFont hudFont;
-            public SpriteFont debugInfoFont;
-        }
 
         public static Player player;
         public static Timer timer;
@@ -126,9 +161,9 @@ namespace oldgoldmine_game
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            //graphics.IsFullScreen = true; //abilitare alla consegna
+            graphics.PreferredBackBufferWidth = 1600;
+            graphics.PreferredBackBufferHeight = 900;
+            //graphics.IsFullScreen = true;             // TODO: enable fullscreen support
 
             Window.Title = "The Old Gold Mine (Alpha)";
         }
@@ -206,8 +241,61 @@ namespace oldgoldmine_game
             resources.m3d_rails = Content.Load<Model>("models_3d/rails_segment");
 
             // Load 2D assets for UI elements
-            resources.menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
-            resources.menuButtonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
+            Texture2D menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
+            Texture2D menuButtonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
+
+            resources.menuButtonTextures = new GameResources.ButtonTexturePack(menuButtonTextureNormal, menuButtonTextureHighlighted,
+                menuButtonTextureHighlighted);
+
+            Texture2D leftArrowNormal = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal");
+            Texture2D leftArrowHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted");
+            Texture2D leftArrowPressed = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed");
+            Texture2D leftArrowDisabled = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled");
+
+            Texture2D rightArrowNormal = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal");
+            Texture2D rightArrowHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted");
+            Texture2D rightArrowPressed = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed");
+            Texture2D rightArrowDisabled = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled");
+
+            Texture2D plusButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal");
+            Texture2D plusButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted");
+            Texture2D plusButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed");
+            Texture2D plusButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled");
+
+            Texture2D minusButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal");
+            Texture2D minusButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted");
+            Texture2D minusButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed");
+            Texture2D minusButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled");
+
+            Texture2D standardButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal");
+            Texture2D standardButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted");
+            Texture2D standardButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed");
+            Texture2D standardButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled");
+
+            Texture2D textboxNormal = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_normal");
+            Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
+            Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
+
+
+            resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
+                leftArrowNormal, leftArrowHighlighted, leftArrowPressed, leftArrowDisabled);
+
+            resources.rightArrowButtonTextures = new GameResources.ButtonTexturePack(
+                rightArrowNormal, rightArrowHighlighted, rightArrowPressed, rightArrowDisabled);
+
+            resources.plusButtonTextures = new GameResources.ButtonTexturePack(
+                plusButtonNormal, plusButtonHighlighted, plusButtonPressed, plusButtonDisabled);
+
+            resources.minusButtonTextures = new GameResources.ButtonTexturePack(
+                minusButtonNormal, minusButtonHighlighted, minusButtonPressed, minusButtonDisabled);
+
+            resources.standardButtonTextures = new GameResources.ButtonTexturePack(
+                standardButtonNormal, standardButtonHighlighted, standardButtonPressed, standardButtonDisabled);
+
+            resources.textboxTextures = new GameResources.ButtonTexturePack(
+                textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled);
+
+
             resources.menuButtonFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
             resources.debugInfoFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
 

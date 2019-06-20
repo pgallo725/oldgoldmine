@@ -21,7 +21,7 @@ namespace oldgoldmine_game.UI
         private SpriteText buttonText;
 
         // 0: Normal, 1: Highlighted, 2: Pressed, 3: Disabled
-        private Texture2D[] buttonTextures;
+        private GameResources.ButtonTexturePack buttonTextures;
 
 
         /// <summary>
@@ -46,22 +46,13 @@ namespace oldgoldmine_game.UI
         /// </summary>
         /// <param name="buttonArea">The Rectangle that will contain the button, defining its position and size.</param>
         /// <param name="text">SpriteText object representing the button's label.</param>
-        /// <param name="buttonNormal">Texture of the button when in the Normal state.</param>
-        /// <param name="buttonHighlighted">Texture of the button when highlighted, repeat buttonNormal if none.</param>
-        /// <param name="buttonPressed">Texture of the button when pressed, repeat buttonNormal if none.</param>
-        /// <param name="buttonDisabled">Texture of the button when disabled, repeat buttonNormal if none.</param>
-        public Button(Rectangle buttonArea, SpriteText text,
-            Texture2D buttonNormal, Texture2D buttonHighlighted, Texture2D buttonPressed, Texture2D buttonDisabled)
+        /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
+        public Button(Rectangle buttonArea, SpriteText text, GameResources.ButtonTexturePack texturePack)
         {
             this.buttonState = ButtonState.Normal;
             this.buttonArea = buttonArea;
             this.buttonText = text;
-            this.buttonTextures = new Texture2D[4]
-            {   buttonNormal,
-                buttonHighlighted,
-                buttonPressed,
-                buttonDisabled
-            };
+            this.buttonTextures = texturePack;
         }
 
         /// <summary>
@@ -70,22 +61,13 @@ namespace oldgoldmine_game.UI
         /// <param name="position">The pixel coordinates of the center of the button.</param>
         /// <param name="size">The button size in pixels.</param>
         /// <param name="text">SpriteText object representing the button's label.</param>
-        /// <param name="buttonNormal">Texture of the button when in the Normal state.</param>
-        /// <param name="buttonHighlighted">Texture of the button when highlighted, repeat buttonNormal if none.</param>
-        /// <param name="buttonPressed">Texture of the button when pressed, repeat buttonNormal if none.</param>
-        /// <param name="buttonDisabled">Texture of the button when disabled, repeat buttonNormal if none.</param>
-        public Button(Vector2 position, Vector2 size, SpriteText text,
-            Texture2D buttonNormal, Texture2D buttonHighlighted, Texture2D buttonPressed, Texture2D buttonDisabled)
+        /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
+        public Button(Vector2 position, Vector2 size, SpriteText text, GameResources.ButtonTexturePack texturePack)
         {
             this.buttonState = ButtonState.Normal;
-            this.buttonArea = new Rectangle((position + size / 2).ToPoint(), size.ToPoint());
+            this.buttonArea = new Rectangle((position - size / 2).ToPoint(), size.ToPoint());
             this.buttonText = text;
-            this.buttonTextures = new Texture2D[4]
-            {   buttonNormal,
-                buttonHighlighted,
-                buttonPressed,
-                buttonDisabled
-            };
+            this.buttonTextures = texturePack;
         }
 
         /// <summary>
@@ -95,23 +77,15 @@ namespace oldgoldmine_game.UI
         /// <param name="font">The SpriteFont to be used in the button's label.</param>
         /// <param name="text">Text string to be shown in the button's label.</param>
         /// <param name="textColor">Color of the label's text.</param>
-        /// <param name="buttonNormal">Texture of the button when in the Normal state.</param>
-        /// <param name="buttonHighlighted">Texture of the button when highlighted, repeat buttonNormal if none.</param>
-        /// <param name="buttonPressed">Texture of the button when pressed, repeat buttonNormal if none.</param>
-        /// <param name="buttonDisabled">Texture of the button when disabled, repeat buttonNormal if none.</param>
+        /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         public Button(Rectangle buttonArea, SpriteFont font, string text, Color textColor,
-            Texture2D buttonNormal, Texture2D buttonHighlighted, Texture2D buttonPressed, Texture2D buttonDisabled)
+            GameResources.ButtonTexturePack texturePack)
         {
             this.buttonState = ButtonState.Normal;
             this.buttonArea = buttonArea;
             this.buttonText = new SpriteText(font, text,
                 buttonArea.Center.ToVector2(), SpriteText.TextAnchor.MiddleCenter);
-            this.buttonTextures = new Texture2D[4]
-            {   buttonNormal,
-                buttonHighlighted,
-                buttonPressed,
-                buttonDisabled
-            };
+            this.buttonTextures = texturePack;
         }
 
         /// <summary>
@@ -122,23 +96,15 @@ namespace oldgoldmine_game.UI
         /// <param name="font">The SpriteFont to be used in the button's label.</param>
         /// <param name="text">Text string to be shown in the button's label.</param>
         /// <param name="textColor">Color of the label's text.</param>
-        /// <param name="buttonNormal">Texture of the button when in the Normal state.</param>
-        /// <param name="buttonHighlighted">Texture of the button when highlighted, repeat buttonNormal if none.</param>
-        /// <param name="buttonPressed">Texture of the button when pressed, repeat buttonNormal if none.</param>
-        /// <param name="buttonDisabled">Texture of the button when disabled, repeat buttonNormal if none.</param>
+        /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         public Button(Vector2 position, Vector2 size, SpriteFont font, string text, Color textColor,
-            Texture2D buttonNormal, Texture2D buttonHighlighted, Texture2D buttonPressed, Texture2D buttonDisabled)
+            GameResources.ButtonTexturePack texturePack)
         {
             this.buttonState = ButtonState.Normal;
-            this.buttonArea = new Rectangle((position + size/2).ToPoint(), size.ToPoint());
+            this.buttonArea = new Rectangle((position - size/2).ToPoint(), size.ToPoint());
             this.buttonText = new SpriteText(font, text, 
                 buttonArea.Center.ToVector2(), SpriteText.TextAnchor.MiddleCenter);
-            this.buttonTextures = new Texture2D[4]
-            {   buttonNormal,
-                buttonHighlighted,
-                buttonPressed,
-                buttonDisabled
-            };
+            this.buttonTextures = texturePack;
         }
 
 
@@ -153,9 +119,10 @@ namespace oldgoldmine_game.UI
             }
             else if (buttonArea.Contains(InputManager.MousePosition))
             {
-                if (IsClicked())
+                if (buttonState != ButtonState.Pressed && IsClicked())
                     buttonState = ButtonState.Pressed;
-                else buttonState = ButtonState.Highlighted;
+                else if (!InputManager.MouseHoldLeftClick)
+                    buttonState = ButtonState.Highlighted;
             }
             else buttonState = ButtonState.Normal;
         }

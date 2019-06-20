@@ -15,11 +15,13 @@ namespace oldgoldmine_game.Menus
         public abstract void Initialize(GraphicsDevice device, Texture2D background);
 
 
+        public abstract void Show();
+
+
         public abstract void Update();
 
 
         public abstract void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch);
-        public abstract void Show();
     }
 
 }

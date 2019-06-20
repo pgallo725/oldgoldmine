@@ -11,8 +11,7 @@ namespace oldgoldmine_game.Menus
         private Button replayButton;
         private Button menuButton;
 
-        public override void Initialize(GraphicsDevice device, Texture2D background,
-            SpriteFont font, Texture2D normalButton, Texture2D highlightedButton)
+        public override void Initialize(GraphicsDevice device, Texture2D background)
         {
             this.menuBackground = background;
 
@@ -26,8 +25,13 @@ namespace oldgoldmine_game.Menus
                 (int)buttonSize.X, (int)buttonSize.Y);
 
 
-            replayButton = new Button(resumeButtonRectangle, font, "PLAY AGAIN", normalButton, highlightedButton);
-            menuButton = new Button(menuButtonRectangle,font, "BACK TO MENU", normalButton, highlightedButton);
+            replayButton = new Button(resumeButtonRectangle, 
+                OldGoldMineGame.resources.menuButtonFont, "PLAY AGAIN", Color.White,
+                OldGoldMineGame.resources.menuButtonTextures);
+
+            menuButton = new Button(menuButtonRectangle, 
+                OldGoldMineGame.resources.menuButtonFont, "BACK TO MENU", Color.White,
+                OldGoldMineGame.resources.menuButtonTextures);
         }
 
 

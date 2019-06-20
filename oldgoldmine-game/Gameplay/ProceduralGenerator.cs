@@ -83,7 +83,6 @@ namespace oldgoldmine_game.Gameplay
             {
                 if (playerPosition.Z >= gold.Position.Z + garbageCollectionDistance)
                 {
-                    Console.WriteLine("Collected disposable item");
                     gold.IsActive = false;
                 }
             }
@@ -92,7 +91,6 @@ namespace oldgoldmine_game.Gameplay
             {
                 if (playerPosition.Z >= obstacle.Position.Z + garbageCollectionDistance)
                 {
-                    Console.WriteLine("Collected disposable item");
                     obstacle.IsActive = false;
                 }
             }

@@ -66,6 +66,7 @@
     <Compile Include="UI\IComponentUI.cs" />
     <Compile Include="UI\Image.cs" />
     <Compile Include="UI\SpriteText.cs" />
+    <Compile Include="UI\TextBox.cs" />
     <Compile Include="UI\ToggleSelector.cs" />
   </ItemGroup>
   <ItemGroup>

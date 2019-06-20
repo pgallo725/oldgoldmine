@@ -68,7 +68,7 @@ namespace oldgoldmine_game.UI
         public Image(Texture2D image, Vector2 position, Vector2 size)
         {
             this.imageTexture = image;
-            this.imageArea = new Rectangle((position + size/2).ToPoint(), size.ToPoint());
+            this.imageArea = new Rectangle((position - size/2).ToPoint(), size.ToPoint());
         }
 
 

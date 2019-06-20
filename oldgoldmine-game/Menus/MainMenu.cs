@@ -13,29 +13,28 @@ namespace oldgoldmine_game.Menus
         private SpriteText highscoreText;
 
 
-        public override void Initialize(GraphicsDevice device, Texture2D background,
-            SpriteFont font, Texture2D normalButton, Texture2D highlightedButton)
+        public override void Initialize(GraphicsDevice device, Texture2D background)
         {
             this.menuBackground = background;
 
             // Main menu layout setup
-            Rectangle playButtonRectangle = new Rectangle(device.Viewport.Width/2 - (int)buttonSize.X/2,
-                device.Viewport.Height/2 - (int)buttonSize.Y/2 - elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
 
-            Rectangle exitButtonRectangle = new Rectangle(device.Viewport.Width/2 - (int)buttonSize.X/2,
-                device.Viewport.Height/2 - (int)buttonSize.Y/2 + elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
+            playButton = new Button(
+                device.Viewport.Bounds.Center.ToVector2() - new Vector2(0, elementSeparation), buttonSize, 
+                OldGoldMineGame.resources.menuButtonFont, "PLAY", Color.White,
+                OldGoldMineGame.resources.menuButtonTextures);
 
-            Vector2 highscoreTextPosition = new Vector2(device.Viewport.Width/2,
-                exitButtonRectangle.Bottom + (elementSeparation / 2));
+            exitButton = new Button(
+                device.Viewport.Bounds.Center.ToVector2() + new Vector2(0, elementSeparation), buttonSize,
+                OldGoldMineGame.resources.menuButtonFont, "QUIT", Color.White,
+                OldGoldMineGame.resources.menuButtonTextures);
 
 
-            playButton = new Button(playButtonRectangle, font, "PLAY", normalButton, highlightedButton);
-            exitButton = new Button(exitButtonRectangle, font, "QUIT", normalButton, highlightedButton);
+            Vector2 highscoreTextPosition = new Vector2(device.Viewport.Width / 2,
+                (device.Viewport.Height + buttonSize.Y + 3 * elementSeparation) / 2);
 
-            highscoreText = new SpriteText(font, "Highscore: " + OldGoldMineGame.BestScore, Color.LightGoldenrodYellow,
-                highscoreTextPosition, SpriteText.TextAnchor.MiddleCenter);
+            highscoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "Highscore: " + OldGoldMineGame.BestScore,
+                Color.LightGoldenrodYellow, highscoreTextPosition, SpriteText.TextAnchor.MiddleCenter);
         }
 
 
@@ -67,6 +66,7 @@ namespace oldgoldmine_game.Menus
 
             spriteBatch.End();
         }
+
         public override void Show()
         {
             highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
