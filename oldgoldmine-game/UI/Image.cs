@@ -24,9 +24,15 @@ namespace oldgoldmine_game.UI
             set { imageArea.Size = value.ToPoint(); }       // TODO: test how size scales
         }
 
+        private bool imageVisible = true;
         private Texture2D imageTexture;
         private Rectangle imageArea;
 
+
+        /// <summary>
+        /// The enabled flag determines if the image is visible or hidden
+        /// </summary>
+        public bool Enabled { get { return imageVisible; } set { imageVisible = value; } }
 
         /// <summary>
         /// The Texture 2D drawn by this element
@@ -74,7 +80,8 @@ namespace oldgoldmine_game.UI
 
         public void Draw(in SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(imageTexture, imageArea, Color.White);
+            if (imageVisible && imageTexture != null)
+                spriteBatch.Draw(imageTexture, imageArea, Color.White);
         }
     }
 }

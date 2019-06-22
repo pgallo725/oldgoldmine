@@ -21,14 +21,62 @@ namespace oldgoldmine_game.UI
         /// List of string values that this element switches between
         /// </summary>
         public List<string> Values { get { return values; } }
+
         /// <summary>
-        /// Index of the currently selected option
+        /// Index of the currently selected option, if set manually it also updates 
+        /// the ToggleSelector status to reflect the change
         /// </summary>
-        public int SelectedValueIndex { get { return index; } set { this.index = value; } }
+        public int SelectedValueIndex
+        {
+            get { return index; }
+
+            set
+            {
+                this.index = MathHelper.Clamp(value, 0, values.Count - 1);
+                label.Text = values[index];
+
+                if (index == 0)
+                    leftButton.Enabled = false;
+                else leftButton.Enabled = true;
+
+                if (index == values.Count - 1)
+                    rightButton.Enabled = false;
+                else rightButton.Enabled = true;
+            }
+        }
+
         /// <summary>
         /// The string of the current option being selected
         /// </summary>
         public string SelectedValue { get { return values[index]; } }
+
+
+        /// <summary>
+        /// This flag determines if, the user can interact with the ToggleSelector and change the selected option,
+        /// or if the buttons are greyed out and disabled (in that case, the last status is kept)
+        /// </summary>
+        public bool Enabled
+        {
+            get { return (leftButton.Enabled || rightButton.Enabled); }
+            set
+            {
+                if (value)
+                {
+                    if (index == 0)
+                        leftButton.Enabled = false;
+                    else leftButton.Enabled = true;
+
+                    if (index == values.Count - 1)
+                        rightButton.Enabled = false;
+                    else rightButton.Enabled = true;
+                }
+                else
+                {
+                    leftButton.Enabled = false;
+                    rightButton.Enabled = false;
+                }
+            }
+        }
 
 
         /// <summary>

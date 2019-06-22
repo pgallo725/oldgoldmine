@@ -75,28 +75,31 @@ namespace oldgoldmine_game.Gameplay
         private float currentVerticalPosition = normalVerticalPosition;
 
 
-        public Player()
+        public Player(GameCamera playerCamera)
         {
-            jumpDuration = ((float)2/3 * jumpHeight) / jumpVelocity;
-            jumpAcceleration = - (jumpVelocity / jumpDuration);
-        }
+            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
+            jumpAcceleration = -(jumpVelocity / jumpDuration);
 
-        public void Initialize(GameCamera playerCamera)
-        {
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
 
-        public void Initialize(GameCamera playerCamera, float hitboxRadius)
+        public Player(GameCamera playerCamera, float hitboxRadius)
         {
+            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
+            jumpAcceleration = -(jumpVelocity / jumpDuration);
+
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }
 
-        public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset)
+        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset)
         {
+            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
+            jumpAcceleration = -(jumpVelocity / jumpDuration);
+
             this.camera = playerCamera;
             this.model = playerModel;
             this.model.EnableLightingModel();
@@ -104,8 +107,11 @@ namespace oldgoldmine_game.Gameplay
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
 
-        public void Initialize(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset, float hitboxRadius)
+        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset, float hitboxRadius)
         {
+            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
+            jumpAcceleration = -(jumpVelocity / jumpDuration);
+
             this.camera = playerCamera;
             this.model = playerModel;
             this.model.EnableLightingModel();

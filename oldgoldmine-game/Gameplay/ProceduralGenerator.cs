@@ -9,7 +9,7 @@ namespace oldgoldmine_game.Gameplay
 {
     public class ProceduralGenerator
     {
-        Random rand = new Random();     // TODO: add seed ?
+        Random rand = new Random();
 
 
         private readonly float railSegmentLength;
@@ -62,6 +62,13 @@ namespace oldgoldmine_game.Gameplay
 
             this.obstaclesPool = new ObjectPool<Obstacle>(
                 new Obstacle(new GameObject3D(obstacle), hitboxSize), 10);
+        }
+
+
+        public void InitializeSeed(int seed)
+        {
+            if (seed != 0)
+                rand = new Random(seed);
         }
 
 

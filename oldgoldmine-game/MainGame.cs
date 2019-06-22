@@ -82,6 +82,9 @@ namespace oldgoldmine_game
         public ButtonTexturePack minusButtonTextures;
         public ButtonTexturePack textboxTextures;
 
+        public Texture2D framedPanelTexture;
+        public Texture2D lockIcon;
+
 
         /* Fonts */
 
@@ -133,8 +136,9 @@ namespace oldgoldmine_game
         Queue<Collectible> collectibles;
         Queue<Obstacle> obstacles;
         ProceduralGenerator levelGenerator;
-        
 
+
+        private static float scoreMultiplier = 1f;
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
         private static int bestScore = 0;
@@ -178,16 +182,8 @@ namespace oldgoldmine_game
         {
             base.Initialize();
 
-
-            // Initialize Camera and Player objects
-            player = new Player();
-            GameCamera camera = new GameCamera();
-            camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
-            player.Initialize(camera, 
-                new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
-                new Vector3(0f, -2.4f, -0.75f), 1.2f);
-
             BestScore = LoadScore();
+
 
             // Initialize menus
             mainMenu.Initialize(GraphicsDevice, null);
@@ -215,6 +211,7 @@ namespace oldgoldmine_game
             gameState = GameState.MainMenu;
             IsMouseVisible = true;
         }
+
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -244,8 +241,7 @@ namespace oldgoldmine_game
             Texture2D menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
             Texture2D menuButtonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
 
-            resources.menuButtonTextures = new GameResources.ButtonTexturePack(menuButtonTextureNormal, menuButtonTextureHighlighted,
-                menuButtonTextureHighlighted);
+            resources.menuButtonTextures = new GameResources.ButtonTexturePack(menuButtonTextureNormal, menuButtonTextureHighlighted);
 
             Texture2D leftArrowNormal = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal");
             Texture2D leftArrowHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted");
@@ -276,6 +272,9 @@ namespace oldgoldmine_game
             Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
             Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
 
+            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel_framed");
+            resources.lockIcon = Content.Load<Texture2D>("ui_elements_2d/lock_icon");
+
 
             resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
                 leftArrowNormal, leftArrowHighlighted, leftArrowPressed, leftArrowDisabled);
@@ -298,8 +297,10 @@ namespace oldgoldmine_game
 
             resources.menuButtonFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
             resources.debugInfoFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
-
-            resources.hudFont = resources.menuButtonFont;   // tmp
+            
+            resources.hudFont = resources.menuButtonFont;       // tmp
+            resources.menuTitleFont = resources.menuButtonFont;
+            resources.settingSelectorFont = resources.hudFont;
         }
 
         /// <summary>
@@ -310,6 +311,7 @@ namespace oldgoldmine_game
         {
             // TODO: Unload any non ContentManager content here
         }
+
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -553,21 +555,32 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.MainMenu)
             {
+                customMenu.Show();
                 gameState = GameState.NewGame;
                 IsMouseVisible = true;
-                // anything else ?
             }
         }
 
-        public void StartGame()
+        public void StartGame(float multiplier, float startSpeed, int difficulty, int seed, int cart)
         {
             if (gameState == GameState.NewGame)
             {
-                // TODO: reload the entire scene to its initial state
+                // Reset the level information
+                Speed = startSpeed;
                 Score = 0;
+                scoreMultiplier = multiplier;
+
+                // Initialize Camera and Player objects
+                GameCamera camera = (player != null) ? player.Camera : new GameCamera();
+                camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
+                player = new Player(camera,
+                    new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                    new Vector3(0f, -2.4f, -0.75f), 1.2f);
+
+                levelGenerator.InitializeSeed(seed);
+
                 gameState = GameState.Running;
                 IsMouseVisible = false;
-                // anything else ?
             }
         }
 
@@ -600,9 +613,9 @@ namespace oldgoldmine_game
                     BestScore = Score;
                     SaveScore(Score);
                 } 
+
                 gameState = GameState.GameOver;
                 IsMouseVisible = true;
-                // TODO: destroy the player object
             }
         }
 
@@ -618,6 +631,11 @@ namespace oldgoldmine_game
         }
 
 
+        public static void UpdateScore(int points)
+        {
+            Score += (int)(points * scoreMultiplier + 0.5f);    // extra 0.5f added to avoid int conversion errors
+        }
+
         public void SaveScore(int score)
         {
             const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
@@ -628,14 +646,18 @@ namespace oldgoldmine_game
         {
             const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
             int? score = 0;
-            try {
-                score = (int)Registry.GetValue(key, "Best_Score", 0); //without ? it's not nullable
+
+            try
+            {
+                score = (int)Registry.GetValue(key, "Best_Score", 0);   // type int? is nullable (if key doesn't exist)
                 if (score == null)
                     score = 0;
             }
-            catch (System.Exception) {
-                //nothing
+            catch (System.Exception)
+            {
+                // nothing
             }
+
             return score.Value;
         }
     }

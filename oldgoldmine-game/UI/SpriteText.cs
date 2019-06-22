@@ -20,6 +20,7 @@ namespace oldgoldmine_game.UI
         }
 
 
+        private bool show = true;
         private string text;
         private SpriteFont font;
         private Color color;
@@ -42,6 +43,11 @@ namespace oldgoldmine_game.UI
         /// The color of the label's text
         /// </summary>
         public Color Color { get { return color; } set { color = value; } }
+
+        /// <summary>
+        /// The enabled flag determines if the label is visible or hidden
+        /// </summary>
+        public bool Enabled { get { return show; } set { show = value; } }
 
         /// <summary>
         /// The position of the anchor point of this text element
@@ -152,10 +158,11 @@ namespace oldgoldmine_game.UI
 
         public void Draw(in SpriteBatch spriteBatch)
         {
-            if (font == null)
+            if (!show)      // Do not draw the text if the element is flagged as disabled
                 return;
 
-            spriteBatch.DrawString(font, text, position + alignmentOffset, color);
+            if (font != null)
+                spriteBatch.DrawString(font, text, position + alignmentOffset, color);
         }
 
     }

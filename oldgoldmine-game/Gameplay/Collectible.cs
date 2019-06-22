@@ -134,7 +134,7 @@ namespace oldgoldmine_game.Gameplay
             if (CheckPlayerCollision(OldGoldMineGame.player))
             {
                 this.IsActive = false;
-                OldGoldMineGame.Score += 100;
+                OldGoldMineGame.UpdateScore(100);
             }
         }
 

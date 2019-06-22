@@ -44,7 +44,7 @@ namespace oldgoldmine_game.Menus
                 OldGoldMineGame.Application.ResumeGame();
 
             if (replayButton.IsClicked())
-                OldGoldMineGame.Application.StartGame();
+                ;//OldGoldMineGame.Application.StartGame();
             else if (menuButton.IsClicked())
                 OldGoldMineGame.Application.ToMainMenu();
         }
