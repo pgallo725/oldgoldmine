@@ -35,10 +35,27 @@ namespace oldgoldmine_game.UI
         public Vector2 Position
         {
             get { return buttonArea.Center.ToVector2(); }
-            set { buttonArea.Location = value.ToPoint() - buttonArea.Size / new Point(2); }
+            set
+            {
+                Vector2 deltaMovement = value - this.Position;
+                buttonArea.Location = value.ToPoint() - buttonArea.Size / new Point(2);
+                buttonText.Position += deltaMovement;
+            }
         }
 
-        // TODO: size ?
+        /// <summary>
+        /// The pixel size of this Button element
+        /// </summary>
+        public Vector2 Size
+        {
+            get { return buttonArea.Size.ToVector2(); }
+            set
+            {
+                Point oldPosition = buttonArea.Center;
+                buttonArea.Size = value.ToPoint();
+                buttonArea.Location = oldPosition - buttonArea.Size / new Point(2);
+            }
+        }
 
 
         /// <summary>

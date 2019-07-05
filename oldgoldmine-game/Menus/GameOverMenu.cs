@@ -7,31 +7,40 @@ namespace oldgoldmine_game.Menus
 {
     class GameOverMenu : Menu
     {
+        private SpriteText menuTitle;
 
         private Button replayButton;
         private Button menuButton;
 
-        public override void Initialize(GraphicsDevice device, Texture2D background)
+        private SpriteText scoreText;
+        private SpriteText newHighscoreText;
+
+        public override void Initialize(Viewport viewport, Texture2D background)
         {
             this.menuBackground = background;
 
-            // Game over menu layout setup
-            Rectangle resumeButtonRectangle = new Rectangle(device.Viewport.Width / 2 - (int)buttonSize.X / 2,
-                device.Viewport.Height / 2 - (int)buttonSize.Y / 2 - elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
-
-            Rectangle menuButtonRectangle = new Rectangle(device.Viewport.Width / 2 - (int)buttonSize.X / 2,
-                device.Viewport.Height / 2 - (int)buttonSize.Y / 2 + elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
+            Vector2 buttonSize = new Vector2(400, 120);
 
 
-            replayButton = new Button(resumeButtonRectangle, 
+            // GAMEOVER MENU LAYOUT SETUP
+
+            menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
+                Color.White, new Vector2(viewport.Width / 2, viewport.Height * 0.075f), SpriteText.TextAnchor.MiddleCenter);
+
+            replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize, 
                 OldGoldMineGame.resources.menuButtonFont, "PLAY AGAIN", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
-            menuButton = new Button(menuButtonRectangle, 
+            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 75), buttonSize, 
                 OldGoldMineGame.resources.menuButtonFont, "BACK TO MENU", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
+
+            scoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "Final score: " + OldGoldMineGame.Score,
+                Color.Blue, new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 190),
+                SpriteText.TextAnchor.MiddleCenter);
+
+            newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "NEW HIGHSCORE!",
+                Color.Yellow, scoreText.Position + new Vector2(0, 50), SpriteText.TextAnchor.MiddleCenter);
         }
 
 
@@ -44,7 +53,7 @@ namespace oldgoldmine_game.Menus
                 OldGoldMineGame.Application.ResumeGame();
 
             if (replayButton.IsClicked())
-                ;//OldGoldMineGame.Application.StartGame();
+                OldGoldMineGame.Application.RestartGame();
             else if (menuButton.IsClicked())
                 OldGoldMineGame.Application.ToMainMenu();
         }
@@ -59,15 +68,23 @@ namespace oldgoldmine_game.Menus
             if (menuBackground != null)
                 spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
 
+            menuTitle.Draw(spriteBatch);
             replayButton.Draw(spriteBatch);
             menuButton.Draw(spriteBatch);
+            scoreText.Draw(spriteBatch);
+            newHighscoreText.Draw(spriteBatch);
 
             spriteBatch.End();
         }
 
+
         public override void Show()
         {
-            return;
+            scoreText.Text = "Final score: " + OldGoldMineGame.Score;
+            newHighscoreText.Enabled = OldGoldMineGame.Score > OldGoldMineGame.BestScore;
+
+            replayButton.Enabled = true;
+            menuButton.Enabled = true;
         }
     }
 }

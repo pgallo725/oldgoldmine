@@ -21,7 +21,12 @@ namespace oldgoldmine_game.UI
         public Vector2 Size
         {
             get { return imageArea.Size.ToVector2(); }
-            set { imageArea.Size = value.ToPoint(); }       // TODO: test how size scales
+            set
+            {
+                Point oldPosition = imageArea.Center;
+                imageArea.Size = value.ToPoint();
+                imageArea.Location = oldPosition - imageArea.Size / new Point(2);
+            }
         }
 
         private bool imageVisible = true;

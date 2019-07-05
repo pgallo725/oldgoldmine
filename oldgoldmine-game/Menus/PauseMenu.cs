@@ -12,25 +12,20 @@ namespace oldgoldmine_game.Menus
         private Button menuButton;
 
 
-        public override void Initialize(GraphicsDevice device, Texture2D background)
+        public override void Initialize(Viewport viewport, Texture2D background)
         {
             this.menuBackground = background;
 
-            // Pause menu layout setup
-            Rectangle resumeButtonRectangle = new Rectangle(device.Viewport.Width / 2 - (int)buttonSize.X / 2,
-                device.Viewport.Height / 2 - (int)buttonSize.Y / 2 - elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
-
-            Rectangle menuButtonRectangle = new Rectangle(device.Viewport.Width / 2 - (int)buttonSize.X / 2,
-                device.Viewport.Height / 2 - (int)buttonSize.Y / 2 + elementSeparation,
-                (int)buttonSize.X, (int)buttonSize.Y);
+            Vector2 buttonSize = new Vector2(400, 120);
 
 
-            resumeButton = new Button(resumeButtonRectangle,
+            // PAUSE MENU LAYOUT SETUP
+
+            resumeButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize,
                 OldGoldMineGame.resources.menuButtonFont, "RESUME", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
-            menuButton = new Button(menuButtonRectangle,
+            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 75), buttonSize,
                 OldGoldMineGame.resources.menuButtonFont, "BACK TO MENU", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
         }
@@ -65,9 +60,12 @@ namespace oldgoldmine_game.Menus
 
             spriteBatch.End();
         }
+
+
         public override void Show()
         {
-            return;
+            resumeButton.Enabled = true;
+            menuButton.Enabled = true;
         }
     }
 }

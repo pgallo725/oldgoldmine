@@ -13,28 +13,27 @@ namespace oldgoldmine_game.Menus
         private SpriteText highscoreText;
 
 
-        public override void Initialize(GraphicsDevice device, Texture2D background)
+        public override void Initialize(Viewport viewport, Texture2D background)
         {
             this.menuBackground = background;
 
-            // Main menu layout setup
+            Vector2 buttonSize = new Vector2(400, 120);
 
-            playButton = new Button(
-                device.Viewport.Bounds.Center.ToVector2() - new Vector2(0, elementSeparation), buttonSize, 
+
+            // MAIN MENU LAYOUT SETUP
+
+            playButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize, 
                 OldGoldMineGame.resources.menuButtonFont, "PLAY", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
-            exitButton = new Button(
-                device.Viewport.Bounds.Center.ToVector2() + new Vector2(0, elementSeparation), buttonSize,
+            exitButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 75), buttonSize,
                 OldGoldMineGame.resources.menuButtonFont, "QUIT", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
 
-            Vector2 highscoreTextPosition = new Vector2(device.Viewport.Width / 2,
-                (device.Viewport.Height + buttonSize.Y + 3 * elementSeparation) / 2);
-
             highscoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "Highscore: " + OldGoldMineGame.BestScore,
-                Color.LightGoldenrodYellow, highscoreTextPosition, SpriteText.TextAnchor.MiddleCenter);
+                Color.LightGoldenrodYellow, new Vector2(viewport.Width / 2, (viewport.Height + buttonSize.Y) / 2 + 160),
+                SpriteText.TextAnchor.MiddleCenter);
         }
 
 
@@ -67,9 +66,13 @@ namespace oldgoldmine_game.Menus
             spriteBatch.End();
         }
 
+
         public override void Show()
         {
             highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
+
+            playButton.Enabled = true;
+            exitButton.Enabled = true;
         }
     }
 }

@@ -138,6 +138,28 @@ namespace oldgoldmine_game
         ProceduralGenerator levelGenerator;
 
 
+        public struct GameSettings
+        {
+            public float multiplier;
+            public float startSpeed;
+            public int difficulty;
+            public int seed;
+            public int cart;
+
+
+            public GameSettings(float multiplier, int startSpeed, int difficulty, int seed, int cart) 
+                : this()
+            {
+                this.multiplier = multiplier;
+                this.startSpeed = startSpeed;
+                this.difficulty = difficulty;
+                this.seed = seed;
+                this.cart = cart;
+            }
+        }
+
+        private GameSettings currentGameInfo;
+
         private static float scoreMultiplier = 1f;
         private static int score = 0;
         public static int Score { get { return score; } set { score = value; } }
@@ -186,10 +208,10 @@ namespace oldgoldmine_game
 
 
             // Initialize menus
-            mainMenu.Initialize(GraphicsDevice, null);
-            customMenu.Initialize(GraphicsDevice, null);
-            pauseMenu.Initialize(GraphicsDevice, null);
-            deathMenu.Initialize(GraphicsDevice, null);
+            mainMenu.Initialize(GraphicsDevice.Viewport, null);
+            customMenu.Initialize(GraphicsDevice.Viewport, null);
+            pauseMenu.Initialize(GraphicsDevice.Viewport, null);
+            deathMenu.Initialize(GraphicsDevice.Viewport, null);
             
 
             // Setup HUD
@@ -561,14 +583,18 @@ namespace oldgoldmine_game
             }
         }
 
-        public void StartGame(float multiplier, float startSpeed, int difficulty, int seed, int cart)
+        public void StartGame(GameSettings gameSettings)
         {
             if (gameState == GameState.NewGame)
             {
+                // Store the new game's settings
+                currentGameInfo = gameSettings;
+
                 // Reset the level information
-                Speed = startSpeed;
+                Speed = gameSettings.startSpeed;
                 Score = 0;
-                scoreMultiplier = multiplier;
+                scoreMultiplier = gameSettings.multiplier;
+                timer.Reset();
 
                 // Initialize Camera and Player objects
                 GameCamera camera = (player != null) ? player.Camera : new GameCamera();
@@ -577,10 +603,19 @@ namespace oldgoldmine_game
                     new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                     new Vector3(0f, -2.4f, -0.75f), 1.2f);
 
-                levelGenerator.InitializeSeed(seed);
+                levelGenerator.InitializeSeed(gameSettings.seed);
 
                 gameState = GameState.Running;
                 IsMouseVisible = false;
+            }
+        }
+
+        public void RestartGame()
+        {
+            if (gameState == GameState.GameOver)
+            {
+                gameState = GameState.NewGame;
+                StartGame(currentGameInfo);
             }
         }
 
@@ -588,6 +623,7 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Running)
             {
+                pauseMenu.Show();
                 gameState = GameState.Paused;
                 IsMouseVisible = true;
                 // anything else ?
@@ -608,14 +644,15 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Running)
             {
+                deathMenu.Show();
+                gameState = GameState.GameOver;
+                IsMouseVisible = true;
+
                 if (Score > BestScore)
                 {
                     BestScore = Score;
                     SaveScore(Score);
                 } 
-
-                gameState = GameState.GameOver;
-                IsMouseVisible = true;
             }
         }
 

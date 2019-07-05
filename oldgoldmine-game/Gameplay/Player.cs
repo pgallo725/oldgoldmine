@@ -124,13 +124,13 @@ namespace oldgoldmine_game.Gameplay
         public void RotateUpDown(float degrees)
         {
             camera.RotateViewVertical(degrees);
-            // TODO: rotate the model vertically as well
+            model.RotateAroundAxis(Vector3.Left, degrees);
         }
 
         public void RotateLeftRight(float degrees)
         {
             camera.RotateViewHorizontal(degrees);
-            // TODO: rotate the model horizontally as well
+            model.RotateAroundAxis(Vector3.Down, degrees);
         }
 
 

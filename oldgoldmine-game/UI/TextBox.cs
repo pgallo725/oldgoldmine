@@ -61,13 +61,35 @@ namespace oldgoldmine_game.UI
             {
                 boxArea.Location = value.ToPoint() - boxArea.Size / new Point(2);
                 textArea.Location = value.ToPoint() - textArea.Size / new Point(2);
+                content.Position = CalculateAnchorPoint(textArea, content.AnchorPoint).ToVector2();
             }
         }
+
+
+        /// <summary>
+        /// The pixel size of this TextBox element and it's content
+        /// </summary>
+        public Vector2 Size
+        {
+            get { return boxArea.Size.ToVector2(); }
+            set
+            {
+                Vector2 textAreaScaling = textArea.Size.ToVector2() / boxArea.Size.ToVector2();
+                Point oldPosition = boxArea.Center;
+                boxArea.Size = value.ToPoint();
+                boxArea.Location = oldPosition - boxArea.Size / new Point(2);
+                textArea.Size = (value * textAreaScaling).ToPoint();
+                textArea.Location = oldPosition - textArea.Size / new Point(2);
+                content.Position = CalculateAnchorPoint(textArea, content.AnchorPoint).ToVector2();
+            }
+        }
+
 
         /// <summary>
         /// The text content acquired by this TextBox
         /// </summary>
         public string Content { get { return content.Text; } set { content.Text = value; } }
+
 
 
         /// <summary>
