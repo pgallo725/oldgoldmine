@@ -147,7 +147,7 @@ namespace oldgoldmine_game.Menus
             UpdateScoreMultiplier();
             UpdateCartSelection();
 
-            if (startButton.IsClicked())
+            if (startButton.IsClicked() || Engine.InputManager.EnterKeyPressed )
             {
                 OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings(
                     ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
