@@ -27,6 +27,8 @@ namespace oldgoldmine_game.Engine
         private static bool debugKeyPressed = false;
         private static bool enterKeyWasPressed = false;
         private static bool enterKeyPressed = false;
+        private static bool backKeyWasPressed = false;
+        private static bool backKeyPressed = false;
 
         public static Vector2 CurrentFrameMouseMovement { get { return mouseMovement; } }
         public static Point MousePosition { get { return mousePosition; } }
@@ -37,6 +39,7 @@ namespace oldgoldmine_game.Engine
         public static bool PauseKeyPressed { get { return pausePressed; } }
         public static bool DebugKeyPressed { get { return debugKeyPressed; } }
         public static bool EnterKeyPressed { get { return enterKeyPressed; } }
+        public static bool BackKeyPressed { get { return backKeyPressed; } }
 
         public static bool LeftKeyHold { get { return leftKeyHold; } }
         public static bool RightKeyHold { get { return rightKeyHold; } }
@@ -81,6 +84,8 @@ namespace oldgoldmine_game.Engine
             debugKeyWasPressed = (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
             enterKeyPressed = !enterKeyWasPressed && (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
             enterKeyWasPressed = (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
+            backKeyPressed = !backKeyWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.B));
+            backKeyWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.B));
         }
 
     }

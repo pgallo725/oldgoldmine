@@ -154,7 +154,7 @@ namespace oldgoldmine_game.Menus
 
                 OldGoldMineGame.Application.StartGame(newGameSettings);
             }
-            else if (backButton.IsClicked())
+            else if (backButton.IsClicked() || Engine.InputManager.BackKeyPressed )
             {
                 OldGoldMineGame.Application.ToMainMenu();
             }
