@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using oldgoldmine_game.Engine;
 
 
@@ -7,8 +6,8 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Player
     {
-        private const float maxVerticalAngle = 12f;
-        private const float maxHorizontalAngle = 33f;
+        private const float maxVerticalAngle = 15f;
+        private const float maxHorizontalAngle = 40f;
 
         private float verticalLookAngle = 0.0f;
         private float horizontalLookAngle = 0.0f;
@@ -43,7 +42,7 @@ namespace oldgoldmine_game.Gameplay
         // Jump animation parameters
         private const float jumpHeight = 9f;
         private const float jumpVelocity = 16f;
-        private const float jumpCooldown = 0.2f;
+        private const float jumpCooldown = 0.1f;
         private readonly float jumpAcceleration;
         private readonly float jumpDuration;
         
@@ -134,26 +133,36 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
-        public void LookUpDown(float degrees, bool freeLook)
+        public void LookUpDown(float degrees, bool freeMovement)
         {
             float targetAngle = verticalLookAngle + degrees;
 
-            if (!freeLook)
+            if (!freeMovement)
                 targetAngle = MathHelper.Clamp(targetAngle, -maxVerticalAngle, maxVerticalAngle);
 
             camera.RotateViewVertical(targetAngle - verticalLookAngle);
             verticalLookAngle = targetAngle;
         }
 
-        public void LookLeftRight(float degrees, bool freeLook)
+        public void LookLeftRight(float degrees, bool freeMovement)
         {
             float targetAngle = horizontalLookAngle + degrees;
 
-            if (!freeLook)
+            if (!freeMovement)
                 targetAngle = MathHelper.Clamp(targetAngle, -maxHorizontalAngle, maxHorizontalAngle);
 
             camera.RotateViewHorizontal(targetAngle - horizontalLookAngle);
             horizontalLookAngle = targetAngle;
+        }
+
+
+        public void ResetCameraLook()
+        {
+            LookUpDown(-verticalLookAngle, true);
+            verticalLookAngle = 0f;
+
+            LookLeftRight(-horizontalLookAngle, true);
+            horizontalLookAngle = 0f;
         }
 
 

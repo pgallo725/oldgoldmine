@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
 
 
 namespace oldgoldmine_game.Engine
@@ -23,6 +21,8 @@ namespace oldgoldmine_game.Engine
         private static bool jumpPressed = false;
         private static bool pauseWasPressed = false;
         private static bool pausePressed = false;
+        private static bool freelookKeyWasPressed = false;
+        private static bool freelookKeyPressed = false;
         private static bool debugKeyWasPressed = false;
         private static bool debugKeyPressed = false;
         private static bool enterKeyWasPressed = false;
@@ -37,6 +37,7 @@ namespace oldgoldmine_game.Engine
         public static bool MouseSingleLeftClick { get { return mouseLeftClickSingle; } }
         public static bool MouseHoldLeftClick { get { return mouseLeftClickHold; } }
         public static bool PauseKeyPressed { get { return pausePressed; } }
+        public static bool FreeLookKeyPressed { get { return freelookKeyPressed; } }
         public static bool DebugKeyPressed { get { return debugKeyPressed; } }
         public static bool EnterKeyPressed { get { return enterKeyPressed; } }
         public static bool BackKeyPressed { get { return backKeyPressed; } }
@@ -80,8 +81,10 @@ namespace oldgoldmine_game.Engine
 
             pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
             pauseWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
-            debugKeyPressed = !debugKeyWasPressed && (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
-            debugKeyWasPressed = (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
+            freelookKeyPressed = !freelookKeyWasPressed && (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
+            freelookKeyWasPressed = (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
+            debugKeyPressed = !debugKeyWasPressed && keyboardState.IsKeyDown(Keys.G);
+            debugKeyWasPressed = keyboardState.IsKeyDown(Keys.G);
             enterKeyPressed = !enterKeyWasPressed && (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
             enterKeyWasPressed = (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
             backKeyPressed = !backKeyWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.B));

@@ -51,7 +51,6 @@ namespace oldgoldmine_game.Engine
         /// </summary>
         public GameObject3D()
         {
-            Console.WriteLine("Allocating new game object");
             this.model3d = null;
             this.position = Vector3.Zero;
             this.scale = Vector3.One;
@@ -64,7 +63,6 @@ namespace oldgoldmine_game.Engine
         public GameObject3D(GameObject3D other)
             : base()
         {
-            Console.WriteLine("Allocating new game object");
             this.model3d = other.model3d;
             this.position = other.position;
             this.scale = other.scale;
@@ -77,7 +75,6 @@ namespace oldgoldmine_game.Engine
         /// <param name="model">The 3D model of this object.</param>
         public GameObject3D(Model model)
         {
-            Console.WriteLine("Allocating new game object");
             this.model3d = model;
             this.position = Vector3.Zero;
             this.scale = Vector3.One;
@@ -93,7 +90,6 @@ namespace oldgoldmine_game.Engine
         /// <param name="rotation">The initial rotation of the 3D model.</param>
         public GameObject3D(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
         {
-            Console.WriteLine("Allocating new game object");
             this.model3d = model;
             this.position = position;
             this.scale = scale;
@@ -198,11 +194,6 @@ namespace oldgoldmine_game.Engine
         public override object Clone()
         {
             return new GameObject3D(this.model3d, this.position, this.scale, this.rotation);
-        }
-
-        ~GameObject3D()
-        {
-            Console.WriteLine("Destroying game object");
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Win32;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
 using oldgoldmine_game.Gameplay;
-using Microsoft.Win32;
+
 
 namespace oldgoldmine_game
 {
@@ -115,9 +115,6 @@ namespace oldgoldmine_game
         public static BasicEffect basicEffect;
 
 
-        public static Player player;
-        public static Timer timer;
-
         private static OldGoldMineGame application;
         public static OldGoldMineGame Application { get { return application; } }
 
@@ -130,12 +127,11 @@ namespace oldgoldmine_game
         CustomizationMenu customMenu = new CustomizationMenu();
         PauseMenu pauseMenu = new PauseMenu();
         GameOverMenu deathMenu = new GameOverMenu();
-        
 
-        Queue<GameObject3D> rails;
-        Queue<Collectible> collectibles;
-        Queue<Obstacle> obstacles;
-        ProceduralGenerator levelGenerator;
+
+        public static Timer timer;
+        public static Player player;
+        ProceduralGenerator level;
 
 
         public struct GameSettings
@@ -166,6 +162,7 @@ namespace oldgoldmine_game
         private static int bestScore = 0;
         public static int BestScore { get { return bestScore; } set { bestScore = value; } }
 
+        bool freeLook = false;
         bool freeMovement = false;
 
         private float currentSpeed = 20f;
@@ -183,7 +180,7 @@ namespace oldgoldmine_game
             Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
-            //this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
+            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
@@ -219,15 +216,9 @@ namespace oldgoldmine_game
             hud.Initialize(Window);
             
 
-            // Instantiate and initialize the pool of items for the procedural generator
-            rails = new Queue<GameObject3D>();
-            collectibles = new Queue<Collectible>();
-            obstacles = new Queue<Obstacle>();
-
-            levelGenerator = new ProceduralGenerator(in rails, resources.m3d_rails, 20f,
-                in collectibles, resources.m3d_gold, 0.25f,
-                in obstacles, resources.m3d_woodenCrate, new Vector3(2f, 2f, 2f),
-                150f);
+            // Instantiate the procedural generator and initialize the level
+            level = new ProceduralGenerator(resources.m3d_rails, 20f, resources.m3d_gold, 0.25f,
+                resources.m3d_woodenCrate, new Vector3(2f, 2f, 2f), 150f);
 
 
             gameState = GameState.MainMenu;
@@ -369,18 +360,23 @@ namespace oldgoldmine_game
                     if (InputManager.DebugKeyPressed)
                         freeMovement = true;
 
+                    if (InputManager.FreeLookKeyPressed)
+                    {
+                        freeLook = !freeLook;
+                        player.ResetCameraLook();
+                    }
+
                     timer.Update(gameTime);
 
                     if (timer.time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
                     {
-                        Speed = MathHelper.Clamp(Speed + 1f, 0, maxSpeed);
-                        lastSpeedUpdate = (float)gameTime.TotalGameTime.TotalSeconds;
+                        Speed = MathHelper.Clamp(Speed + 1f, 0f, maxSpeed);
+                        lastSpeedUpdate = (float)timer.time.TotalSeconds;
                         hud.UpdateSpeed(Speed);
                     }
 
                     hud.UpdateTimer(timer);
                     hud.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
-                    hud.UpdateScore(Score);     // TODO: do it only when really needed (on collectible pickup)
 
                     float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -454,22 +450,16 @@ namespace oldgoldmine_game
                         }
                     }
 
-                    player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed, freeMovement);
-                    player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
+                    if (freeLook || freeMovement)
+                    {
+                        player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed, freeMovement);
+                        player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
+                    }
+                    
 
                     player.Update(gameTime);
                         
-                    levelGenerator.Update(player.Position, rails, collectibles, obstacles);
-
-                    foreach (Collectible gold in collectibles)
-                    {
-                        gold.Update();
-                    }
-
-                    foreach (Obstacle obstacle in obstacles)
-                    {
-                        obstacle.Update();
-                    }
+                    level.Update(player.Position);
 
                     break;
                 }
@@ -526,24 +516,11 @@ namespace oldgoldmine_game
                         CullMode = CullMode.None
                     };
 
-                    // Draw 3D objects in the scene, starting from the player
+                    // Draw the player and the 3D level (according to the player's POV)
 
                     player.Draw();
+                    level.Draw(player.Camera);
 
-                    foreach(GameObject3D rail in rails)
-                    {
-                        rail.Draw(player.Camera);
-                    }
-
-                    foreach (Collectible gold in collectibles)
-                    {
-                        gold.Draw(player.Camera);
-                    }
-
-                    foreach (Obstacle obstacle in obstacles)
-                    {
-                        obstacle.Draw(player.Camera);
-                    }
 
                     // Draw the HUD on top of the rendered scene
                     hud.Draw(spriteBatch);
@@ -594,7 +571,9 @@ namespace oldgoldmine_game
                 Speed = gameSettings.startSpeed;
                 Score = 0;
                 scoreMultiplier = gameSettings.multiplier;
+                lastSpeedUpdate = 0f;
                 timer.Reset();
+                level.Reset();
 
                 // Initialize Camera and Player objects
                 GameCamera camera = (player != null) ? player.Camera : new GameCamera();
@@ -603,7 +582,11 @@ namespace oldgoldmine_game
                     new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                     new Vector3(0f, -2.4f, -0.75f), 1.2f);
 
-                levelGenerator.InitializeSeed(gameSettings.seed);
+                level.InitializeSeed(gameSettings.seed);
+                level.Difficulty = gameSettings.difficulty;
+
+                // Show the game HUD
+                hud.Show(timer, 60f, Score, Speed);
 
                 gameState = GameState.Running;
                 IsMouseVisible = false;
@@ -671,6 +654,7 @@ namespace oldgoldmine_game
         public static void UpdateScore(int points)
         {
             Score += (int)(points * scoreMultiplier + 0.5f);    // extra 0.5f added to avoid int conversion errors
+            OldGoldMineGame.application.hud.UpdateScore(score);
         }
 
         public void SaveScore(int score)

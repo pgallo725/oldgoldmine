@@ -27,20 +27,20 @@ namespace oldgoldmine_game.Menus
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
                 Color.White, new Vector2(viewport.Width / 2, viewport.Height * 0.075f), SpriteText.TextAnchor.MiddleCenter);
 
-            replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize, 
+            replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 50), buttonSize, 
                 OldGoldMineGame.resources.menuButtonFont, "PLAY AGAIN", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
-            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 75), buttonSize, 
+            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 100), buttonSize, 
                 OldGoldMineGame.resources.menuButtonFont, "BACK TO MENU", Color.White,
                 OldGoldMineGame.resources.menuButtonTextures);
 
             scoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "Final score: " + OldGoldMineGame.Score,
-                Color.Blue, new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 190),
+                Color.LightGoldenrodYellow, new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175),
                 SpriteText.TextAnchor.MiddleCenter);
 
             newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "NEW HIGHSCORE!",
-                Color.Yellow, scoreText.Position + new Vector2(0, 50), SpriteText.TextAnchor.MiddleCenter);
+                Color.Orange, scoreText.Position + new Vector2(0, 55), SpriteText.TextAnchor.MiddleCenter);
         }
 
 

@@ -52,6 +52,15 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        public void Show(Engine.Timer time, double framerate, int score, float speed)
+        {
+            UpdateTimer(time);
+            UpdateFramerate(framerate);
+            UpdateScore(score);
+            UpdateSpeed(speed);
+        }
+
+
         public void Draw(in SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
