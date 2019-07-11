@@ -139,11 +139,11 @@ namespace oldgoldmine_game
             public float multiplier;
             public float startSpeed;
             public int difficulty;
-            public int seed;
+            public long seed;
             public int cart;
 
 
-            public GameSettings(float multiplier, int startSpeed, int difficulty, int seed, int cart) 
+            public GameSettings(float multiplier, int startSpeed, int difficulty, long seed, int cart) 
                 : this()
             {
                 this.multiplier = multiplier;

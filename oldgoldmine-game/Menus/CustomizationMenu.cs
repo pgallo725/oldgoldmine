@@ -49,16 +49,16 @@ namespace oldgoldmine_game.Menus
         public int SelectedDifficulty { get { return difficultyToggle.SelectedValueIndex; } }
         public float ScoreMultiplier { get { return scoreMultiplier; } }
         public int SelectedCart { get { return cartSelector.SelectedValueIndex; } }
-        public int Seed
+        public long Seed
         {
             get
             {
                 if (seedBox.Content.Length == 0)
-                    return 0;
+                    return System.DateTime.Now.Ticks;
 
                 MD5 md5Hasher = MD5.Create();
                 var hashed = md5Hasher.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedBox.Content));
-                return System.BitConverter.ToInt32(hashed, 0);
+                return System.BitConverter.ToInt64(hashed, 0);
             }
         }
 

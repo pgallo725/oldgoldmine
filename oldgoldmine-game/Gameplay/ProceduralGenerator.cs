@@ -483,10 +483,10 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
-        public void InitializeSeed(int seed)
+        public void InitializeSeed(long seed)
         {
             if (seed != 0)
-                rand = new Random(seed);
+                rand = new Random((int)seed);
         }
 
 
