@@ -17,6 +17,7 @@ namespace oldgoldmine_game
         public Model m3d_gold;
         public Model m3d_cart;
         public Model m3d_rails;
+        public Model m3d_lowerObstacle;
 
 
         public struct ButtonTexturePack
@@ -218,7 +219,7 @@ namespace oldgoldmine_game
 
             // Instantiate the procedural generator and initialize the level
             level = new ProceduralGenerator(resources.m3d_rails, 20f, resources.m3d_gold, 0.25f,
-                resources.m3d_woodenCrate, new Vector3(2f, 2f, 2f), 150f);
+                resources.m3d_lowerObstacle, resources.m3d_woodenCrate, new Vector3(2f, 2f, 2f), 150f);
 
 
             gameState = GameState.MainMenu;
@@ -249,6 +250,7 @@ namespace oldgoldmine_game
             resources.m3d_gold = Content.Load<Model>("models_3d/goldOre");
             resources.m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
             resources.m3d_rails = Content.Load<Model>("models_3d/rails_segment");
+            resources.m3d_lowerObstacle = Content.Load<Model>("models_3d/obstacle_debris");
 
             // Load 2D assets for UI elements
             Texture2D menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");

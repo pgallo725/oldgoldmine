@@ -440,6 +440,7 @@ namespace oldgoldmine_game.Gameplay
         ObjectPool<GameObject3D> railsPool;
         ObjectPool<Collectible> goldPool;
         ObjectPool<Obstacle> obstaclesPool;
+        ObjectPool<Obstacle> obstaclesLowPool;
 
 
         private int difficulty = 1;
@@ -456,7 +457,7 @@ namespace oldgoldmine_game.Gameplay
 
 
         public ProceduralGenerator(Model rail, float railLength, Model collectible, float collectibleScale,
-            Model obstacle, Vector3 hitboxSize, float popupDistance = 100f)
+            Model obstacleLow, Model obstacle, Vector3 hitboxSize, float popupDistance = 100f)
         {
             this.rails = new Queue<GameObject3D>();
             this.collectibles = new Queue<Collectible>();
@@ -480,6 +481,13 @@ namespace oldgoldmine_game.Gameplay
 
             this.obstaclesPool = new ObjectPool<Obstacle>(
                 new Obstacle(new GameObject3D(obstacle), hitboxSize), 10);
+
+            GameObject3D lowerObstacle = new GameObject3D(obstacleLow, Vector3.Zero, 0.6f * Vector3.One,
+                Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(180)));
+            lowerObstacle.EnableLightingModel();
+
+            this.obstaclesLowPool = new ObjectPool<Obstacle>(
+                new Obstacle(lowerObstacle, hitboxSize), 10);
         }
 
 
@@ -627,13 +635,25 @@ namespace oldgoldmine_game.Gameplay
                 }
                 else if (p <= PatternElement.ObstacleAbove)  // obstacle
                 {
-                    Obstacle newObstacle = obstaclesPool.GetOne();
+                    Obstacle newObstacle = null;
                     switch (p)
                     {
-                        case PatternElement.ObstacleLeft: offset = leftObstacleOffset; break;
-                        case PatternElement.ObstacleRight: offset = rightObstacleOffset; break;
-                        case PatternElement.ObstacleBelow: offset = bottomObstacleOffset; break;
-                        case PatternElement.ObstacleAbove: offset = topObstacleOffset; break;
+                        case PatternElement.ObstacleLeft:
+                            newObstacle = obstaclesPool.GetOne();
+                            offset = leftObstacleOffset;
+                            break;
+                        case PatternElement.ObstacleRight:
+                            newObstacle = obstaclesPool.GetOne();
+                            offset = rightObstacleOffset;
+                            break;
+                        case PatternElement.ObstacleBelow:
+                            newObstacle = obstaclesLowPool.GetOne();
+                            offset = bottomObstacleOffset;
+                            break;
+                        case PatternElement.ObstacleAbove:
+                            newObstacle = obstaclesPool.GetOne();
+                            offset = topObstacleOffset;
+                            break;
                     }
                     newObstacle.Position = new Vector3(0f, 0f, position) + offset;
                     obstacles.Enqueue(newObstacle);
