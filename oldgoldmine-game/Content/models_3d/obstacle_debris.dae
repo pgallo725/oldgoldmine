@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.79.0 commit date:2018-03-22, commit time:14:10, hash:f4dc9f9d68b</authoring_tool>
     </contributor>
-    <created>2019-07-11T22:47:35</created>
-    <modified>2019-07-11T22:47:35</modified>
+    <created>2019-07-12T08:01:42</created>
+    <modified>2019-07-12T08:01:42</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -35,7 +35,7 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
@@ -45,16 +45,10 @@
             <diffuse>
               <texture texture="BakedWood2-sampler"/>
             </diffuse>
-            <specular>
-              <color sid="specular">0 0 0 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </lambert>
         </technique>
       </profile_COMMON>
     </effect>
@@ -71,7 +65,7 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
@@ -81,16 +75,10 @@
             <diffuse>
               <texture texture="BakedWood-sampler"/>
             </diffuse>
-            <specular>
-              <color sid="specular">0 0 0 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </lambert>
         </technique>
       </profile_COMMON>
     </effect>
@@ -107,7 +95,7 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
@@ -115,18 +103,12 @@
               <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="RocksBaked-sampler" texcoord="RockMapping"/>
+              <texture texture="RocksBaked-sampler"/>
             </diffuse>
-            <specular>
-              <color sid="specular">0 0 0 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </lambert>
         </technique>
       </profile_COMMON>
     </effect>
@@ -274,18 +256,16 @@
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
       <node id="Debris" name="Debris" type="NODE">
-        <matrix sid="transform">-0.6045806 0.04070015 0.1585115 0 -0.05628422 0.5179407 -0.3476633 0 -0.15367 -0.3498302 -0.4962908 0 0 0 0 1</matrix>
+        <matrix sid="transform">0.3627484 -0.02442013 -0.09510686 0 0.03377047 -0.3107644 0.208598 -0.8523284 -0.09220199 -0.2098981 -0.2977745 0 0 0 0 1</matrix>
         <instance_geometry url="#Cone_005-mesh" name="Debris">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Rocks-material" target="#Rocks-material">
-                <bind_vertex_input semantic="RockMapping" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
+              <instance_material symbol="Rocks-material" target="#Rocks-material"/>
             </technique_common>
           </bind_material>
         </instance_geometry>
         <node id="WoodSegment2" name="WoodSegment2" type="NODE">
-          <matrix sid="transform">-1.734291 0.4290613 -2.186077 2.157291 1.75224 1.753109 -1.102953 -1.075035 1.227464 -1.89639 -1.514223 -0.01884019 0 0 0 1</matrix>
+          <matrix sid="transform">-1.734292 0.4290612 -2.186077 2.157291 1.75224 1.753109 -1.102953 -1.075035 1.227464 -1.89639 -1.514223 -0.01883984 0 0 0 1</matrix>
           <instance_geometry url="#CUNurbsPath_002-mesh" name="WoodSegment2">
             <bind_material>
               <technique_common>
@@ -295,7 +275,7 @@
           </instance_geometry>
         </node>
         <node id="WoodSegment1" name="WoodSegment1" type="NODE">
-          <matrix sid="transform">-0.68479 0.2231888 -1.424892 -2.474096 1.126323 1.067978 -0.374017 -1.153186 0.9008484 -1.165624 -0.6155176 0.5252369 0 0 0 1</matrix>
+          <matrix sid="transform">-0.6847901 0.2231889 -1.424892 -2.474096 1.126323 1.067978 -0.374017 -1.153186 0.9008483 -1.165624 -0.6155175 0.5252376 0 0 0 1</matrix>
           <instance_geometry url="#CUNurbsPath_000-mesh" name="WoodSegment1">
             <bind_material>
               <technique_common>

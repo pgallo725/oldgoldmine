@@ -482,12 +482,8 @@ namespace oldgoldmine_game.Gameplay
             this.obstaclesPool = new ObjectPool<Obstacle>(
                 new Obstacle(new GameObject3D(obstacle), hitboxSize), 10);
 
-            GameObject3D lowerObstacle = new GameObject3D(obstacleLow, Vector3.Zero, 0.6f * Vector3.One,
-                Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(180)));
-            lowerObstacle.EnableLightingModel();
-
             this.obstaclesLowPool = new ObjectPool<Obstacle>(
-                new Obstacle(lowerObstacle, hitboxSize), 10);
+                new Obstacle(new GameObject3D(obstacleLow), hitboxSize), 10);
         }
 
 

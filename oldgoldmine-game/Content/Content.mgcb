@@ -520,6 +520,30 @@
 /processorParam:TextureFormat=Color
 /build:ui_elements_2d/lock_icon.png
 
+#begin models_3d/BakedWood.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/BakedWood.png
+
+#begin models_3d/BakedWood2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/BakedWood2.png
+
 #begin models_3d/obstacle_debris.dae
 /importer:OpenAssetImporter
 /processor:ModelProcessor
@@ -539,30 +563,6 @@
 /processorParam:TextureFormat=Compressed
 /build:models_3d/obstacle_debris.dae
 
-#begin models_3d/BakedWood.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:models_3d/BakedWood.png
-
-#begin models_3d/BakedWood2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:models_3d/BakedWood2.png
-
 #begin models_3d/RocksBaked.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -572,6 +572,6 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
+/processorParam:TextureFormat=DxtCompressed
 /build:models_3d/RocksBaked.png
 
