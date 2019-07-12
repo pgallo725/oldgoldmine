@@ -265,3 +265,4 @@ __pycache__/
 *.pyc
 *.bphys
 *.ini
+*.gz
