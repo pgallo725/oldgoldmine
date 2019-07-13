@@ -420,7 +420,7 @@ namespace oldgoldmine_game.Gameplay
         private readonly Vector3 leftObstacleOffset = new Vector3(1.2f, 1.3f, 0f);
         private readonly Vector3 rightObstacleOffset = new Vector3(-1.2f, 1.3f, 0f);
         private readonly Vector3 bottomObstacleOffset = new Vector3(0f, 0.4f, 0f);
-        private readonly Vector3 topObstacleOffset = new Vector3(0f, 3.5f, 0f);
+        private readonly Vector3 topObstacleOffset = new Vector3(0f, -1f, 0f);
 
         private readonly Vector3 normalCollectibleOffset = new Vector3(0f, 1.5f, 0f);
         private readonly Vector3 leftCollectibleOffset = new Vector3(2f, 1.7f, 0f);
@@ -439,8 +439,10 @@ namespace oldgoldmine_game.Gameplay
 
         ObjectPool<GameObject3D> railsPool;
         ObjectPool<Collectible> goldPool;
-        ObjectPool<Obstacle> obstaclesPool;
         ObjectPool<Obstacle> obstaclesLowPool;
+        ObjectPool<Obstacle> obstaclesLeftPool;
+        ObjectPool<Obstacle> obstaclesRightPool;
+        ObjectPool<Obstacle> obstaclesHighPool;
 
 
         private int difficulty = 1;
@@ -457,7 +459,7 @@ namespace oldgoldmine_game.Gameplay
 
 
         public ProceduralGenerator(Model rail, float railLength, Model collectible, float collectibleScale,
-            Model obstacleLow, Model obstacle, Vector3 hitboxSize, float popupDistance = 100f)
+            Model obstacleLow, Model obstacleLeft, Model obstacleRight, Model obstacleTop, Vector3 hitboxSize, float popupDistance = 100f)
         {
             this.rails = new Queue<GameObject3D>();
             this.collectibles = new Queue<Collectible>();
@@ -478,12 +480,18 @@ namespace oldgoldmine_game.Gameplay
 
             this.goldPool = new ObjectPool<Collectible>(
                 new Collectible(collectible, Vector3.Zero, collectibleScale * Vector3.One, Quaternion.Identity), 10);
-
-            this.obstaclesPool = new ObjectPool<Obstacle>(
-                new Obstacle(new GameObject3D(obstacle), hitboxSize), 10);
-
+            
             this.obstaclesLowPool = new ObjectPool<Obstacle>(
                 new Obstacle(new GameObject3D(obstacleLow), hitboxSize), 10);
+
+            this.obstaclesLeftPool = new ObjectPool<Obstacle>(
+                new Obstacle(new GameObject3D(obstacleLeft), hitboxSize), 10);
+
+            this.obstaclesRightPool = new ObjectPool<Obstacle>(
+                new Obstacle(new GameObject3D(obstacleRight), hitboxSize), 10);
+
+            this.obstaclesHighPool = new ObjectPool<Obstacle>(
+                new Obstacle(new GameObject3D(obstacleTop, Vector3.Zero, 0.9f * Vector3.One, Quaternion.Identity), hitboxSize), 10);
         }
 
 
@@ -635,19 +643,19 @@ namespace oldgoldmine_game.Gameplay
                     switch (p)
                     {
                         case PatternElement.ObstacleLeft:
-                            newObstacle = obstaclesPool.GetOne();
-                            offset = leftObstacleOffset;
+                            newObstacle = obstaclesLeftPool.GetOne();
+                            offset = Vector3.Zero;// leftObstacleOffset;
                             break;
                         case PatternElement.ObstacleRight:
-                            newObstacle = obstaclesPool.GetOne();
-                            offset = rightObstacleOffset;
+                            newObstacle = obstaclesRightPool.GetOne();
+                            offset = Vector3.Zero;// rightObstacleOffset;
                             break;
                         case PatternElement.ObstacleBelow:
                             newObstacle = obstaclesLowPool.GetOne();
                             offset = bottomObstacleOffset;
                             break;
                         case PatternElement.ObstacleAbove:
-                            newObstacle = obstaclesPool.GetOne();
+                            newObstacle = obstaclesHighPool.GetOne();
                             offset = topObstacleOffset;
                             break;
                     }
