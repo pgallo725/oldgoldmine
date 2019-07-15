@@ -16,10 +16,10 @@ namespace oldgoldmine_game.Gameplay
             get { return base.position; }
             set
             {
-                Vector3 boxSize = hitbox.Max - hitbox.Min;
+                Vector3 deltaMovement = value - base.Position;
                 base.Position = value;
-                hitbox.Min = value - boxSize / 2;
-                hitbox.Max = value + boxSize / 2;
+                hitbox.Min += deltaMovement;
+                hitbox.Max += deltaMovement;
             }
         }
 
@@ -28,18 +28,21 @@ namespace oldgoldmine_game.Gameplay
             get { return base.scale; }
             set
             {
+                Vector3 hitboxOffset = (hitbox.Max + hitbox.Min) / 2 - base.Position;
+                hitboxOffset = (hitboxOffset / base.Scale) * value;
                 Vector3 boxSize = ((hitbox.Max - hitbox.Min) / base.Scale) * value;
                 base.Scale = value;
-                hitbox.Min = Position - boxSize / 2;
-                hitbox.Max = Position + boxSize / 2;
+                hitbox.Min = Position + hitboxOffset - boxSize / 2;
+                hitbox.Max = Position + hitboxOffset + boxSize / 2;
             }
         }
+
 
 
         public Obstacle()
             : base()
         {
-            this.hitbox = new BoundingBox(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, 0.5f, -0.5f));
+            this.hitbox = new BoundingBox(-0.5f * Vector3.One, 0.5f * Vector3.One);
         }
 
         public Obstacle(Model model)
@@ -51,6 +54,8 @@ namespace oldgoldmine_game.Gameplay
         public Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation)
             : base(model, position, scale, rotation)
         {
+            base.Scale = Vector3.One;   // to ensure consistency with the hitbox size
+
             CreateBoundingBoxFromModel(model);
 
             this.Position = position;
@@ -70,13 +75,13 @@ namespace oldgoldmine_game.Gameplay
                 collectibleObj.Position + hitboxSize / 2);
         }
 
-        private Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
+        public Obstacle(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
             : base(model, position, scale, rotation)
         {
             this.hitbox = hitbox;
         }
 
-        private Obstacle(GameObject3D collectibleObj, BoundingBox hitbox)
+        public Obstacle(GameObject3D collectibleObj, BoundingBox hitbox)
             : base(collectibleObj)
         {
             this.hitbox = hitbox;
