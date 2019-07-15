@@ -10,16 +10,16 @@ namespace oldgoldmine_game.Gameplay
         private const bool debugDrawHitbox = true;
 
         private BoundingBox hitbox;
-        
+
         public override Vector3 Position
         {
             get { return base.position; }
             set
             {
-                Vector3 boxSize = hitbox.Max - hitbox.Min;
+                Vector3 deltaMovement = value - base.Position;
                 base.Position = value;
-                hitbox.Min = value - boxSize / 2;
-                hitbox.Max = value + boxSize / 2;
+                hitbox.Min += deltaMovement;
+                hitbox.Max += deltaMovement;
             }
         }
 
@@ -28,18 +28,21 @@ namespace oldgoldmine_game.Gameplay
             get { return base.scale; }
             set
             {
+                Vector3 hitboxOffset = (hitbox.Max + hitbox.Min) / 2 - base.Position;
+                hitboxOffset = (hitboxOffset / base.Scale) * value;
                 Vector3 boxSize = ((hitbox.Max - hitbox.Min) / base.Scale) * value;
                 base.Scale = value;
-                hitbox.Min = Position - boxSize / 2;
-                hitbox.Max = Position + boxSize / 2;
+                hitbox.Min = Position + hitboxOffset - boxSize / 2;
+                hitbox.Max = Position + hitboxOffset + boxSize / 2;
             }
         }
+
 
 
         public Collectible()
             : base()
         {
-            this.hitbox = new BoundingBox(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, 0.5f, -0.5f));
+            this.hitbox = new BoundingBox(-0.5f * Vector3.One, 0.5f * Vector3.One);
         }
 
         public Collectible(Model model)
@@ -72,13 +75,13 @@ namespace oldgoldmine_game.Gameplay
                 collectibleObj.Position + hitboxSize / 2);
         }
 
-        private Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
+        public Collectible(Model model, Vector3 position, Vector3 scale, Quaternion rotation, BoundingBox hitbox)
             : base(model, position, scale, rotation)
         {
             this.hitbox = hitbox;
         }
 
-        private Collectible(GameObject3D collectibleObj, BoundingBox hitbox)
+        public Collectible(GameObject3D collectibleObj, BoundingBox hitbox)
             : base(collectibleObj)
         {
             this.hitbox = hitbox;

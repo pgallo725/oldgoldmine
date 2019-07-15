@@ -162,7 +162,7 @@ namespace oldgoldmine_game.Engine
         /// <summary>
         /// Enables the basic XNA lighting model for all meshes of the object
         /// </summary>
-        public void EnableLightingModel()
+        public void EnableDefaultLighting()
         {
             if (model3d == null)
                 return;
@@ -173,6 +173,167 @@ namespace oldgoldmine_game.Engine
                 {
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
+                }
+            }
+        }
+
+
+        // Lighting properties
+
+        public void SetAmbientLightColor(Color color)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.AmbientLightColor = color.ToVector3();
+                }
+            }
+        }
+
+        public void SetDiffuseColor(Color color)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.DiffuseColor = color.ToVector3();
+                }
+            }
+        }
+
+        public void SetSpecularSettings(Color color, float strength)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.SpecularColor = color.ToVector3();
+                    effect.SpecularPower = strength;
+                }
+            }
+        }
+
+
+        public void SetEmissiveColor(Color color)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EmissiveColor = color.ToVector3();
+                }
+            }
+        }
+
+
+        public void SetLightEnabled(int lightIndex, bool enabled = true)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    switch (lightIndex)
+                    {
+                        case 0:
+                            effect.DirectionalLight0.Enabled = enabled;
+                            break;
+
+                        case 1:
+                            effect.DirectionalLight1.Enabled = enabled;
+                            break;
+
+                        case 2:
+                            effect.DirectionalLight2.Enabled = enabled;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        }
+
+
+        public void SetLightProperties(int lightIndex, Color diffuseColor, Color specularColor, Vector3 direction)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    switch (lightIndex)
+                    {
+                        case 0:
+                            effect.DirectionalLight0.DiffuseColor = diffuseColor.ToVector3();
+                            effect.DirectionalLight0.SpecularColor = specularColor.ToVector3();
+                            effect.DirectionalLight0.Direction = direction;
+                            break;
+
+                        case 1:
+                            effect.DirectionalLight1.DiffuseColor = diffuseColor.ToVector3();
+                            effect.DirectionalLight1.SpecularColor = specularColor.ToVector3();
+                            effect.DirectionalLight1.Direction = direction;
+                            break;
+
+                        case 2:
+                            effect.DirectionalLight2.DiffuseColor = diffuseColor.ToVector3();
+                            effect.DirectionalLight2.SpecularColor = specularColor.ToVector3();
+                            effect.DirectionalLight2.Direction = direction;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        }
+
+
+        public void SetFogEffectEnabled(bool enabled)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                    effect.FogEnabled = enabled;
+            }
+        }
+
+        public void SetFogEffectEnabled(bool enabled, Color fogColor, float fogStart, float fogEnd)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (var mesh in model3d.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.FogEnabled = enabled;
+                    effect.FogColor = fogColor.ToVector3();
+                    effect.FogStart = fogStart;
+                    effect.FogEnd = fogEnd;
                 }
             }
         }

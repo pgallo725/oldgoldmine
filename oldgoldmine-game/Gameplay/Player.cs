@@ -15,7 +15,7 @@ namespace oldgoldmine_game.Gameplay
         private GameCamera camera;
         private GameObject3D model;
 
-        private readonly Vector3 hitboxOffset = new Vector3(0f, 0f, -0.5f);
+        private readonly Vector3 hitboxOffset = new Vector3(0f, -0.5f, 0f);
         internal BoundingSphere hitbox;
 
         public GameCamera Camera { get { return camera; } }
@@ -101,7 +101,7 @@ namespace oldgoldmine_game.Gameplay
 
             this.camera = playerCamera;
             this.model = playerModel;
-            this.model.EnableLightingModel();
+            this.model.EnableDefaultLighting();
             this.model.Position = playerCamera.Position + modelOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
@@ -113,7 +113,7 @@ namespace oldgoldmine_game.Gameplay
 
             this.camera = playerCamera;
             this.model = playerModel;
-            this.model.EnableLightingModel();
+            this.model.EnableDefaultLighting();
             this.model.Position = playerCamera.Position + modelOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }

@@ -16,6 +16,7 @@ namespace oldgoldmine_game
         public Model m3d_gold;
         public Model m3d_cart;
         public Model m3d_rails;
+        public Model m3d_cave;
         public Model m3d_lowerObstacle;
         public Model m3d_leftObstacle;
         public Model m3d_rightObstacle;
@@ -40,9 +41,9 @@ namespace oldgoldmine_game
                 Texture2D pressed = null, Texture2D disabled = null)
             {
                 this.normal = normal;
-                this.highlighted = highlighted != null ? highlighted : normal;
-                this.pressed = pressed != null ? pressed : normal;
-                this.disabled = disabled != null ? disabled : normal;
+                this.highlighted = highlighted ?? normal;
+                this.pressed = pressed ?? normal;
+                this.disabled = disabled ?? normal;
             }
 
             // 0: Normal, 1: Highlighted, 2: Pressed, 3: Disabled
@@ -191,7 +192,7 @@ namespace oldgoldmine_game
             graphics.PreferredBackBufferHeight = 900;
             //graphics.IsFullScreen = true;             // TODO: enable fullscreen support
 
-            Window.Title = "The Old Gold Mine (Alpha)";
+            Window.Title = "The Old Gold Mine (Beta)";
         }
 
         /// <summary>
@@ -217,12 +218,45 @@ namespace oldgoldmine_game
             // Setup HUD
             timer = new Timer();
             hud.Initialize(Window);
-            
+
+
+            float popupDistance = 400f;
+
+            // Set-up the properties of the GameObjects that will be used in the level generation
+                       
+            Collectible gold = new Collectible(resources.m3d_gold, Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
+            gold.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            gold.SetEmissiveColor(Color.Yellow);
+
+            Obstacle lowerObstacle = new Obstacle(new GameObject3D(resources.m3d_lowerObstacle,
+                Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
+                new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
+            lowerObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
+            Obstacle leftObstacle = new Obstacle(new GameObject3D(resources.m3d_leftObstacle),
+                new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
+            leftObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
+            Obstacle rightObstacle = new Obstacle(new GameObject3D(resources.m3d_rightObstacle),
+                new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
+            rightObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
+            Obstacle upperObstacle = new Obstacle(new GameObject3D(resources.m3d_upperObstacle,
+                new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity),
+                new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
+            upperObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
+            GameObject3D rail = new GameObject3D(resources.m3d_rails);
+            rail.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
+            GameObject3D cave = new GameObject3D(resources.m3d_cave, Vector3.Zero, 4.5f * Vector3.One,
+                Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(-90f)));
+            cave.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+
 
             // Instantiate the procedural generator and initialize the level
-            level = new ProceduralGenerator(resources.m3d_rails, 20f, resources.m3d_gold, 0.25f,
-                resources.m3d_lowerObstacle, resources.m3d_leftObstacle, resources.m3d_rightObstacle,
-                resources.m3d_upperObstacle, new Vector3(2f, 2f, 2f), 150f);
+            level = new ProceduralGenerator(rail, 20f, cave, 225f, gold,
+                lowerObstacle, leftObstacle, rightObstacle, upperObstacle, popupDistance);
 
 
             gameState = GameState.MainMenu;
@@ -248,72 +282,65 @@ namespace oldgoldmine_game
                 LightingEnabled = false
             };
 
+
             // Load 3D models for the game
-            resources.m3d_gold = Content.Load<Model>("models_3d/goldOre");
+
+            resources.m3d_gold = Content.Load<Model>("models_3d/GoldCollectible/goldOre");
             resources.m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
-            resources.m3d_rails = Content.Load<Model>("models_3d/rails_segment");
+            resources.m3d_rails = Content.Load<Model>("models_3d/Rails/rails_segment");
+            resources.m3d_cave = Content.Load<Model>("models_3d/Cave/cave_segment");
             resources.m3d_lowerObstacle = Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris");
             resources.m3d_leftObstacle = Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left");
             resources.m3d_rightObstacle = Content.Load<Model>("models_3d/ObstacleRight/obstacle_right");
             resources.m3d_upperObstacle = Content.Load<Model>("models_3d/ObstacleTop/obstacle_top");
 
             // Load 2D assets for UI elements
-            Texture2D menuButtonTextureNormal = Content.Load<Texture2D>("ui_elements_2d/woodButton_normal");
-            Texture2D menuButtonTextureHighlighted = Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted");
 
-            resources.menuButtonTextures = new GameResources.ButtonTexturePack(menuButtonTextureNormal, menuButtonTextureHighlighted);
+            resources.menuButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/woodButton_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted"));
 
-            Texture2D leftArrowNormal = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal");
-            Texture2D leftArrowHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted");
-            Texture2D leftArrowPressed = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed");
-            Texture2D leftArrowDisabled = Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled");
+            resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted"),
+                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed"),
+                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled"));
 
-            Texture2D rightArrowNormal = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal");
-            Texture2D rightArrowHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted");
-            Texture2D rightArrowPressed = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed");
-            Texture2D rightArrowDisabled = Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled");
+            resources.rightArrowButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted"),
+                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed"),
+                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled"));
 
-            Texture2D plusButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal");
-            Texture2D plusButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted");
-            Texture2D plusButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed");
-            Texture2D plusButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled");
+            resources.plusButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted"),
+                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed"),
+                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled"));
 
-            Texture2D minusButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal");
-            Texture2D minusButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted");
-            Texture2D minusButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed");
-            Texture2D minusButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled");
+            resources.minusButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted"),
+                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed"),
+                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled"));
 
-            Texture2D standardButtonNormal = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal");
-            Texture2D standardButtonHighlighted = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted");
-            Texture2D standardButtonPressed = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed");
-            Texture2D standardButtonDisabled = Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled");
+            resources.standardButtonTextures = new GameResources.ButtonTexturePack(
+                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted"),
+                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed"),
+                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled"));
+
 
             Texture2D textboxNormal = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_normal");
             Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
             Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
 
-            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel_framed");
-            resources.lockIcon = Content.Load<Texture2D>("ui_elements_2d/lock_icon");
-
-
-            resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
-                leftArrowNormal, leftArrowHighlighted, leftArrowPressed, leftArrowDisabled);
-
-            resources.rightArrowButtonTextures = new GameResources.ButtonTexturePack(
-                rightArrowNormal, rightArrowHighlighted, rightArrowPressed, rightArrowDisabled);
-
-            resources.plusButtonTextures = new GameResources.ButtonTexturePack(
-                plusButtonNormal, plusButtonHighlighted, plusButtonPressed, plusButtonDisabled);
-
-            resources.minusButtonTextures = new GameResources.ButtonTexturePack(
-                minusButtonNormal, minusButtonHighlighted, minusButtonPressed, minusButtonDisabled);
-
-            resources.standardButtonTextures = new GameResources.ButtonTexturePack(
-                standardButtonNormal, standardButtonHighlighted, standardButtonPressed, standardButtonDisabled);
-
             resources.textboxTextures = new GameResources.ButtonTexturePack(
                 textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled);
 
+
+            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel_framed");
+            resources.lockIcon = Content.Load<Texture2D>("ui_elements_2d/lock_icon");
 
             resources.menuButtonFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
             resources.debugInfoFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
@@ -322,6 +349,7 @@ namespace oldgoldmine_game
             resources.menuTitleFont = resources.menuButtonFont;
             resources.settingSelectorFont = resources.hudFont;
         }
+
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
