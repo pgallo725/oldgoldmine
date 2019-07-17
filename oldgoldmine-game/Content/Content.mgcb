@@ -609,49 +609,6 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/GoldCollectible/goldOres_BakedMaterial.png
 
-#begin models_3d/Rails/rails_BakedMetal.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:models_3d/Rails/rails_BakedMetal.png
-
-#begin models_3d/Rails/rails_BakedWood.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:models_3d/Rails/rails_BakedWood.png
-
-#begin models_3d/Rails/rails_segment.dae
-/importer:OpenAssetImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:models_3d/Rails/rails_segment.dae
-
 #begin models_3d/Cave/cave_BakedBeams1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -724,11 +681,11 @@
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
 /processorParam:RotationX=0
-/processorParam:RotationY=0
+/processorParam:RotationY=-90
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
+/processorParam:TextureFormat=DxtCompressed
 /build:models_3d/Cave/cave_segment.dae
 
 #begin models_3d/Cave/lantern_BakedMetal.png
@@ -742,6 +699,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/Cave/lantern_BakedMetal.png
+
+#begin models_3d/Cave/lantern_rustTexture.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/Cave/lantern_rustTexture.jpg
 
 #begin models_3d/Cave/pickaxe_BakedMetal.png
 /importer:TextureImporter
@@ -767,6 +736,30 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/Cave/pickaxe_BakedWood.png
 
+#begin models_3d/Cave/rails_BakedMetal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/Cave/rails_BakedMetal.png
+
+#begin models_3d/Cave/rails_BakedWood.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/Cave/rails_BakedWood.png
+
 #begin models_3d/Cave/sackClosed_BakedTexture.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -778,4 +771,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/Cave/sackClosed_BakedTexture.png
+
+#begin models_3d/Cave/woodenCrate_woodTexture.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=DxtCompressed
+/build:models_3d/Cave/woodenCrate_woodTexture.jpg
 

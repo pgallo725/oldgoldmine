@@ -15,7 +15,6 @@ namespace oldgoldmine_game
 
         public Model m3d_gold;
         public Model m3d_cart;
-        public Model m3d_rails;
         public Model m3d_cave;
         public Model m3d_lowerObstacle;
         public Model m3d_leftObstacle;
@@ -181,6 +180,8 @@ namespace oldgoldmine_game
         public OldGoldMineGame()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+
             Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
@@ -225,38 +226,34 @@ namespace oldgoldmine_game
             // Set-up the properties of the GameObjects that will be used in the level generation
                        
             Collectible gold = new Collectible(resources.m3d_gold, Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
-            gold.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            gold.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance);
             gold.SetEmissiveColor(Color.Yellow);
 
             Obstacle lowerObstacle = new Obstacle(new GameObject3D(resources.m3d_lowerObstacle,
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
                 new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
-            lowerObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            lowerObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle leftObstacle = new Obstacle(new GameObject3D(resources.m3d_leftObstacle),
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
-            leftObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            leftObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle rightObstacle = new Obstacle(new GameObject3D(resources.m3d_rightObstacle),
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
-            rightObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            rightObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle upperObstacle = new Obstacle(new GameObject3D(resources.m3d_upperObstacle,
                 new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity),
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
-            upperObstacle.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            upperObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            GameObject3D rail = new GameObject3D(resources.m3d_rails);
-            rail.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
-
-            GameObject3D cave = new GameObject3D(resources.m3d_cave, Vector3.Zero, 4.5f * Vector3.One,
-                Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(-90f)));
-            cave.SetFogEffectEnabled(true, Color.CornflowerBlue, popupDistance - 12f, popupDistance - 2f);
+            GameObject3D cave = new GameObject3D(resources.m3d_cave);
+            cave.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
 
             // Instantiate the procedural generator and initialize the level
-            level = new ProceduralGenerator(rail, 20f, cave, 225f, gold,
-                lowerObstacle, leftObstacle, rightObstacle, upperObstacle, popupDistance);
+            level = new ProceduralGenerator(cave, 220f, gold, lowerObstacle,
+                leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
 
 
             gameState = GameState.MainMenu;
@@ -287,7 +284,6 @@ namespace oldgoldmine_game
 
             resources.m3d_gold = Content.Load<Model>("models_3d/GoldCollectible/goldOre");
             resources.m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
-            resources.m3d_rails = Content.Load<Model>("models_3d/Rails/rails_segment");
             resources.m3d_cave = Content.Load<Model>("models_3d/Cave/cave_segment");
             resources.m3d_lowerObstacle = Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris");
             resources.m3d_leftObstacle = Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left");
@@ -541,7 +537,7 @@ namespace oldgoldmine_game
 
                 case GameState.Running:
                 {
-                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                    GraphicsDevice.Clear(Color.Black);
 
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;

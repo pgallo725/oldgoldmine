@@ -417,7 +417,7 @@ namespace oldgoldmine_game.Gameplay
 
         private const float garbageCollectionDistance = 10f;
 
-        float nextRailsPosition = 0f;
+        //float nextRailsPosition = 0f;
         float nextCavePosition = 0f;
         float nextObjectPosition = 80f;
 
@@ -431,13 +431,13 @@ namespace oldgoldmine_game.Gameplay
         private readonly Vector3 topCollectibleOffset = new Vector3(0f, 4f, 0f);
         
 
-        Queue<GameObject3D> rails;
+        //Queue<GameObject3D> rails;
         Queue<GameObject3D> caves;
         Queue<Collectible> collectibles;
         Queue<Obstacle> obstacles;
 
 
-        ObjectPool<GameObject3D> railsPool;
+        //ObjectPool<GameObject3D> railsPool;
         ObjectPool<GameObject3D> cavePool;
         ObjectPool<Collectible> goldPool;
         ObjectPool<Obstacle> obstaclesLowPool;
@@ -459,30 +459,22 @@ namespace oldgoldmine_game.Gameplay
 
 
 
-        public ProceduralGenerator(GameObject3D rail, float railLength, GameObject3D cave, float caveLength, 
-            Collectible gold, Obstacle lower, Obstacle left, Obstacle right, Obstacle upper, float popupDistance = 100f)
+        public ProceduralGenerator(GameObject3D cave, float caveLength, Collectible gold,
+            Obstacle lower, Obstacle left, Obstacle right, Obstacle upper, float popupDistance = 100f)
         {
-            this.rails = new Queue<GameObject3D>();
             this.caves = new Queue<GameObject3D>();
             this.collectibles = new Queue<Collectible>();
             this.obstacles = new Queue<Obstacle>();
 
-            this.railSegmentLength = railLength;
             this.caveSegmentLength = caveLength;
+            this.nextCavePosition = -caveLength;        // First cave segment is spawned behind the player to avoid starting outside the cave
             this.popupDistance = popupDistance;
 
-            this.railsPool = new ObjectPool<GameObject3D>(rail, 10);
             this.cavePool = new ObjectPool<GameObject3D>(cave, 4);
 
-            // Generate the first few rail and cave segments
+            // Generate the first few cave segments
 
-            for (int i = 0; i <= (int)(popupDistance / railLength); i++)
-            {
-                GenerateRails(nextRailsPosition);
-                nextRailsPosition += railSegmentLength;
-            }
-
-            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength)  + 0.5f); i++)
+            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength)  + 1.5f); i++)
             {
                 GenerateCave(nextCavePosition);
                 nextCavePosition += caveSegmentLength;
@@ -507,9 +499,6 @@ namespace oldgoldmine_game.Gameplay
 
         public void Reset()
         {
-            foreach (GameObject3D rail in rails)
-                rail.IsActive = false;
-
             foreach (GameObject3D cave in caves)
                 cave.IsActive = false;
 
@@ -519,22 +508,14 @@ namespace oldgoldmine_game.Gameplay
             foreach (Obstacle obstacle in obstacles)
                 obstacle.IsActive = false;
 
-            rails.Clear();
             caves.Clear();
             collectibles.Clear();
             obstacles.Clear();
 
-            nextRailsPosition = 0f;
-            nextCavePosition = 0f;
+            nextCavePosition = -caveSegmentLength;
             nextObjectPosition = 80f;
 
-            for (int i = 0; i <= (int)(popupDistance / railSegmentLength); i++)
-            {
-                GenerateRails(nextRailsPosition);
-                nextRailsPosition += railSegmentLength;
-            }
-
-            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength) + 0.5f); i++)
+            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength) + 1.5f); i++)
             {
                 GenerateCave(nextCavePosition);
                 nextCavePosition += caveSegmentLength;
@@ -544,14 +525,6 @@ namespace oldgoldmine_game.Gameplay
 
         public void Update(Vector3 playerPosition)
         {
-            // Generate the next rails or cave segment, or populate the level with new objects
-
-            if (playerPosition.Z >= nextRailsPosition - popupDistance)
-            {
-                GenerateRails(nextRailsPosition);
-                nextRailsPosition += railSegmentLength;
-            }
-                
             if (playerPosition.Z >= nextCavePosition - popupDistance)
             {
                 GenerateCave(nextCavePosition);
@@ -585,15 +558,6 @@ namespace oldgoldmine_game.Gameplay
 
                 obstacle.Update();
             }
-        }
-
-
-        private void GenerateRails(float position)
-        {
-            GameObject3D newRails = railsPool.GetOne();
-            newRails.EnableDefaultLighting();
-            newRails.Position = new Vector3(0f, 0f, position);
-            rails.Enqueue(newRails);
         }
 
 
@@ -707,9 +671,6 @@ namespace oldgoldmine_game.Gameplay
         // Draw the level objects according to the player's POV
         public void Draw (GameCamera camera)
         {
-            foreach (GameObject3D rail in rails)
-                rail.Draw(camera);
-
             foreach (GameObject3D cave in caves)
                 cave.Draw(camera);
 
