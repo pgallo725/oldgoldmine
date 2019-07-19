@@ -43,6 +43,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Engine\AudioManager.cs" />
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\GameObject3D.cs" />
     <Compile Include="Engine\InputManager.cs" />

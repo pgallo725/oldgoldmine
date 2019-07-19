@@ -343,8 +343,8 @@ namespace oldgoldmine_game.Gameplay
             },
 
             new Pattern {
-                PatternElement.Empty,
                 PatternElement.ObstacleBelow,
+                PatternElement.Empty,
                 PatternElement.ObstacleBelow,
                 PatternElement.GoldBothSides,
                 PatternElement.GoldBothSides,
@@ -411,13 +411,11 @@ namespace oldgoldmine_game.Gameplay
         Random rand = new Random();
 
 
-        private readonly float railSegmentLength;
         private readonly float caveSegmentLength;
         private readonly float popupDistance;
 
         private const float garbageCollectionDistance = 10f;
 
-        //float nextRailsPosition = 0f;
         float nextCavePosition = 0f;
         float nextObjectPosition = 80f;
 
@@ -431,13 +429,11 @@ namespace oldgoldmine_game.Gameplay
         private readonly Vector3 topCollectibleOffset = new Vector3(0f, 4f, 0f);
         
 
-        //Queue<GameObject3D> rails;
         Queue<GameObject3D> caves;
         Queue<Collectible> collectibles;
         Queue<Obstacle> obstacles;
 
 
-        //ObjectPool<GameObject3D> railsPool;
         ObjectPool<GameObject3D> cavePool;
         ObjectPool<Collectible> goldPool;
         ObjectPool<Obstacle> obstaclesLowPool;
@@ -497,20 +493,17 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // Reset the level to its original state, removing all generated items
         public void Reset()
         {
-            foreach (GameObject3D cave in caves)
-                cave.IsActive = false;
+            while (caves.Count > 0)
+                caves.Dequeue().IsActive = false;
 
-            foreach (Collectible gold in collectibles)
-                gold.IsActive = false;
+            while (collectibles.Count > 0)
+                collectibles.Dequeue().IsActive = false;
 
-            foreach (Obstacle obstacle in obstacles)
-                obstacle.IsActive = false;
-
-            caves.Clear();
-            collectibles.Clear();
-            obstacles.Clear();
+            while (obstacles.Count > 0)
+                obstacles.Dequeue().IsActive = false;
 
             nextCavePosition = -caveSegmentLength;
             nextObjectPosition = 80f;
@@ -539,24 +532,32 @@ namespace oldgoldmine_game.Gameplay
 
             // Garbage collect the items behind the player, update all active items
 
-            foreach (Collectible gold in collectibles)
+            foreach (GameObject3D cave in caves.ToArray())
+            {
+                if (playerPosition.Z >= cave.Position.Z + caveSegmentLength + garbageCollectionDistance)
+                {
+                    caves.Dequeue().IsActive = false;     // Remove previous cave segments from the active queue
+                }
+            }
+
+            foreach (Collectible gold in collectibles.ToArray())
             {
                 if (playerPosition.Z >= gold.Position.Z + garbageCollectionDistance)
                 {
                     gold.IsActive = false;
+                    collectibles.Dequeue();     // Remove element from the queue (knowing that collectibles are sorted in order of encounter)
                 }
-
-                gold.Update();
+                else gold.Update();
             }
 
-            foreach (Obstacle obstacle in obstacles)
+            foreach (Obstacle obstacle in obstacles.ToArray())
             {
                 if (playerPosition.Z >= obstacle.Position.Z + garbageCollectionDistance)
                 {
                     obstacle.IsActive = false;
+                    obstacles.Dequeue();        // Remove element from the queue (knowing that obstacles are sorted in order of encounter)
                 }
-
-                obstacle.Update();
+                else obstacle.Update();
             }
         }
 

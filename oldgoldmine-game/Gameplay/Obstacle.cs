@@ -7,7 +7,7 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Obstacle : GameObject3D
     {
-        private const bool debugDrawHitbox = true;
+        public static bool debugDrawHitbox = false;
 
         private BoundingBox hitbox;
 
@@ -137,6 +137,7 @@ namespace oldgoldmine_game.Gameplay
             if (CheckPlayerCollision(OldGoldMineGame.player))
             {
                 this.IsActive = false;
+                AudioManager.PlaySoundEffect("Crash_Sound");
                 OldGoldMineGame.Application.GameOver();
             }
         }

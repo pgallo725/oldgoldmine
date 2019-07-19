@@ -12,6 +12,8 @@ namespace oldgoldmine_game.Gameplay
         SpriteText scoreText;
         SpriteText speedText;
 
+        private bool framerateVisible = false;
+
 
         public void Initialize(in GameWindow window)
         {
@@ -37,8 +39,16 @@ namespace oldgoldmine_game.Gameplay
 
         public void UpdateFramerate(double framerate)
         {
-            framerateText.Text = framerate.ToString("0.# FPS");
-            framerateText.Color = framerate < 60f ? Color.Red : Color.LimeGreen;
+            if (framerateVisible)
+            {
+                framerateText.Text = framerate.ToString("0.# FPS");
+                framerateText.Color = framerate < 60f ? Color.Red : Color.LimeGreen;
+            }
+        }
+
+        public void ToggleFramerateVisible()
+        {
+            framerateVisible = !framerateVisible;
         }
 
         public void UpdateScore(int score)
@@ -66,7 +76,8 @@ namespace oldgoldmine_game.Gameplay
             spriteBatch.Begin();
 
             timerText.Draw(in spriteBatch);            // Show timer
-            framerateText.Draw(in spriteBatch);        // Show framerate
+            if (framerateVisible)
+                framerateText.Draw(in spriteBatch);    // Show framerate
             scoreText.Draw(in spriteBatch);            // Show score
             speedText.Draw(in spriteBatch);            // Show speed
 

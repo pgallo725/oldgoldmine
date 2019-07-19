@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using oldgoldmine_game.Engine;
 
 
@@ -14,6 +15,7 @@ namespace oldgoldmine_game.Gameplay
 
         private GameCamera camera;
         private GameObject3D model;
+        private SoundEffectInstance sound;
 
         private readonly Vector3 hitboxOffset = new Vector3(0f, -0.5f, 0f);
         internal BoundingSphere hitbox;
@@ -79,6 +81,9 @@ namespace oldgoldmine_game.Gameplay
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
 
+            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
+            sound.Pause();
+
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
@@ -89,6 +94,9 @@ namespace oldgoldmine_game.Gameplay
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
 
+            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
+            sound.Pause();
+
             this.camera = playerCamera;
             this.model = null;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
@@ -98,6 +106,9 @@ namespace oldgoldmine_game.Gameplay
         {
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
+
+            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
+            sound.Pause();
 
             this.camera = playerCamera;
             this.model = playerModel;
@@ -111,13 +122,15 @@ namespace oldgoldmine_game.Gameplay
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
 
+            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
+            sound.Pause();
+
             this.camera = playerCamera;
             this.model = playerModel;
             this.model.EnableDefaultLighting();
             this.model.Position = playerCamera.Position + modelOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }
-
 
 
         public void RotateUpDown(float degrees)
@@ -133,7 +146,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
-        public void LookUpDown(float degrees, bool freeMovement)
+        public void LookUpDown(float degrees, bool freeMovement = false)
         {
             float targetAngle = verticalLookAngle + degrees;
 
@@ -144,7 +157,7 @@ namespace oldgoldmine_game.Gameplay
             verticalLookAngle = targetAngle;
         }
 
-        public void LookLeftRight(float degrees, bool freeMovement)
+        public void LookLeftRight(float degrees, bool freeMovement = false)
         {
             float targetAngle = horizontalLookAngle + degrees;
 
@@ -171,6 +184,28 @@ namespace oldgoldmine_game.Gameplay
             camera.Move(speed * direction);
             if (model != null)
                 model.MovePosition(speed * direction);
+        }
+
+
+        public void Start()
+        {
+            sound.Play();
+        }
+
+        public void Pause()
+        {
+            sound.Pause();
+        }
+
+        public void Resume()
+        {
+            sound.Resume();
+        }
+
+        public void Kill()
+        {
+            sound.Stop();
+            AudioManager.StopEffectsByName("Gold_Pickup");
         }
 
 
@@ -224,6 +259,10 @@ namespace oldgoldmine_game.Gameplay
                 float interpolatedPosition = MathHelper.Lerp(0f, sideMovementOffset,
                     sideMovementTimepoint / sideMovementAnimDuration);
 
+                // Adjust audio panning towards the animation side direction, to emphasize the movement
+                float interpolatedPannning = MathHelper.Lerp(0f, direction == Vector3.Left ? -0.33f : 0.33f,
+                    sideMovementTimepoint / sideMovementAnimDuration);
+
                 if (model != null)
                 {
                     model.RotateAroundAxis(Vector3.Forward, direction.X * (interpolatedRotation - currentRotation));
@@ -231,6 +270,7 @@ namespace oldgoldmine_game.Gameplay
                 }
 
                 camera.Move(direction * (interpolatedPosition - currentSidePosition));
+                sound.Pan = interpolatedPannning;
 
                 currentRotation = interpolatedRotation;
                 currentSidePosition = interpolatedPosition;
@@ -252,6 +292,10 @@ namespace oldgoldmine_game.Gameplay
                 float interpolatedPosition = MathHelper.Lerp(sideMovementOffset, 0f,
                     sideMovementTimepoint / sideMovementAnimDuration);
 
+                // Gradually bring the audio panning back to centered
+                float interpolatedPannning = MathHelper.Lerp(direction == Vector3.Left ? -0.33f : 0.33f, 0f,
+                    sideMovementTimepoint / sideMovementAnimDuration);
+
                 if (model != null)
                 {
                     model.RotateAroundAxis(Vector3.Forward, direction.X * (interpolatedRotation - currentRotation));
@@ -259,6 +303,7 @@ namespace oldgoldmine_game.Gameplay
                 }
 
                 camera.Move(direction * (interpolatedPosition - currentSidePosition));
+                sound.Pan = interpolatedPannning;
 
                 currentRotation = interpolatedRotation;
                 currentSidePosition = interpolatedPosition;
@@ -343,6 +388,7 @@ namespace oldgoldmine_game.Gameplay
         {
             if (state == AnimationState.Idle && timeBeforeNextJump == 0f)
             {
+                sound.Pause();
                 state = AnimationState.Jump;
                 jumpTimepoint = 0f;
             }
@@ -369,7 +415,10 @@ namespace oldgoldmine_game.Gameplay
 
                 if (interpolatedJumpPosition == 0f)
                 {
-                    state = AnimationState.Idle;        // Stop jump animation when the rail is hit again
+                    sound.Resume();
+                    AudioManager.PlaySoundEffect("Rails_Hit", false, 0.6f, -0.1f);
+
+                    state = AnimationState.Idle;            // Stop jump animation when the rail is hit again
                     timeBeforeNextJump = jumpCooldown;
                 }
             }

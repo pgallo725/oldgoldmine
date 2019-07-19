@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using oldgoldmine_game.Menus;
 using oldgoldmine_game.Engine;
@@ -13,8 +15,8 @@ namespace oldgoldmine_game
     {
         /* 3D models for the game */
 
+        public Model[] m3d_carts;
         public Model m3d_gold;
-        public Model m3d_cart;
         public Model m3d_cave;
         public Model m3d_lowerObstacle;
         public Model m3d_leftObstacle;
@@ -84,6 +86,8 @@ namespace oldgoldmine_game
         public ButtonTexturePack plusButtonTextures;
         public ButtonTexturePack minusButtonTextures;
         public ButtonTexturePack textboxTextures;
+
+        public Texture2D[] cartPreviewImages;
 
         public Texture2D framedPanelTexture;
         public Texture2D lockIcon;
@@ -166,7 +170,6 @@ namespace oldgoldmine_game
         public static int BestScore { get { return bestScore; } set { bestScore = value; } }
 
         bool freeLook = false;
-        bool freeMovement = false;
 
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
@@ -256,6 +259,9 @@ namespace oldgoldmine_game
                 leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
 
 
+            AudioManager.MusicVolume = 0.8f;
+            AudioManager.PlaySong("Cave_MainTheme", true);
+
             gameState = GameState.MainMenu;
             IsMouseVisible = true;
         }
@@ -282,13 +288,28 @@ namespace oldgoldmine_game
 
             // Load 3D models for the game
 
+            resources.m3d_carts = new Model[4] 
+            {
+                Content.Load<Model>("models_3d/Minecarts/cart_wooden"),
+                Content.Load<Model>("models_3d/Minecarts/cart_iron"),
+                Content.Load<Model>("models_3d/Minecarts/cart_tank"),
+                Content.Load<Model>("models_3d/Minecarts/cart_golden")
+            };
             resources.m3d_gold = Content.Load<Model>("models_3d/GoldCollectible/goldOre");
-            resources.m3d_cart = Content.Load<Model>("models_3d/cart_lowpoly");
             resources.m3d_cave = Content.Load<Model>("models_3d/Cave/cave_segment");
             resources.m3d_lowerObstacle = Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris");
             resources.m3d_leftObstacle = Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left");
             resources.m3d_rightObstacle = Content.Load<Model>("models_3d/ObstacleRight/obstacle_right");
             resources.m3d_upperObstacle = Content.Load<Model>("models_3d/ObstacleTop/obstacle_top");
+
+            // Load sound effects and music for AudioManager
+
+            AudioManager.AddSong("Cave_MainTheme", Content.Load<Song>("sounds/Music/Main_Cave_Theme"));
+            AudioManager.AddSong("Cave_AmbientSound", Content.Load<Song>("sounds/Music/Cave_Ambient_Sound"));
+            AudioManager.AddSoundEffect("Gold_Pickup", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_GoldPickup"));
+            AudioManager.AddSoundEffect("Crash_Sound", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CrashSounds"));
+            AudioManager.AddSoundEffect("Rails_Hit", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_RailsMetalHit"));
+            AudioManager.AddSoundEffect("Minecart_Loop", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_MinecartLoop"));
 
             // Load 2D assets for UI elements
 
@@ -333,6 +354,15 @@ namespace oldgoldmine_game
 
             resources.textboxTextures = new GameResources.ButtonTexturePack(
                 textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled);
+
+
+            resources.cartPreviewImages = new Texture2D[4]
+            {
+                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_wooden"),
+                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_iron"),
+                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_tank"),
+                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_golden")
+            };
 
 
             resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel_framed");
@@ -389,13 +419,19 @@ namespace oldgoldmine_game
                         PauseGame();
 
                     if (InputManager.DebugKeyPressed)
-                        freeMovement = true;
-
+                    {
+                        Collectible.debugDrawHitbox = !Collectible.debugDrawHitbox;
+                        Obstacle.debugDrawHitbox = !Obstacle.debugDrawHitbox;
+                        hud.ToggleFramerateVisible();
+                    }
+                        
                     if (InputManager.FreeLookKeyPressed)
                     {
                         freeLook = !freeLook;
                         player.ResetCameraLook();
                     }
+
+                    // Update time-related information and parameters
 
                     timer.Update(gameTime);
 
@@ -412,79 +448,46 @@ namespace oldgoldmine_game
                     float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (freeMovement)
+                    // Move the player according to the current frame inputs
+                    
+                    player.Move(moveSpeed, Vector3.Backward);
+
+                    if (InputManager.RightKeyHold)
                     {
-                        if (Keyboard.GetState().IsKeyDown(Keys.W))
-                        {
-                            player.Move(moveSpeed, player.Camera.Forward);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.S))
-                        {
-                            player.Move(moveSpeed, player.Camera.Back);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.A))
-                        {
-                            player.Move(moveSpeed, player.Camera.Left);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.D))
-                        {
-                            player.Move(moveSpeed, player.Camera.Right);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                        {
-                            player.Move(moveSpeed, player.Camera.Up);
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                        {
-                            player.Move(moveSpeed, player.Camera.Down);
-                        }
+                        player.UpdateSideMovement(gameTime, Vector3.Right);
                     }
-                    else
+                    else if (InputManager.RightKeyReleased)
                     {
-                        player.Move(moveSpeed, Vector3.Backward);
-
-                        if (InputManager.RightKeyHold)
-                        {
-                            player.UpdateSideMovement(gameTime, Vector3.Right);
-                        }
-                        else if (InputManager.RightKeyReleased)
-                        {
-                            player.ReverseSideMovement(Vector3.Left);
-                        }
-
-                        if (InputManager.LeftKeyHold)
-                        {
-                            player.UpdateSideMovement(gameTime, Vector3.Left);
-                        }
-                        else if (InputManager.LeftKeyReleased)
-                        {
-                            player.ReverseSideMovement(Vector3.Right);
-                        }
-
-                        if (InputManager.DownKeyHold)
-                        {
-                            player.UpdateCrouchMovement(gameTime);
-                        }
-                        else if (InputManager.DownKeyReleased)
-                        {
-                            player.ReverseCrouch();
-                        }
-
-                        if (InputManager.JumpKeyPressed)
-                        {
-                            player.Jump();
-                        }
+                        player.ReverseSideMovement(Vector3.Left);
                     }
 
-                    if (freeLook || freeMovement)
+                    if (InputManager.LeftKeyHold)
                     {
-                        player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed, freeMovement);
-                        player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed, freeMovement);
+                        player.UpdateSideMovement(gameTime, Vector3.Left);
+                    }
+                    else if (InputManager.LeftKeyReleased)
+                    {
+                        player.ReverseSideMovement(Vector3.Right);
+                    }
+
+                    if (InputManager.DownKeyHold)
+                    {
+                        player.UpdateCrouchMovement(gameTime);
+                    }
+                    else if (InputManager.DownKeyReleased)
+                    {
+                        player.ReverseCrouch();
+                    }
+
+                    if (InputManager.JumpKeyPressed)
+                    {
+                        player.Jump();
+                    }
+
+                    if (freeLook)
+                    {
+                        player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
+                        player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
                     }
                     
 
@@ -579,11 +582,11 @@ namespace oldgoldmine_game
                     break;
             }
 
-
             base.Draw(gameTime);
         }
 
 
+        // Methods for managing game status changes
 
         public void NewGame()
         {
@@ -614,7 +617,7 @@ namespace oldgoldmine_game
                 GameCamera camera = (player != null) ? player.Camera : new GameCamera();
                 camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
                 player = new Player(camera,
-                    new GameObject3D(resources.m3d_cart, Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                    new GameObject3D(resources.m3d_carts[gameSettings.cart], Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                     new Vector3(0f, -2.4f, -0.75f), 1.2f);
 
                 level.InitializeSeed(gameSettings.seed);
@@ -623,8 +626,12 @@ namespace oldgoldmine_game
                 // Show the game HUD
                 hud.Show(timer, 60f, Score, Speed);
 
+                player.Start();
                 gameState = GameState.Running;
                 IsMouseVisible = false;
+
+                // Start playing ambient music
+                AudioManager.PlaySong("Cave_AmbientSound", true);
             }
         }
 
@@ -632,6 +639,7 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.GameOver)
             {
+                AudioManager.StopAllEffects();
                 gameState = GameState.NewGame;
                 StartGame(currentGameInfo);
             }
@@ -641,10 +649,10 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Running)
             {
+                player.Pause();
                 pauseMenu.Show();
                 gameState = GameState.Paused;
                 IsMouseVisible = true;
-                // anything else ?
             }
         }
 
@@ -652,9 +660,9 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Paused)
             {
+                player.Resume();
                 gameState = GameState.Running;
                 IsMouseVisible = false;
-                // anything else ?
             }
         }
 
@@ -662,6 +670,7 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.Running)
             {
+                player.Kill();
                 deathMenu.Show();
                 gameState = GameState.GameOver;
                 IsMouseVisible = true;
@@ -678,13 +687,19 @@ namespace oldgoldmine_game
         {
             if (gameState != GameState.MainMenu)
             {
+                if (gameState != GameState.NewGame)
+                    AudioManager.PlaySong("Cave_MainTheme");
+
+                AudioManager.StopAllEffects();      // Immediately stop all sound effects being played
+
                 mainMenu.Show();
                 gameState = GameState.MainMenu;
                 IsMouseVisible = true;
-                // anything else ?
             }
         }
 
+
+        // Score handling methods
 
         public static void UpdateScore(int points)
         {

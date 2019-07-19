@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using oldgoldmine_game.UI;
+using oldgoldmine_game.Engine;
 
 
 namespace oldgoldmine_game.Menus
@@ -24,6 +25,7 @@ namespace oldgoldmine_game.Menus
         private Image cartPreview;
         private ToggleSelector cartSelector;
         private SpriteText cartLockedLabel;
+        private Image cartTransparencyLayer;
         private Image cartLockedIcon;
 
         private SpriteText scoreMultiplierLabel;
@@ -31,7 +33,7 @@ namespace oldgoldmine_game.Menus
         private Button startButton;
         private Button backButton;
 
-        private Texture2D[] cartPreviewTextures = new Texture2D[4] { null, null, null, null };
+        
         private int[] cartPointsNeeded = { -1, 2500, 8000, 20000 };
 
 
@@ -118,7 +120,10 @@ namespace oldgoldmine_game.Menus
 
             cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Vector2(450, 440));
 
-            cartPreview = new Image(cartPreviewTextures[0], cartPanel.Position, new Vector2(420, 420));
+            cartPreview = new Image(OldGoldMineGame.resources.cartPreviewImages[0], cartPanel.Position, new Vector2(380, 380));
+
+            cartTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.6f)), cartPanel.Position, new Vector2(400, 400));
 
             cartSelector = new ToggleSelector(cartPanel.Position + new Vector2(0, 270), new Vector2(60, 60), 200,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
@@ -127,7 +132,7 @@ namespace oldgoldmine_game.Menus
             cartLockedLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Unlock with score ", Color.DimGray,
                 cartSelector.Position + new Vector2(0, 75));
 
-            cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Vector2(360, 360));
+            cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Vector2(300, 300));
 
 
             scoreMultiplierLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Score multiplier: 1.0x",
@@ -171,16 +176,18 @@ namespace oldgoldmine_game.Menus
 
         private void UpdateCartSelection()
         {
-            cartPreview.ImageTexture = cartPreviewTextures[SelectedCart];
+            cartPreview.ImageTexture = OldGoldMineGame.resources.cartPreviewImages[SelectedCart];
 
             if (OldGoldMineGame.BestScore > cartPointsNeeded[SelectedCart])
             {
+                cartTransparencyLayer.Enabled = false;
                 cartLockedLabel.Enabled = false;
                 cartLockedIcon.Enabled = false;
                 startButton.Enabled = true;
             }
             else
             {
+                cartTransparencyLayer.Enabled = true;
                 cartLockedLabel.Text = cartPointsNeeded[SelectedCart].ToString("Unlock with score > 0.#");
                 cartLockedLabel.Enabled = true;
                 cartLockedIcon.Enabled = true;
@@ -213,6 +220,7 @@ namespace oldgoldmine_game.Menus
             cartPreview.Draw(spriteBatch);
             cartSelector.Draw(spriteBatch);
             cartLockedLabel.Draw(spriteBatch);
+            cartTransparencyLayer.Draw(spriteBatch);
             cartLockedIcon.Draw(spriteBatch);
 
             scoreMultiplierLabel.Draw(spriteBatch);

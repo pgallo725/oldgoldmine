@@ -7,7 +7,7 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Collectible : GameObject3D
     {
-        private const bool debugDrawHitbox = true;
+        public static bool debugDrawHitbox = false;
 
         private BoundingBox hitbox;
 
@@ -138,6 +138,7 @@ namespace oldgoldmine_game.Gameplay
             {
                 this.IsActive = false;
                 OldGoldMineGame.UpdateScore(100);
+                AudioManager.PlaySoundEffect("Gold_Pickup", false, 1f, 0f);
             }
         }
 
