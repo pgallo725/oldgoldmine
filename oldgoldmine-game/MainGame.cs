@@ -192,8 +192,8 @@ namespace oldgoldmine_game
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
-            graphics.PreferredBackBufferWidth = 1600;
-            graphics.PreferredBackBufferHeight = 900;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
             //graphics.IsFullScreen = true;             // TODO: enable fullscreen support
 
             Window.Title = "The Old Gold Mine (Beta)";
