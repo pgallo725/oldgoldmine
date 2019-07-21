@@ -25,7 +25,7 @@ namespace oldgoldmine_game.Menus
             // PAUSE MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "GAME PAUSED",
-                Color.LightGray, new Vector2(viewport.Width / 2, viewport.Height * 0.1f), SpriteText.TextAnchor.MiddleCenter);
+                Color.LightGray, new Vector2(viewport.Width / 2, viewport.Height * 0.12f), SpriteText.TextAnchor.MiddleCenter);
 
             resumeButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "RESUME", Color.LightGoldenrodYellow,

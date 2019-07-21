@@ -27,7 +27,7 @@ namespace oldgoldmine_game.Menus
             // GAMEOVER MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
-                Color.DarkRed, new Vector2(viewport.Width / 2, viewport.Height * 0.08f), SpriteText.TextAnchor.MiddleCenter);
+                new Color(160, 0, 0, 255), new Vector2(viewport.Width / 2, viewport.Height * 0.1f), SpriteText.TextAnchor.MiddleCenter);
 
             replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 50), buttonSize, 
                 OldGoldMineGame.resources.menuItemsFont, "PLAY AGAIN", Color.LightGoldenrodYellow,

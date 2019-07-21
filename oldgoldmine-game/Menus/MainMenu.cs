@@ -28,7 +28,7 @@ namespace oldgoldmine_game.Menus
             // MAIN MENU LAYOUT SETUP
 
             gameTitle = new SpriteText(OldGoldMineGame.resources.gameTitleFont, "Old Gold Mine",
-                Color.DarkGoldenrod, new Vector2(viewport.Width / 2, viewport.Height * 0.15f), SpriteText.TextAnchor.MiddleCenter);
+                Color.DarkGoldenrod, new Vector2(viewport.Width / 2, viewport.Height * 0.16f), SpriteText.TextAnchor.MiddleCenter);
 
             playButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize, 
                 OldGoldMineGame.resources.menuItemsFont, "PLAY", Color.LightGoldenrodYellow,

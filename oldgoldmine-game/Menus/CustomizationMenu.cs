@@ -77,7 +77,7 @@ namespace oldgoldmine_game.Menus
             float screenWidth = viewport.Width;
             float screenHeight = viewport.Height;
 
-            anchorPointTitle = new Vector2(screenWidth * 0.5f, screenHeight * 0.075f);          // Position at center X and 7.5% Y from the top
+            anchorPointTitle = new Vector2(screenWidth * 0.5f, screenHeight * 0.08f);           // Position at center X and 8% Y from the top
             anchorPointCarts = new Vector2(screenWidth * 0.25f, screenHeight * 0.45f);          // Position at -25% X and -5% Y from the center
             anchorPointSettings = new Vector2(screenWidth * 0.75f, screenHeight * 0.45f);       // Position at +25% X and -5% Y from the center
             anchorPointScore = new Vector2(screenWidth * 0.25f, screenHeight * 0.875f);         // Position at -25% X and -37.5% Y from the center
@@ -129,10 +129,10 @@ namespace oldgoldmine_game.Menus
 
             cartSelector = new ToggleSelector(cartPanel.Position + new Vector2(0, 270), new Vector2(60, 60), 200,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
-                OldGoldMineGame.resources.hudFont, new List<string>() { "Cart.001", "Cart.002", "Cart.003", "Cart.004" });
+                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." });
 
             cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ", Color.DarkGray,
-                cartSelector.Position + new Vector2(0, 60));
+                cartSelector.Position + new Vector2(0, 65));
 
             cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Vector2(300, 300));
 
@@ -172,6 +172,12 @@ namespace oldgoldmine_game.Menus
         {
             scoreMultiplier = 1f + (difficultyToggle.SelectedValueIndex - 1) * 0.5f
                 + speedToggle.SelectedValueIndex * 0.05f;
+
+            if (scoreMultiplier > 1f)
+                scoreMultiplierLabel.Color = new Color(170, 240, 60, 255);
+            else if (scoreMultiplier < 1f)
+                scoreMultiplierLabel.Color = new Color(170, 0, 0, 255);
+            else scoreMultiplierLabel.Color = Color.White;
 
             scoreMultiplierLabel.Text = scoreMultiplier.ToString("Score multiplier: 0.00#x");
         }

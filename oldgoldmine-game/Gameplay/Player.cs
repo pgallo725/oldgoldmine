@@ -7,9 +7,11 @@ namespace oldgoldmine_game.Gameplay
 {
     public class Player
     {
+        // Maximum angles allowed for looking around vertically or horizontally
         private const float maxVerticalAngle = 15f;
         private const float maxHorizontalAngle = 40f;
 
+        // Current view angles (relative to movement direction, or Z axis)
         private float verticalLookAngle = 0.0f;
         private float horizontalLookAngle = 0.0f;
 
@@ -138,6 +140,8 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // Rotate the whole player (model + view) horizontally or vertically
+
         public void RotateUpDown(float degrees)
         {
             camera.RotateViewVertical(degrees);
@@ -150,6 +154,9 @@ namespace oldgoldmine_game.Gameplay
             model.RotateAroundAxis(Vector3.Down, degrees);
         }
 
+
+        // Rotate the player's view horizontally or vertically,
+        // constraining it to the maxVerticalAngle and maxHorizontalAngle values
 
         public void LookUpDown(float degrees, bool freeMovement = false)
         {
@@ -174,6 +181,8 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // Fix the player's camera view back to the center 
+        // (aligned with movement direction on Z axis)
         public void ResetCameraLook()
         {
             LookUpDown(-verticalLookAngle, true);
@@ -244,7 +253,10 @@ namespace oldgoldmine_game.Gameplay
                 model.Draw(camera);
         }
 
-        
+
+
+        /* Based on the type of side movement animation, the player model and camera position are
+         * interpolated between the 2 keyframe positions according to the current animation timepoint */
 
         public void UpdateSideMovement(GameTime gameTime, Vector3 direction)
         {
@@ -324,6 +336,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // Start the animation of returning from a left or right position
         public void ReverseSideMovement(Vector3 reverseDirection)
         {
             if (state == AnimationState.RightMovement && reverseDirection == Vector3.Left)
@@ -344,6 +357,10 @@ namespace oldgoldmine_game.Gameplay
         {
             if (state == AnimationState.Idle)
                 state = AnimationState.Crouch;
+
+            // Based on the direction of the animation (crouching or standing up again)
+            // the vertical position of the camera is obtained by interpolating the 2 keyframe positions
+            // according to the current animation timepoint
 
             if (state == AnimationState.Crouch)
             {
@@ -380,6 +397,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // Start the animation of returning from the crouch position
         public void ReverseCrouch()
         {
             if (state == AnimationState.Crouch)
@@ -390,7 +408,7 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
-
+        // Start the jumping animation
         public void Jump()
         {
             if (state == AnimationState.Idle && timeBeforeNextJump == 0f)
@@ -402,6 +420,8 @@ namespace oldgoldmine_game.Gameplay
         }
 
 
+        // While the jumping animation is active, update at every frame the vertical position
+        // according to the physical law of x(t) = v0 * t + 1/2 * a * t^2
         private void UpdateJump(GameTime gameTime)
         {
             if (state == AnimationState.Jump)
@@ -420,6 +440,7 @@ namespace oldgoldmine_game.Gameplay
 
                 currentJumpPosition = interpolatedJumpPosition;
 
+                // At the end of the jumping animation, play the Rails_Hit sound effect
                 if (interpolatedJumpPosition == 0f)
                 {
                     sound.Resume();

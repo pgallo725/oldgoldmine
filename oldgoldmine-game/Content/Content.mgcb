@@ -904,42 +904,6 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/Minecarts/wooden_bake.png
 
-#begin ui_elements_2d/background_images/scene_render_01.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ui_elements_2d/background_images/scene_render_01.jpg
-
-#begin ui_elements_2d/background_images/scene_render_02.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ui_elements_2d/background_images/scene_render_02.jpg
-
-#begin ui_elements_2d/background_images/scene_render_03.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ui_elements_2d/background_images/scene_render_03.jpg
-
 #begin ui_elements_2d/button_main/woodButton_normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1041,4 +1005,40 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=DxtCompressed
 /build:models_3d/GoldCollectible/goldOres_BakedMaterial.png
+
+#begin ui_elements_2d/background_images/scene_render_02.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ui_elements_2d/background_images/scene_render_02.jpg
+
+#begin ui_elements_2d/background_images/scene_render_01.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ui_elements_2d/background_images/scene_render_01.jpg
+
+#begin ui_elements_2d/background_images/scene_render_03.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ui_elements_2d/background_images/scene_render_03.jpg
 
