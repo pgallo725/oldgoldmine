@@ -11,6 +11,8 @@ namespace oldgoldmine_game.Menus
         /// </summary>
         protected Texture2D menuBackground;
 
+        protected Image semiTransparencyLayer;      // to slightly obscure the background image and not interfere with items in the foreground
+
 
         /// <summary>
         /// Initialize the elements of this menu and their layout 

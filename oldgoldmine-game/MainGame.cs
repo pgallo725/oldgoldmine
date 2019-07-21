@@ -87,6 +87,13 @@ namespace oldgoldmine_game
         public ButtonTexturePack minusButtonTextures;
         public ButtonTexturePack textboxTextures;
 
+
+        /* Other UI images and textures */
+
+        public Texture2D mainMenuBackground;
+        public Texture2D pauseMenuBackground;
+        public Texture2D deathMenuBackground;
+
         public Texture2D[] cartPreviewImages;
 
         public Texture2D framedPanelTexture;
@@ -95,9 +102,10 @@ namespace oldgoldmine_game
 
         /* Fonts */
 
-        public SpriteFont menuButtonFont;
-        public SpriteFont settingSelectorFont;
+        public SpriteFont gameTitleFont;
         public SpriteFont menuTitleFont;
+        public SpriteFont menuItemsFont;
+        public SpriteFont menuSmallFont;
         public SpriteFont hudFont;
         public SpriteFont debugInfoFont;
     }
@@ -126,7 +134,7 @@ namespace oldgoldmine_game
         public static OldGoldMineGame Application { get { return application; } }
 
         public static GameResources resources = new GameResources();
-
+        
         GameState gameState;
 
         HUD hud = new HUD();
@@ -136,6 +144,7 @@ namespace oldgoldmine_game
         GameOverMenu deathMenu = new GameOverMenu();
 
 
+        public GameTime gameTime;
         public static Timer timer;
         public static Player player;
         ProceduralGenerator level;
@@ -192,11 +201,11 @@ namespace oldgoldmine_game
             OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
             OldGoldMineGame.application = this;
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            //graphics.IsFullScreen = true;             // TODO: enable fullscreen support
+            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-            Window.Title = "The Old Gold Mine (Beta)";
+            Window.IsBorderless = true;
+            Window.Title = "The Old Gold Mine";
         }
 
         /// <summary>
@@ -213,10 +222,10 @@ namespace oldgoldmine_game
 
 
             // Initialize menus
-            mainMenu.Initialize(GraphicsDevice.Viewport, null);
-            customMenu.Initialize(GraphicsDevice.Viewport, null);
-            pauseMenu.Initialize(GraphicsDevice.Viewport, null);
-            deathMenu.Initialize(GraphicsDevice.Viewport, null);
+            mainMenu.Initialize(GraphicsDevice.Viewport, resources.mainMenuBackground);
+            customMenu.Initialize(GraphicsDevice.Viewport, resources.mainMenuBackground);
+            pauseMenu.Initialize(GraphicsDevice.Viewport, resources.pauseMenuBackground);
+            deathMenu.Initialize(GraphicsDevice.Viewport, resources.deathMenuBackground);
             
 
             // Setup HUD
@@ -230,7 +239,7 @@ namespace oldgoldmine_game
                        
             Collectible gold = new Collectible(resources.m3d_gold, Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
             gold.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance);
-            gold.SetEmissiveColor(Color.Yellow);
+            gold.SetEmissiveColor(Color.Gold);
 
             Obstacle lowerObstacle = new Obstacle(new GameObject3D(resources.m3d_lowerObstacle,
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
@@ -314,8 +323,8 @@ namespace oldgoldmine_game
             // Load 2D assets for UI elements
 
             resources.menuButtonTextures = new GameResources.ButtonTexturePack(
-                Content.Load<Texture2D>("ui_elements_2d/woodButton_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/woodButton_highlighted"));
+                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_normal"),
+                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_highlighted"));
 
             resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal"),
@@ -365,15 +374,23 @@ namespace oldgoldmine_game
             };
 
 
-            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel_framed");
+            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel/panel_framed");
             resources.lockIcon = Content.Load<Texture2D>("ui_elements_2d/lock_icon");
 
-            resources.menuButtonFont = Content.Load<SpriteFont>("ui_elements_2d/MenuFont");
-            resources.debugInfoFont = Content.Load<SpriteFont>("ui_elements_2d/SmallFont");
-            
-            resources.hudFont = resources.menuButtonFont;       // tmp
-            resources.menuTitleFont = resources.menuButtonFont;
-            resources.settingSelectorFont = resources.hudFont;
+            resources.mainMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_01");
+            resources.pauseMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_02");
+            resources.deathMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_03");
+
+
+            // Load fonts
+
+            resources.gameTitleFont = Content.Load<SpriteFont>("fonts/MainGame_Title_Font");
+            resources.menuTitleFont = Content.Load<SpriteFont>("fonts/MenuTitle_Bahnschrift_Font");
+            resources.menuItemsFont = Content.Load<SpriteFont>("fonts/MenuItem_Bahnschrift_Font");
+            resources.menuSmallFont = Content.Load<SpriteFont>("fonts/MenuSmall_Bahnschrift_Font");
+
+            resources.hudFont = resources.menuItemsFont;
+            resources.debugInfoFont = Content.Load<SpriteFont>("fonts/DebugInfo_Font");
         }
 
 
@@ -396,6 +413,8 @@ namespace oldgoldmine_game
         {
             if (!IsActive)
                 return;
+
+            this.gameTime = gameTime;
 
             InputManager.UpdateFrameInput();
 

@@ -8,6 +8,7 @@ namespace oldgoldmine_game.Gameplay
     public class Collectible : GameObject3D
     {
         public static bool debugDrawHitbox = false;
+        private const float rotationSpeed = 120f;
 
         private BoundingBox hitbox;
 
@@ -133,6 +134,10 @@ namespace oldgoldmine_game.Gameplay
         {
             if (!IsActive)
                 return;
+
+            float rotationAmount = rotationSpeed *
+                (float)OldGoldMineGame.Application.gameTime.ElapsedGameTime.TotalSeconds;
+            this.RotateAroundAxis(Vector3.Up, rotationAmount);
 
             if (CheckPlayerCollision(OldGoldMineGame.player))
             {

@@ -18,6 +18,8 @@ namespace oldgoldmine_game.Menus
         public override void Initialize(Viewport viewport, Texture2D background)
         {
             this.menuBackground = background;
+            this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.33f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
 
             Vector2 buttonSize = new Vector2(400, 120);
 
@@ -25,21 +27,21 @@ namespace oldgoldmine_game.Menus
             // GAMEOVER MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
-                Color.White, new Vector2(viewport.Width / 2, viewport.Height * 0.075f), SpriteText.TextAnchor.MiddleCenter);
+                Color.DarkRed, new Vector2(viewport.Width / 2, viewport.Height * 0.08f), SpriteText.TextAnchor.MiddleCenter);
 
             replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 50), buttonSize, 
-                OldGoldMineGame.resources.menuButtonFont, "PLAY AGAIN", Color.White,
+                OldGoldMineGame.resources.menuItemsFont, "PLAY AGAIN", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures);
 
             menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 100), buttonSize, 
-                OldGoldMineGame.resources.menuButtonFont, "BACK TO MENU", Color.White,
+                OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures);
 
-            scoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "Final score: " + OldGoldMineGame.Score,
+            scoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Final score: " + OldGoldMineGame.Score,
                 Color.LightGoldenrodYellow, new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175),
                 SpriteText.TextAnchor.MiddleCenter);
 
-            newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuButtonFont, "NEW HIGHSCORE!",
+            newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "NEW HIGHSCORE!",
                 Color.Orange, scoreText.Position + new Vector2(0, 55), SpriteText.TextAnchor.MiddleCenter);
         }
 
@@ -61,12 +63,15 @@ namespace oldgoldmine_game.Menus
 
         public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
-            screen.Clear(Color.DarkRed);
+            screen.Clear(Color.Black);
 
             spriteBatch.Begin();
 
             if (menuBackground != null)
+            {
                 spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
+                semiTransparencyLayer.Draw(spriteBatch);
+            }
 
             menuTitle.Draw(spriteBatch);
             replayButton.Draw(spriteBatch);

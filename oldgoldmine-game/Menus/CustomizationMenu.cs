@@ -2,8 +2,8 @@
 using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using oldgoldmine_game.UI;
 using oldgoldmine_game.Engine;
+using oldgoldmine_game.UI;
 
 
 namespace oldgoldmine_game.Menus
@@ -68,6 +68,8 @@ namespace oldgoldmine_game.Menus
         public override void Initialize(Viewport viewport, Texture2D background)
         {
             this.menuBackground = background;
+            this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.66f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
 
 
             Vector2 buttonSize = new Vector2(240, 80);
@@ -85,11 +87,11 @@ namespace oldgoldmine_game.Menus
             // CUSTOMIZATION MENU LAYOUT SETUP
 
             backButton = new Button(anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
-                OldGoldMineGame.resources.menuButtonFont, "BACK", Color.White,
+                OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures);
 
             startButton = new Button(anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
-                OldGoldMineGame.resources.menuButtonFont, "START", Color.White,
+                OldGoldMineGame.resources.menuItemsFont, "START", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures);
 
 
@@ -97,25 +99,25 @@ namespace oldgoldmine_game.Menus
                 anchorPointTitle, SpriteText.TextAnchor.MiddleCenter);
 
 
-            difficultyLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Difficulty",
+            difficultyLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Difficulty",
                 anchorPointSettings - new Vector2(250, 0), SpriteText.TextAnchor.MiddleRight);
 
             difficultyToggle = new ToggleSelector(difficultyLabel.Position + new Vector2(300, 0), new Vector2(70, 70), 240,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
-                OldGoldMineGame.resources.settingSelectorFont, new List<string>() { "Easy", "Medium", "Hard" });
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" });
 
-            speedLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Starting\n     speed",
+            speedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Starting\n     speed",
                 difficultyLabel.Position - new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             speedToggle = new ToggleSelector(speedLabel.Position + new Vector2(300, 0), new Vector2(60, 60), 180,
                 OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures,
-                OldGoldMineGame.resources.settingSelectorFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" });
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" });
 
-            seedLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Seed",
+            seedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Seed",
                 difficultyLabel.Position + new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             seedBox = new TextBox(seedLabel.Position + new Vector2(300, 0), new Vector2(320, 100), new Vector2(32, 20),
-                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.settingSelectorFont, characterLimit: 10);
+                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, characterLimit: 10);
 
 
             cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Vector2(450, 440));
@@ -129,13 +131,13 @@ namespace oldgoldmine_game.Menus
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
                 OldGoldMineGame.resources.hudFont, new List<string>() { "Cart.001", "Cart.002", "Cart.003", "Cart.004" });
 
-            cartLockedLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Unlock with score ", Color.DimGray,
-                cartSelector.Position + new Vector2(0, 75));
+            cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ", Color.DarkGray,
+                cartSelector.Position + new Vector2(0, 60));
 
             cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Vector2(300, 300));
 
 
-            scoreMultiplierLabel = new SpriteText(OldGoldMineGame.resources.settingSelectorFont, "Score multiplier: 1.0x",
+            scoreMultiplierLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Score multiplier: 1.0x",
                 anchorPointScore, SpriteText.TextAnchor.MiddleLeft);
         }
 
@@ -152,14 +154,14 @@ namespace oldgoldmine_game.Menus
             UpdateScoreMultiplier();
             UpdateCartSelection();
 
-            if (startButton.IsClicked() || Engine.InputManager.EnterKeyPressed )
+            if (startButton.IsClicked() || InputManager.EnterKeyPressed )
             {
                 OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings(
                     ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
 
                 OldGoldMineGame.Application.StartGame(newGameSettings);
             }
-            else if (backButton.IsClicked() || Engine.InputManager.BackKeyPressed )
+            else if (backButton.IsClicked() || InputManager.BackKeyPressed )
             {
                 OldGoldMineGame.Application.ToMainMenu();
             }
@@ -203,7 +205,10 @@ namespace oldgoldmine_game.Menus
             spriteBatch.Begin();
 
             if (menuBackground != null)
+            {
                 spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
+                semiTransparencyLayer.Draw(spriteBatch);
+            }
 
             titleText.Draw(spriteBatch);
 

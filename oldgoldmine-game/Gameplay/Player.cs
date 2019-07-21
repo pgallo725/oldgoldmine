@@ -76,6 +76,11 @@ namespace oldgoldmine_game.Gameplay
         private float currentVerticalPosition = normalVerticalPosition;
 
 
+
+        /* Constructors first calculate jump animation values based on configuration parameters,
+         * then initialize AudioManager so that it can play the proper sound effects and 
+         * finally creates the Player object by putting together a Camera, a 3D model and an hitbox */
+
         public Player(GameCamera playerCamera)
         {
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
@@ -186,6 +191,8 @@ namespace oldgoldmine_game.Gameplay
                 model.MovePosition(speed * direction);
         }
 
+
+        // Handle game state changes relative to the player
 
         public void Start()
         {
