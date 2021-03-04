@@ -1,25 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oldgoldmine-game", "oldgoldmine-game\oldgoldmine-game.csproj", "{5F14A6E6-7875-42F8-9DA2-A9CF0D03B009}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oldgoldmine-game", "oldgoldmine-game\oldgoldmine-game.csproj", "{7F559F72-AB43-4CEF-9E92-DFD160DB1E0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5F14A6E6-7875-42F8-9DA2-A9CF0D03B009}.Debug|x86.ActiveCfg = Debug|x86
-		{5F14A6E6-7875-42F8-9DA2-A9CF0D03B009}.Debug|x86.Build.0 = Debug|x86
-		{5F14A6E6-7875-42F8-9DA2-A9CF0D03B009}.Release|x86.ActiveCfg = Release|x86
-		{5F14A6E6-7875-42F8-9DA2-A9CF0D03B009}.Release|x86.Build.0 = Release|x86
+		{7F559F72-AB43-4CEF-9E92-DFD160DB1E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F559F72-AB43-4CEF-9E92-DFD160DB1E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F559F72-AB43-4CEF-9E92-DFD160DB1E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F559F72-AB43-4CEF-9E92-DFD160DB1E0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {32C59B71-59B8-4671-BB5A-7C183B7153D2}
+		SolutionGuid = {8CEEF079-E9AB-4637-B309-764A7169DB6F}
 	EndGlobalSection
 EndGlobal
