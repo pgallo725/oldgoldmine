@@ -65,8 +65,9 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Initialize(Viewport viewport, Texture2D background)
+        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
         {
+            this.parent = parent;
             this.menuBackground = background;
             this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
                 new Color(Color.Black, 0.66f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
@@ -88,11 +89,11 @@ namespace oldgoldmine_game.Menus
 
             backButton = new Button(anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures);
+                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
 
             startButton = new Button(anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "START", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures);
+                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
 
 
             titleText = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "CUSTOMIZE YOUR GAME", Color.DarkOrange,
@@ -103,21 +104,21 @@ namespace oldgoldmine_game.Menus
                 anchorPointSettings - new Vector2(250, 0), SpriteText.TextAnchor.MiddleRight);
 
             difficultyToggle = new ToggleSelector(difficultyLabel.Position + new Vector2(300, 0), new Vector2(70, 70), 240,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" });
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" },
+                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
             speedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Starting\n     speed",
                 difficultyLabel.Position - new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             speedToggle = new ToggleSelector(speedLabel.Position + new Vector2(300, 0), new Vector2(60, 60), 180,
-                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" });
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" },
+                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
 
             seedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Seed",
                 difficultyLabel.Position + new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             seedBox = new TextBox(seedLabel.Position + new Vector2(300, 0), new Vector2(320, 100), new Vector2(32, 20),
-                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, characterLimit: 10);
+                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, characterLimit: 10, shade: Color.BurlyWood);
 
 
             cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Vector2(450, 440));
@@ -128,8 +129,8 @@ namespace oldgoldmine_game.Menus
                 new Color(Color.Black, 0.6f)), cartPanel.Position, new Vector2(400, 400));
 
             cartSelector = new ToggleSelector(cartPanel.Position + new Vector2(0, 270), new Vector2(60, 60), 200,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures,
-                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." });
+                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." },
+                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
             cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ", Color.DarkGray,
                 cartSelector.Position + new Vector2(0, 65));
@@ -148,20 +149,18 @@ namespace oldgoldmine_game.Menus
             difficultyToggle.Update();
             seedBox.Update();
             cartSelector.Update();
-            startButton.Update();
-            backButton.Update();
 
             UpdateScoreMultiplier();
             UpdateCartSelection();
 
-            if (startButton.IsClicked() || InputManager.EnterKeyPressed )
+            if (startButton.Update() || InputManager.EnterKeyPressed )
             {
                 OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings(
                     ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
 
                 OldGoldMineGame.Application.StartGame(newGameSettings);
             }
-            else if (backButton.IsClicked() || InputManager.BackKeyPressed )
+            else if (backButton.Update() || InputManager.BackKeyPressed )
             {
                 OldGoldMineGame.Application.ToMainMenu();
             }
@@ -255,6 +254,12 @@ namespace oldgoldmine_game.Menus
 
             UpdateScoreMultiplier();
             UpdateCartSelection();
+        }
+
+        public override void CloseSubmenu()
+        {
+            // CustomizationMenu has no nested submenus
+            throw new System.NotSupportedException();
         }
     }
 }

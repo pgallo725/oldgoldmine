@@ -67,6 +67,11 @@ namespace oldgoldmine_game.Engine
         
         static Dictionary<string, SFX> soundEffects = new Dictionary<string, SFX>();
 
+        public static void SetVolume(int masterVolume, int musicVolume, int effectsVolume)
+        {
+            SoundEffect.MasterVolume = (effectsVolume / 100f) * (masterVolume / 100f);
+            MediaPlayer.Volume = (musicVolume / 100f) * (masterVolume / 100f);
+        }
 
         // Music
 
@@ -127,12 +132,6 @@ namespace oldgoldmine_game.Engine
             // (by TrackNumber and song Name)
         }
 
-
-        public static float MusicVolume
-        {
-            get { return MediaPlayer.Volume; }
-            set { MediaPlayer.Volume = value; }
-        }
 
         public static void PauseMusic()
         {

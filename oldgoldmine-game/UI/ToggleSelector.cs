@@ -94,6 +94,19 @@ namespace oldgoldmine_game.UI
             }
         }
 
+        /// <summary>
+        /// The color used to shade the ToggleSelector left and right buttons (Color.White is the neutral value)
+        /// </summary>
+        public Color Shade
+        {
+            get { return leftButton.Shade; }
+            set
+            {
+                leftButton.Shade = value;
+                rightButton.Shade = value;
+            }
+        }
+
 
         /// <summary>
         /// Create a new ToggleSelector item inside the bounds defined by the Recangle, initializing the left and right buttons
@@ -101,19 +114,21 @@ namespace oldgoldmine_game.UI
         /// </summary>
         /// <param name="elementArea">Rectangle that will contain the entire element, 2 buttons on the sides and text in the middle.</param>
         /// <param name="buttonSize">Size (in pixels) of the left and right buttons.</param>
-        /// <param name="leftButtonTextures">Texture pack to use for the left button.</param>
-        /// <param name="rightButtonTextures">Texture pack to use for the right button.</param>
         /// <param name="font">SpriteFont that will be used to draw the text of the currently selected option.</param>
         /// <param name="textValues">List of selectable items.</param>
+        /// <param name="leftButtonTextures">Texture pack to use for the left button.</param>
+        /// <param name="rightButtonTextures">Texture pack to use for the right button.</param>
+        /// <param name="buttonShade">Color used to shade the left and right Buttons' sprites (Color.White equals leaving it at default).</param>
         public ToggleSelector(Rectangle elementArea, Vector2 buttonSize,
-             GameResources.ButtonTexturePack leftButtonTextures, GameResources.ButtonTexturePack rightButtonTextures,
-            SpriteFont font, List<string> textValues)
+            SpriteFont font, List<string> textValues,
+            GameResources.ButtonTexturePack leftButtonTextures, GameResources.ButtonTexturePack rightButtonTextures,
+            Color buttonShade = default)
         {
             leftButton = new Button(new Vector2(elementArea.Left + buttonSize.X/2, elementArea.Height/2),
-                buttonSize, null, leftButtonTextures);
+                buttonSize, null, leftButtonTextures, buttonShade);
 
             rightButton = new Button(new Vector2(elementArea.Right - buttonSize.X / 2, elementArea.Height / 2),
-                buttonSize, null, rightButtonTextures);
+                buttonSize, null, rightButtonTextures, buttonShade);
 
             this.index = 0;
             this.values = textValues;
@@ -135,19 +150,21 @@ namespace oldgoldmine_game.UI
         /// <param name="position">The position of this element, in pixel coordinates, referred to its center point.</param>
         /// <param name="buttonSize">Size (in pixels) of the left and right buttons.</param>
         /// <param name="textWidth">Width (in pixels) of the central text area separating the buttons.</param>
-        /// <param name="leftButtonTextures">Texture pack to use for the left button.</param>
-        /// <param name="rightButtonTextures">Texture pack to use for the right button.</param>
         /// <param name="font">SpriteFont that will be used to draw the text of the currently selected option.</param>
         /// <param name="textValues">List of selectable items.</param>
-        public ToggleSelector(Vector2 position, Vector2 buttonSize, float textWidth,
-             GameResources.ButtonTexturePack leftButtonTextures, GameResources.ButtonTexturePack rightButtonTextures,
-            SpriteFont font, List<string> textValues)
+        /// <param name="leftButtonTextures">Texture pack to use for the left button.</param>
+        /// <param name="rightButtonTextures">Texture pack to use for the right button.</param>
+        /// <param name="buttonShade">Color used to shade the left and right Buttons' sprites (Color.White equals leaving it at default).</param>
+        public ToggleSelector(Vector2 position, Vector2 buttonSize,
+            float textWidth, SpriteFont font, List<string> textValues,
+            GameResources.ButtonTexturePack leftButtonTextures, GameResources.ButtonTexturePack rightButtonTextures,
+            Color buttonShade = default)
         {
             leftButton = new Button(position - new Vector2(textWidth / 2 + buttonSize.X / 2, 0f),
-                buttonSize, null, leftButtonTextures);
+                buttonSize, null, leftButtonTextures, buttonShade);
 
             rightButton = new Button(position + new Vector2(textWidth / 2 + buttonSize.X / 2, 0f),
-                buttonSize, null, rightButtonTextures);
+                buttonSize, null, rightButtonTextures, buttonShade);
 
             this.index = 0;
             this.values = textValues;
@@ -166,15 +183,23 @@ namespace oldgoldmine_game.UI
         /// <summary>
         /// Update the ToggleSelector status in the current frame
         /// </summary>
-        public void Update()
+        /// <returns>Boolean flag indicating if the ToggleSelector value has changed in the current frame</returns>
+        public bool Update()
         {
-            leftButton.Update();
-            rightButton.Update();
+            bool interacted = false;
 
-            if (leftButton.IsClicked())
+            if (leftButton.Update())
+            {
                 LeftButtonClick();
-            else if (rightButton.IsClicked())
+                interacted = true;
+            }
+            if (rightButton.Update())
+            {
                 RightButtonClick();
+                interacted = true;
+            }
+            
+            return interacted;
         }
 
 

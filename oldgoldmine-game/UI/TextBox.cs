@@ -20,6 +20,7 @@ namespace oldgoldmine_game.UI
 
         private TextboxState state = TextboxState.Normal;
         private GameResources.ButtonTexturePack textures;
+        private Color boxShade;
 
         private Rectangle boxArea;
         private Rectangle textArea;
@@ -84,6 +85,11 @@ namespace oldgoldmine_game.UI
             }
         }
 
+        /// <summary>
+        /// The color shade used to filter the TextBox's sprite (use Color.White if you don't want any color correction)
+        /// </summary>
+        public Color Shade { get { return boxShade; } set { boxShade = value; } }
+
 
         /// <summary>
         /// The text content acquired by this TextBox
@@ -102,14 +108,16 @@ namespace oldgoldmine_game.UI
         /// <param name="font">SpriteFont used to render the text of this element.</param>
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
         /// <param name="characterLimit">Maximum number of characters of the input string (default = unlimited)</param>
-        public TextBox(Rectangle area, Vector2 margin, GameResources.ButtonTexturePack texturePack,
-            SpriteFont font, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int characterLimit = int.MaxValue)
+        /// <param name="shade">Color used to shade the element's sprite (the default value is the same as Color.White)</param>
+        public TextBox(Rectangle area, Vector2 margin, SpriteFont font, GameResources.ButtonTexturePack texturePack,
+            SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int characterLimit = int.MaxValue, Color shade = default)
         {
             this.boxArea = area;
             this.textArea = new Rectangle(area.Location + margin.ToPoint(), area.Size - (2 * margin).ToPoint());
             this.textures = texturePack;
             this.content = new SpriteText(font, "", CalculateAnchorPoint(textArea, textAnchor).ToVector2(), textAnchor);
             this.characterLimit = characterLimit;
+            this.boxShade = shade == default ? Color.White : shade;
         }
 
         /// <summary>
@@ -123,14 +131,17 @@ namespace oldgoldmine_game.UI
         /// <param name="font">SpriteFont used to render the text of this element.</param>
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
         /// <param name="characterLimit">Maximum number of characters of the input string (default = unlimited)</param>
+        /// <param name="shade">Color used to shade the element's sprite (the default value is the same as Color.White)</param>
         public TextBox(Vector2 position, Vector2 boxSize, Vector2 margin, GameResources.ButtonTexturePack texturePack,
-            SpriteFont font, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int characterLimit = int.MaxValue)
+            SpriteFont font, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft,
+            int characterLimit = int.MaxValue, Color shade = default)
         {
             this.boxArea = new Rectangle((position - boxSize / 2f).ToPoint(), boxSize.ToPoint());
             this.textArea = new Rectangle(boxArea.Location + margin.ToPoint(), boxArea.Size - (2 * margin).ToPoint());
             this.textures = texturePack;
             this.content = new SpriteText(font, "", CalculateAnchorPoint(textArea, textAnchor).ToVector2(), textAnchor);
             this.characterLimit = characterLimit;
+            this.boxShade = shade == default ? Color.White : shade;
         }
 
 
@@ -188,13 +199,16 @@ namespace oldgoldmine_game.UI
         /// <summary>
         /// Update the TextBox status, based on user actions/input
         /// </summary>
-        public void Update()
+        /// <returns>Boolean flag indicating if the content of the TextBox has changed in the current frame</returns>
+        public bool Update()
         {
+            bool interacted = false;
+
             if (state != TextboxState.Disabled)
             {
                 if (state == TextboxState.Selected)
                 {
-                    GetKeys();
+                    interacted = GetKeys();
 
                     if (ClickedOutside())
                         state = TextboxState.Normal;
@@ -208,6 +222,8 @@ namespace oldgoldmine_game.UI
                 }
                 else state = TextboxState.Normal;
             }
+
+            return interacted;
         }
 
         private bool ClickedInside()
@@ -221,10 +237,11 @@ namespace oldgoldmine_game.UI
         }
 
 
-        private void GetKeys()
+        private bool GetKeys()
         {
             KeyboardState kbState = Keyboard.GetState();
             Keys[] pressedKeys = kbState.GetPressedKeys();
+            bool keyDown = false;
 
             //check if any of the previous update's keys are no longer pressed
             foreach (Keys key in lastPressedKeys)
@@ -237,11 +254,16 @@ namespace oldgoldmine_game.UI
             foreach (Keys key in pressedKeys)
             {
                 if (!lastPressedKeys.Contains(key))
+                {
                     OnKeyDown(key);
+                    keyDown = true;
+                }
             }
 
             //save the currently pressed keys so we can compare on the next update
             lastPressedKeys = pressedKeys;
+
+            return keyDown;
         }
 
 
@@ -297,7 +319,7 @@ namespace oldgoldmine_game.UI
 
         public void Draw(in SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(textures[(int)state], boxArea, Color.BurlyWood);       // TODO: button color ?
+            spriteBatch.Draw(textures[(int)state], boxArea, boxShade);
 
             content.Draw(in spriteBatch);
         }

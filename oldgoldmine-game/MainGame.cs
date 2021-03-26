@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using System.Linq;
+using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -115,6 +116,105 @@ namespace oldgoldmine_game
     /// </summary>
     public class OldGoldMineGame : Game
     {
+        public struct Settings
+        {
+            /* Audio settings */
+
+            public int MasterVolume { get; set; }
+            public int MusicVolume { get; set; }
+            public int EffectsVolume { get; set; }
+
+
+            /* Video settings */
+
+            public enum DisplayMode
+            {
+                Fullscreen,
+                Windowed,
+                Borderless
+            }
+
+            public DisplayMode CurrentDisplayMode { get; set; }
+            public int ResolutionSetting { get; set; }
+
+
+            /* Methods */
+
+            public void Load()
+            {
+                const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game\\Settings";
+
+                int defaultResolution = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
+                    .Select((v, i) => new {value = v, index = i})
+                    .First(item => item.value == GraphicsAdapter.DefaultAdapter.CurrentDisplayMode)
+                    .index;
+
+                try     /* Read settings values from the registry */
+                {
+                    MasterVolume = (int)(Registry.GetValue(key, "MasterVolume", 100) ?? 100);
+                    MusicVolume = (int)(Registry.GetValue(key, "MusicVolume", 100) ?? 100);
+                    EffectsVolume = (int)(Registry.GetValue(key, "EffectsVolume", 100) ?? 100);
+
+                    CurrentDisplayMode = (DisplayMode)(Registry.GetValue(key, "DisplayMode", 0) ?? 0);
+                    ResolutionSetting = (int)(Registry.GetValue(key, "ResolutionSetting", defaultResolution) ?? defaultResolution);
+                }
+                catch (System.Exception)    /* Load default settings */
+                {
+                    settings.MasterVolume = 100;
+                    settings.MusicVolume = 100;
+                    settings.EffectsVolume = 100;
+                    settings.CurrentDisplayMode = DisplayMode.Fullscreen;
+                    settings.ResolutionSetting = defaultResolution;
+                }
+            }
+
+            public void Save()
+            {
+                const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game\\Settings";
+                Registry.SetValue(key, "MasterVolume", settings.MasterVolume);
+                Registry.SetValue(key, "MusicVolume", settings.MusicVolume);
+                Registry.SetValue(key, "EffectsVolume", settings.EffectsVolume);
+                Registry.SetValue(key, "DisplayMode", (int)settings.CurrentDisplayMode);
+                Registry.SetValue(key, "ResolutionSetting", settings.ResolutionSetting);
+            }
+
+            public void Apply()
+            {
+                AudioManager.SetVolume(MasterVolume, MusicVolume, EffectsVolume);
+
+                try
+                {
+                    Microsoft.Xna.Framework.Graphics.DisplayMode resolution = 
+                        GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
+                            .Skip(ResolutionSetting)
+                            .Take(1)
+                            .Single();
+
+                    graphics.PreferredBackBufferWidth = resolution.Width;
+                    graphics.PreferredBackBufferHeight = resolution.Height;
+                }
+                catch
+                {
+                    graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                }
+
+                graphics.IsFullScreen = (CurrentDisplayMode == DisplayMode.Fullscreen);
+                graphics.ApplyChanges();
+
+                if (CurrentDisplayMode != DisplayMode.Fullscreen)
+                {
+                    var screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    var screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                    var windowWidth = application.Window.ClientBounds.Width;
+                    var windowHeight = application.Window.ClientBounds.Height;
+
+                    application.Window.IsBorderless = (CurrentDisplayMode == DisplayMode.Borderless);
+                    application.Window.Position = new Point((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
+                }
+            }
+        }
+
         public enum GameState
         {
             MainMenu,
@@ -133,6 +233,7 @@ namespace oldgoldmine_game
         private static OldGoldMineGame application;
         public static OldGoldMineGame Application { get { return application; } }
 
+        public static Settings settings = new Settings();
         public static GameResources resources = new GameResources();
         
         GameState gameState;
@@ -203,8 +304,9 @@ namespace oldgoldmine_game
 
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            graphics.IsFullScreen = false;
 
-            Window.IsBorderless = true;
+            Window.IsBorderless = false;
             Window.Title = "The Old Gold Mine";
         }
 
@@ -217,6 +319,9 @@ namespace oldgoldmine_game
         protected override void Initialize()
         {
             base.Initialize();
+
+            settings.Load();
+            settings.Apply();
 
             BestScore = LoadScore();
 
@@ -268,7 +373,6 @@ namespace oldgoldmine_game
                 leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
 
 
-            AudioManager.MusicVolume = 0.8f;
             AudioManager.PlaySong("Cave_MainTheme", true);
 
             gameState = GameState.MainMenu;
@@ -735,20 +839,21 @@ namespace oldgoldmine_game
         public int LoadScore()
         {
             const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
-            int? score = 0;
+            int? score;
 
             try
             {
-                score = (int)Registry.GetValue(key, "Best_Score", 0);   // type int? is nullable (if key doesn't exist)
+                score = Registry.GetValue(key, "Highscore", 0) as int?;   // type int? is nullable (if key doesn't exist)
                 if (score == null)
                     score = 0;
             }
             catch (System.Exception)
             {
-                // nothing
+                return 0;
             }
 
             return score.Value;
         }
+
     }
 }

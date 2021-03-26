@@ -15,8 +15,9 @@ namespace oldgoldmine_game.Menus
         private SpriteText scoreText;
         private SpriteText newHighscoreText;
 
-        public override void Initialize(Viewport viewport, Texture2D background)
+        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
         {
+            this.parent = parent;
             this.menuBackground = background;
             this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
                 new Color(Color.Black, 0.33f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
@@ -31,11 +32,11 @@ namespace oldgoldmine_game.Menus
 
             replayButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 50), buttonSize, 
                 OldGoldMineGame.resources.menuItemsFont, "PLAY AGAIN", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures);
+                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
             menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 100), buttonSize, 
                 OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures);
+                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
             scoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Final score: " + OldGoldMineGame.Score,
                 Color.LightGoldenrodYellow, new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175),
@@ -48,16 +49,14 @@ namespace oldgoldmine_game.Menus
 
         public override void Update()
         {
-            replayButton.Update();
-            menuButton.Update();
-
-            if (InputManager.PauseKeyPressed)
-                OldGoldMineGame.Application.ResumeGame();
-
-            if (replayButton.IsClicked())
+            if (replayButton.Update() || InputManager.PauseKeyPressed)
+            {
                 OldGoldMineGame.Application.RestartGame();
-            else if (menuButton.IsClicked())
+            }
+            else if (menuButton.Update())
+            {
                 OldGoldMineGame.Application.ToMainMenu();
+            }
         }
 
 
@@ -90,6 +89,13 @@ namespace oldgoldmine_game.Menus
 
             replayButton.Enabled = true;
             menuButton.Enabled = true;
+        }
+
+
+        public override void CloseSubmenu()
+        {
+            // GameOverMenu has no nested submenus
+            throw new System.NotSupportedException();
         }
     }
 }

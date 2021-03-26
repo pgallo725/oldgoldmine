@@ -10,16 +10,23 @@ namespace oldgoldmine_game.Menus
         private SpriteText menuTitle;
 
         private Button resumeButton;
+        private Button optionsButton;
         private Button menuButton;
 
+        private OptionsMenu optionsMenu = new OptionsMenu();
+        private bool optionsActive;
 
-        public override void Initialize(Viewport viewport, Texture2D background)
+
+        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
         {
+            this.parent = parent;
             this.menuBackground = background;
             this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
                 new Color(Color.Black, 0.4f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
 
             Vector2 buttonSize = new Vector2(400, 120);
+
+            optionsMenu.Initialize(viewport, background, this);
 
 
             // PAUSE MENU LAYOUT SETUP
@@ -27,49 +34,74 @@ namespace oldgoldmine_game.Menus
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "GAME PAUSED",
                 Color.LightGray, new Vector2(viewport.Width / 2, viewport.Height * 0.12f), SpriteText.TextAnchor.MiddleCenter);
 
-            resumeButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 75), buttonSize,
+            resumeButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 80), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "RESUME", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures);
+                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 75), buttonSize,
+            optionsButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 60), buttonSize,
+                OldGoldMineGame.resources.menuItemsFont, "OPTIONS", Color.LightGoldenrodYellow,
+                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+
+            menuButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 200), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures);
+                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
         }
 
 
         public override void Update()
         {
-            resumeButton.Update();
-            menuButton.Update();
-
-            if (InputManager.PauseKeyPressed)
-                OldGoldMineGame.Application.ResumeGame();
-
-            if (resumeButton.IsClicked())
-                OldGoldMineGame.Application.ResumeGame();
-            else if (menuButton.IsClicked())
-                OldGoldMineGame.Application.ToMainMenu();
+            if (!optionsActive)
+            {
+                if (resumeButton.Update() || InputManager.PauseKeyPressed)
+                {
+                    OldGoldMineGame.Application.ResumeGame();
+                }
+                else if (optionsButton.Update())
+                {
+                    optionsActive = true;
+                    optionsMenu.Show();
+                }
+                else if (menuButton.Update())
+                {
+                    OldGoldMineGame.Application.ToMainMenu();
+                }
+            }
+            else
+            {
+                // If the options menu is the one currently active, the Update call is forwarded
+                // without running any code inside the PauseMenu
+                optionsMenu.Update();
+            }
         }
 
 
         public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
-            screen.Clear(Color.Black);
-
-            spriteBatch.Begin();
-
-            if (menuBackground != null)
+            if (!optionsActive)
             {
-                spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
-                semiTransparencyLayer.Draw(spriteBatch);
+                screen.Clear(Color.Black);
+
+                spriteBatch.Begin();
+
+                if (menuBackground != null)
+                {
+                    spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
+                    semiTransparencyLayer.Draw(spriteBatch);
+                }
+
+                menuTitle.Draw(spriteBatch);
+
+                resumeButton.Draw(spriteBatch);
+                optionsButton.Draw(spriteBatch);
+                menuButton.Draw(spriteBatch);
+
+                spriteBatch.End();
             }
-
-            menuTitle.Draw(spriteBatch);
-
-            resumeButton.Draw(spriteBatch);
-            menuButton.Draw(spriteBatch);
-
-            spriteBatch.End();
+            else
+            {
+                // If the options menu is the one currently active, it gets drawn instead of the PauseMenu
+                optionsMenu.Draw(screen, spriteBatch);
+            }
         }
 
 
@@ -77,6 +109,12 @@ namespace oldgoldmine_game.Menus
         {
             resumeButton.Enabled = true;
             menuButton.Enabled = true;
+        }
+
+
+        public override void CloseSubmenu()
+        {
+            optionsActive = false;
         }
     }
 }
