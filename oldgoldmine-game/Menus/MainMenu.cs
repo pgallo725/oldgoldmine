@@ -56,6 +56,38 @@ namespace oldgoldmine_game.Menus
         }
 
 
+        protected override void Layout()
+        {
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Vector2 center = viewport.Bounds.Center.ToVector2();
+            Vector2 buttonSize = new Vector2(400, 110);
+
+            this.semiTransparencyLayer.Position = center;
+            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+
+            gameTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.16f);
+
+            playButton.Position = center - new Vector2(0, 40);
+            optionsButton.Position = center + new Vector2(0, 80);
+            exitButton.Position = center + new Vector2(0, 200);
+
+            highscoreText.Position = new Vector2(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3 / 2 + 150);
+        }
+
+
+        public override void Show()
+        {
+            Layout();
+
+            highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
+
+            playButton.Enabled = true;
+            optionsButton.Enabled = true;
+            exitButton.Enabled = true;
+            optionsActive = false;
+        }
+
+
         public override void Update()
         {
             if (!optionsActive)
@@ -115,20 +147,11 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Show()
-        {
-            highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
-
-            playButton.Enabled = true;
-            optionsButton.Enabled = true;
-            exitButton.Enabled = true;
-            optionsActive = false;
-        }
-
-
         // Hide the OptionsMenu entity and switch back to the MainMenu Update/Draw
         public override void CloseSubmenu()
         {
+            Layout();   // If the display options have changed, the layout needs to be updated
+
             optionsActive = false;
         }
     }

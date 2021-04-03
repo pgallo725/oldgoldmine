@@ -143,6 +143,62 @@ namespace oldgoldmine_game.Menus
         }
 
 
+        protected override void Layout()
+        {
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Vector2 buttonSize = new Vector2(240, 80);
+
+            this.semiTransparencyLayer.Position = viewport.Bounds.Center.ToVector2();
+            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+
+            anchorPointTitle = new Vector2(viewport.Width * 0.5f, viewport.Height * 0.08f);
+            anchorPointCarts = new Vector2(viewport.Width * 0.25f, viewport.Height * 0.45f);
+            anchorPointSettings = new Vector2(viewport.Width * 0.75f, viewport.Height * 0.45f);
+            anchorPointScore = new Vector2(viewport.Width * 0.25f, viewport.Height * 0.875f);
+            anchorPointButtons = new Vector2(viewport.Width * 0.75f, viewport.Height * 0.875f);
+
+            backButton.Position = anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0);
+            startButton.Position = anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0);
+
+            titleText.Position = anchorPointTitle;
+
+            difficultyLabel.Position = anchorPointSettings - new Vector2(250, 0);
+            difficultyToggle.Position = difficultyLabel.Position + new Vector2(300, 0);
+
+            speedLabel.Position = difficultyLabel.Position - new Vector2(0, 150);
+            speedToggle.Position = speedLabel.Position + new Vector2(300, 0);
+
+            seedLabel.Position = difficultyLabel.Position + new Vector2(0, 150);
+            seedBox.Position = seedLabel.Position + new Vector2(300, 0);
+
+            cartPanel.Position = anchorPointCarts;
+            cartPreview.Position = cartPanel.Position;
+            cartTransparencyLayer.Position = cartPanel.Position;
+            cartSelector.Position = cartPanel.Position + new Vector2(0, 270);
+            cartLockedLabel.Position = cartSelector.Position + new Vector2(0, 65);
+            cartLockedIcon.Position = cartPanel.Position;
+
+            scoreMultiplierLabel.Position = anchorPointScore;
+        }
+
+
+        // Reset all the UI elements and selectable values to their original status
+        public override void Show()
+        {
+            Layout();
+
+            speedToggle.SelectedValueIndex = 0;
+            difficultyToggle.SelectedValueIndex = 1;
+
+            seedBox.Content = string.Empty;
+
+            cartSelector.SelectedValueIndex = 0;
+
+            UpdateScoreMultiplier();
+            UpdateCartSelection();
+        }
+
+
         public override void Update()
         {
             speedToggle.Update();
@@ -241,20 +297,6 @@ namespace oldgoldmine_game.Menus
             spriteBatch.End();
         }
 
-
-        // Reset all the UI elements and selectable values to their original status
-        public override void Show()
-        {
-            speedToggle.SelectedValueIndex = 0;
-            difficultyToggle.SelectedValueIndex = 1;
-
-            seedBox.Content = string.Empty;
-
-            cartSelector.SelectedValueIndex = 0;
-
-            UpdateScoreMultiplier();
-            UpdateCartSelection();
-        }
 
         public override void CloseSubmenu()
         {

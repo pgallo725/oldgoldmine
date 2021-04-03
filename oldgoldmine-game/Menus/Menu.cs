@@ -29,6 +29,12 @@ namespace oldgoldmine_game.Menus
 
 
         /// <summary>
+        /// Caluculates the layout of UI elements in the menu, depending on the viewport size
+        /// </summary>
+        protected abstract void Layout();
+
+
+        /// <summary>
         /// Prepare the menu to be shown on screen, by setting all the elements to their appropriate status
         /// </summary>
         public abstract void Show();

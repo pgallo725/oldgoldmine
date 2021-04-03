@@ -47,6 +47,37 @@ namespace oldgoldmine_game.Menus
         }
 
 
+        protected override void Layout()
+        {
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Vector2 center = viewport.Bounds.Center.ToVector2();
+            Vector2 buttonSize = new Vector2(400, 120);
+
+            this.semiTransparencyLayer.Position = center;
+            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+
+            menuTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.1f);
+
+            replayButton.Position = center - new Vector2(0, 50);
+            menuButton.Position = center + new Vector2(0, 100);
+
+            scoreText.Position = new Vector2(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175);
+            newHighscoreText.Position = scoreText.Position + new Vector2(0, 55);
+        }
+
+
+        public override void Show()
+        {
+            Layout();
+
+            scoreText.Text = "Final score: " + OldGoldMineGame.Score;
+            newHighscoreText.Enabled = OldGoldMineGame.Score > OldGoldMineGame.BestScore;
+
+            replayButton.Enabled = true;
+            menuButton.Enabled = true;
+        }
+
+
         public override void Update()
         {
             if (replayButton.Update() || InputManager.PauseKeyPressed)
@@ -79,16 +110,6 @@ namespace oldgoldmine_game.Menus
             newHighscoreText.Draw(spriteBatch);
 
             spriteBatch.End();
-        }
-
-
-        public override void Show()
-        {
-            scoreText.Text = "Final score: " + OldGoldMineGame.Score;
-            newHighscoreText.Enabled = OldGoldMineGame.Score > OldGoldMineGame.BestScore;
-
-            replayButton.Enabled = true;
-            menuButton.Enabled = true;
         }
 
 

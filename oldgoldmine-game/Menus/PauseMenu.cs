@@ -48,6 +48,22 @@ namespace oldgoldmine_game.Menus
         }
 
 
+        protected override void Layout()
+        {
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Vector2 center = viewport.Bounds.Center.ToVector2();
+
+            this.semiTransparencyLayer.Position = center;
+            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+
+            menuTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.12f);
+
+            resumeButton.Position = center - new Vector2(0, 80);
+            optionsButton.Position = center + new Vector2(0, 60);
+            menuButton.Position = center + new Vector2(0, 200);
+        }
+
+
         public override void Update()
         {
             if (!optionsActive)
@@ -72,6 +88,15 @@ namespace oldgoldmine_game.Menus
                 // without running any code inside the PauseMenu
                 optionsMenu.Update();
             }
+        }
+
+
+        public override void Show()
+        {
+            Layout();
+
+            resumeButton.Enabled = true;
+            menuButton.Enabled = true;
         }
 
 
@@ -105,15 +130,10 @@ namespace oldgoldmine_game.Menus
         }
 
 
-        public override void Show()
-        {
-            resumeButton.Enabled = true;
-            menuButton.Enabled = true;
-        }
-
-
         public override void CloseSubmenu()
         {
+            Layout();   // If the display options have changed, the layout needs to be updated
+
             optionsActive = false;
         }
     }

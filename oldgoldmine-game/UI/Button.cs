@@ -40,7 +40,8 @@ namespace oldgoldmine_game.UI
             {
                 Vector2 deltaMovement = value - this.Position;
                 buttonArea.Location = value.ToPoint() - buttonArea.Size / new Point(2);
-                buttonText.Position += deltaMovement;
+                if (buttonText != null)
+                    buttonText.Position += deltaMovement;
             }
         }
 

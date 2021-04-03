@@ -55,7 +55,7 @@ namespace oldgoldmine_game.Menus
             // OPTIONS MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "EDIT SETTINGS",
-                Color.LightGray, new Vector2(viewport.Width / 2, viewport.Height * 0.12f), SpriteText.TextAnchor.MiddleCenter);
+                Color.LightGray, new Vector2(screenWidth / 2, screenHeight * 0.12f), SpriteText.TextAnchor.MiddleCenter);
 
 
             masterVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Master volume",
@@ -146,9 +146,59 @@ namespace oldgoldmine_game.Menus
 
             OldGoldMineGame.settings.Apply();
 
-            // TODO need to re-initialize all menus when the resolution is changed
+            Layout();   // Update menu layout on-the-fly when the game resolution is changed
 
             confirmButton.Enabled = false;
+        }
+
+
+        protected override void Layout()
+        {
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Vector2 buttonSize = new Vector2(225, 75);
+            
+            anchorPointVolumes = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.25f);
+            anchorPointDisplay = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.625f);
+            anchorPointButtons = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.89f);
+
+            this.semiTransparencyLayer.Position = viewport.Bounds.Center.ToVector2();
+            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+
+            menuTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.12f);
+
+            masterVolumeLabel.Position = anchorPointVolumes - new Vector2(300, 0);
+            masterVolumeSelector.Position = masterVolumeLabel.Position + new Vector2(600, 0);
+
+            musicVolumeLabel.Position = masterVolumeLabel.Position + new Vector2(0, 100);
+            musicVolumeSelector.Position = musicVolumeLabel.Position + new Vector2(600, 0);
+
+            effectsVolumeLabel.Position = musicVolumeLabel.Position + new Vector2(0, 100);
+            effectsVolumeSelector.Position = effectsVolumeLabel.Position + new Vector2(600, 0);
+
+            displayModeLabel.Position = anchorPointDisplay - new Vector2(300, 0);
+            displayModeSelector.Position = displayModeLabel.Position + new Vector2(600, 0);
+
+            resolutionLabel.Position = displayModeLabel.Position + new Vector2(0, 100);
+            resolutionSelector.Position = resolutionLabel.Position + new Vector2(600, 0);
+
+            cancelButton.Position = anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0);
+            confirmButton.Position = anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0);
+        }
+
+
+        public override void Show()
+        {
+            Layout();
+
+            masterVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MasterVolume / 5;
+            musicVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MusicVolume / 5;
+            effectsVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.EffectsVolume / 5;
+
+            displayModeSelector.SelectedValueIndex = (int)OldGoldMineGame.settings.CurrentDisplayMode;
+            resolutionSelector.SelectedValueIndex = OldGoldMineGame.settings.ResolutionSetting;
+
+            confirmButton.Enabled = false;
+            cancelButton.Enabled = true;
         }
 
 
@@ -187,19 +237,6 @@ namespace oldgoldmine_game.Menus
             spriteBatch.End();
         }
 
-
-        public override void Show()
-        {
-            masterVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MasterVolume / 5;
-            musicVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MusicVolume / 5;
-            effectsVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.EffectsVolume / 5;
-
-            displayModeSelector.SelectedValueIndex = (int)OldGoldMineGame.settings.CurrentDisplayMode;
-            resolutionSelector.SelectedValueIndex = OldGoldMineGame.settings.ResolutionSetting;
-
-            confirmButton.Enabled = false;
-            cancelButton.Enabled = true;
-        }
 
         public override void CloseSubmenu()
         {
