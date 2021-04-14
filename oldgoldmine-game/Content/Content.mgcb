@@ -119,8 +119,8 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
+/processorParam:RotationX=-90
+/processorParam:RotationY=-90
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
@@ -265,8 +265,8 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
+/processorParam:RotationX=-90
+/processorParam:RotationY=90
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
@@ -284,7 +284,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -303,7 +303,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -322,7 +322,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -389,7 +389,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -480,7 +480,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -499,7 +499,7 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
+/processorParam:RotationX=-90
 /processorParam:RotationY=0
 /processorParam:RotationZ=0
 /processorParam:Scale=1
@@ -554,8 +554,8 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
+/processorParam:RotationX=-90
+/processorParam:RotationY=180
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
