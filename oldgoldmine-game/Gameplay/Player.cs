@@ -221,7 +221,7 @@ namespace oldgoldmine_game.Gameplay
         public void Kill()
         {
             sound.Stop();
-            AudioManager.StopEffectsByName("Gold_Pickup");
+            AudioManager.StopSoundEffect("Gold_Pickup");
         }
 
 

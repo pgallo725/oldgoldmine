@@ -418,7 +418,7 @@ namespace oldgoldmine_game
             // Load sound effects and music for AudioManager
 
             AudioManager.AddSong("Cave_MainTheme", Content.Load<Song>("sounds/Music/Main_Cave_Theme"));
-            AudioManager.AddSong("Cave_AmbientSound", Content.Load<Song>("sounds/Music/Cave_Ambient_Sound"));
+            AudioManager.AddSoundEffect("Cave_Ambient", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CaveAmbient"));
             AudioManager.AddSoundEffect("Gold_Pickup", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_GoldPickup"));
             AudioManager.AddSoundEffect("Crash_Sound", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CrashSounds"));
             AudioManager.AddSoundEffect("Rails_Hit", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_RailsMetalHit"));
@@ -521,6 +521,8 @@ namespace oldgoldmine_game
             this.gameTime = gameTime;
 
             InputManager.UpdateFrameInput();
+
+            AudioManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             switch (gameState)
             {
@@ -637,7 +639,6 @@ namespace oldgoldmine_game
                     break;
             }
 
-
             base.Update(gameTime);
         }
 
@@ -753,8 +754,11 @@ namespace oldgoldmine_game
                 gameState = GameState.Running;
                 IsMouseVisible = false;
 
-                // Start playing ambient music
-                AudioManager.PlaySong("Cave_AmbientSound", true);
+                // Fade*out the menu music
+                AudioManager.FadeOutMusic(1.5f);
+
+                // Start playing ambient sounds
+                AudioManager.PlaySoundEffect("Cave_Ambient", true, 0.9f);
             }
         }
 
@@ -762,7 +766,7 @@ namespace oldgoldmine_game
         {
             if (gameState == GameState.GameOver)
             {
-                AudioManager.StopAllEffects();
+                AudioManager.StopAllSoundEffects();
                 gameState = GameState.NewGame;
                 StartGame(currentGameInfo);
             }
@@ -811,9 +815,9 @@ namespace oldgoldmine_game
             if (gameState != GameState.MainMenu)
             {
                 if (gameState != GameState.NewGame)
-                    AudioManager.PlaySong("Cave_MainTheme");
+                    AudioManager.PlaySong("Cave_MainTheme", true);
 
-                AudioManager.StopAllEffects();      // Immediately stop all sound effects being played
+                AudioManager.StopAllSoundEffects();      // Immediately stop all sound effects being played
 
                 mainMenu.Show();
                 gameState = GameState.MainMenu;
