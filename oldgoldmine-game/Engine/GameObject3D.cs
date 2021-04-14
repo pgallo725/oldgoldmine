@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
 
     public class GameObject3D : Poolable

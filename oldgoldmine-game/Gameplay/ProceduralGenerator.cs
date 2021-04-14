@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using oldgoldmine_game.Engine;
+using OldGoldMine.Engine;
 
 
-namespace oldgoldmine_game.Gameplay
+namespace OldGoldMine.Gameplay
 {
     public class ProceduralGenerator
     {

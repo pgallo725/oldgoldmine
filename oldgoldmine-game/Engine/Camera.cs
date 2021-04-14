@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
 
     public class GameCamera

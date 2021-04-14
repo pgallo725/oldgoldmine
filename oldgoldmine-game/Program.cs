@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace oldgoldmine_game
+namespace OldGoldMine
 {
     public static class Program
     {

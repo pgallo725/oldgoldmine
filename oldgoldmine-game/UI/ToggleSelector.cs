@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using oldgoldmine_game.Engine;
+using OldGoldMine.Engine;
 
-namespace oldgoldmine_game.UI
+namespace OldGoldMine.UI
 {
     class ToggleSelector : IComponentUI
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
 
     public abstract class Poolable : ICloneable

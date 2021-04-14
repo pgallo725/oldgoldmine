@@ -3,9 +3,9 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using oldgoldmine_game.Engine;
+using OldGoldMine.Engine;
 
-namespace oldgoldmine_game.UI
+namespace OldGoldMine.UI
 {
     class TextBox : IComponentUI
     {

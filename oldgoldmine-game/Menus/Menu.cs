@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using oldgoldmine_game.UI;
+using OldGoldMine.UI;
 
-namespace oldgoldmine_game.Menus
+namespace OldGoldMine.Menus
 {
     abstract class Menu
     {

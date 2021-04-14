@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
 
     public static class InputManager

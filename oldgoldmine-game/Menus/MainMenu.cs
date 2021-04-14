@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using oldgoldmine_game.Engine;
-using oldgoldmine_game.UI;
+using OldGoldMine.Engine;
+using OldGoldMine.UI;
 
 
-namespace oldgoldmine_game.Menus
+namespace OldGoldMine.Menus
 {
     class MainMenu : Menu
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using oldgoldmine_game.Engine;
+using OldGoldMine.Engine;
 
 
-namespace oldgoldmine_game.Gameplay
+namespace OldGoldMine.Gameplay
 {
     public class Player
     {

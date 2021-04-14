@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
     // Creates a 1x1 pixel texture of a solid color
     public class SolidColorTexture : Texture2D

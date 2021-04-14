@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
-using oldgoldmine_game.Menus;
-using oldgoldmine_game.Engine;
-using oldgoldmine_game.Gameplay;
+using OldGoldMine.Menus;
+using OldGoldMine.Engine;
+using OldGoldMine.Gameplay;
 
 
-namespace oldgoldmine_game
+namespace OldGoldMine
 {
     public struct GameResources
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace oldgoldmine_game.UI
+namespace OldGoldMine.UI
 {
     public interface IComponentUI
     {

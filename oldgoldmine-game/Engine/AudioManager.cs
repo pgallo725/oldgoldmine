@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
 
-namespace oldgoldmine_game.Engine
+namespace OldGoldMine.Engine
 {
     public static class AudioManager
     {
