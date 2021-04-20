@@ -3,22 +3,30 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OldGoldMine.UI
 {
+    /// <summary>
+    /// Common class interface for all components of the menus and in-game UI.
+    /// </summary>
     public interface IComponentUI
     {
         /// <summary>
-        /// The pixel coordinates referring to the center of this UI element
+        /// Determines if this UI element is active and interactable or disabled/hidden.
         /// </summary>
-        Vector2 Position { get; set; }
+        public bool Enabled { get; set; }
 
         /// <summary>
-        /// Flag which determines if this UI element is active and interactable or disabled/hidden
+        /// The pixel coordinates referring to the center of this UI element.
         /// </summary>
-        bool Enabled { get; set; }
+        public Point Position { get; set; }
 
         /// <summary>
-        /// Draw the UI element on the screen
+        /// The size of this UI element, in pixels.
+        /// </summary>
+        public Point Size { get; set; }
+
+        /// <summary>
+        /// Draw the UI element on the screen.
         /// </summary>
         /// <param name="spriteBatch">An opened SpriteBatch object that will be used to draw the element.</param>
-        void Draw(in SpriteBatch spriteBatch);
+        public void Draw(in SpriteBatch spriteBatch);
     }
 }

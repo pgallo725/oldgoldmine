@@ -1,15 +1,12 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using OldGoldMine.Engine;
 
 namespace OldGoldMine.UI
 {
-    class TextBox : IComponentUI
+    public class TextBox : IComponentUI
     {
-
         private enum TextboxState
         {
             Normal,
@@ -19,187 +16,144 @@ namespace OldGoldMine.UI
         }
 
         private TextboxState state = TextboxState.Normal;
-        private GameResources.ButtonTexturePack textures;
-        private Color boxShade;
-
+        private Button.TexturePack textures;
+        
+        /* UI ELEMENTS */
         private Rectangle boxArea;
         private Rectangle textArea;
-
-        private SpriteText content;
-
+        private readonly SpriteText boxContent;
 
         /// <summary>
-        /// Contains the set of keys pressed in the previous frame
-        /// </summary>
-        private Keys[] lastPressedKeys = new Keys[0];
-
-        private bool caps;
-        private int characterLimit;
-
-
-        /// <summary>
-        /// Determines if the textbox is active and interactable, or greyed out and disabled
+        /// Determines if the TextBox is active and interactable, or greyed out and disabled.
         /// </summary>
         public bool Enabled
         {
             get { return state != TextboxState.Disabled; }
+            set { state = value ? TextboxState.Normal : TextboxState.Disabled; }
+        }
+
+        /// <summary>
+        /// The pixel coordinates referring to the center of the TextBox.
+        /// </summary>
+        public Point Position
+        {
+            get { return boxArea.Center; }
             set
             {
-                if (value)
-                    state = TextboxState.Normal;
-                else state = TextboxState.Disabled;
+                boxArea.Location = value - boxArea.Size / new Point(2);
+                textArea.Location = value - textArea.Size / new Point(2);
+                boxContent.Position = CalculateAnchorPoint(textArea, boxContent.Anchor);
             }
         }
 
 
         /// <summary>
-        /// The pixel coordinates referring to the center of the TextBox
+        /// The pixel size of this TextBox element and its content.
         /// </summary>
-        public Vector2 Position
+        public Point Size
         {
-            get { return boxArea.Center.ToVector2(); }
+            get { return boxArea.Size; }
             set
             {
-                boxArea.Location = value.ToPoint() - boxArea.Size / new Point(2);
-                textArea.Location = value.ToPoint() - textArea.Size / new Point(2);
-                content.Position = CalculateAnchorPoint(textArea, content.AnchorPoint).ToVector2();
-            }
-        }
-
-
-        /// <summary>
-        /// The pixel size of this TextBox element and it's content
-        /// </summary>
-        public Vector2 Size
-        {
-            get { return boxArea.Size.ToVector2(); }
-            set
-            {
-                Vector2 textAreaScaling = textArea.Size.ToVector2() / boxArea.Size.ToVector2();
+                // Compute the ratio as a Vector2 to maintain floating point precision (not rounding to integers)
+                Vector2 textAreaRatio = textArea.Size.ToVector2() / boxArea.Size.ToVector2();
                 Point oldPosition = boxArea.Center;
-                boxArea.Size = value.ToPoint();
+                boxArea.Size = value;
                 boxArea.Location = oldPosition - boxArea.Size / new Point(2);
-                textArea.Size = (value * textAreaScaling).ToPoint();
+                textArea.Size = (value.ToVector2() * textAreaRatio).ToPoint();
                 textArea.Location = oldPosition - textArea.Size / new Point(2);
-                content.Position = CalculateAnchorPoint(textArea, content.AnchorPoint).ToVector2();
+                boxContent.Position = CalculateAnchorPoint(textArea, boxContent.Anchor);
             }
         }
 
         /// <summary>
-        /// The color shade used to filter the TextBox's sprite (use Color.White if you don't want any color correction)
+        /// The color shade used to filter the TextBox's sprite (Color.White preserves original colors).
         /// </summary>
         public Color Shade { get { return boxShade; } set { boxShade = value; } }
+        private Color boxShade;
+
+        /// <summary>
+        /// The color of the text content displayed in the TextBox.
+        /// </summary>
+        public Color TextColor { get { return boxContent.Color; } set { boxContent.Color = value; } }
 
 
         /// <summary>
-        /// The text content acquired by this TextBox
+        /// The current text contained by this TextBox.
         /// </summary>
-        public string Content { get { return content.Text; } set { content.Text = value; } }
+        public string Content { get { return boxContent.Text; } set { boxContent.Text = value; } }
 
+        /// <summary>
+        /// The maximum number of characters containable by this TextBox.
+        /// </summary>
+        public int CharacterLimit { get; set; }
 
 
         /// <summary>
-        /// Create a TextBox inside the specified Rectangle, with the desired margin between
-        /// the rectangle border and the text area
+        /// Create a TextBox inside the specified Rectangle, with the desired margin between the border and the text.
         /// </summary>
-        /// <param name="area">A rectangle that will contain the TextBox element.</param>
-        /// <param name="margin">Size of the separation between the element Rectangle and the area showing the text contained in it.</param>
+        /// <param name="area">A Rectangle that will contain the TextBox element.</param>
+        /// <param name="margin">Size (in pixels) of the separation between the element's border and the text.</param>
         /// <param name="texturePack">A set of textures used to draw this element.</param>
-        /// <param name="font">SpriteFont used to render the text of this element.</param>
+        /// <param name="textFont">SpriteFont used to render the text of this element.</param>
+        /// <param name="textColor">Color of the TextBox's content.</param>
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
-        /// <param name="characterLimit">Maximum number of characters of the input string (default = unlimited)</param>
-        /// <param name="shade">Color used to shade the element's sprite (the default value is the same as Color.White)</param>
-        public TextBox(Rectangle area, Vector2 margin, SpriteFont font, GameResources.ButtonTexturePack texturePack,
-            SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int characterLimit = int.MaxValue, Color shade = default)
+        /// <param name="charLimit">Maximum number of characters of the input string (default = unlimited).</param>
+        /// <param name="shade">Color used to shade the element's sprite (Color.White preserves original colors).</param>
+        public TextBox(Rectangle area, Point margin, Button.TexturePack texturePack, SpriteFont textFont, Color textColor,
+            SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int charLimit = int.MaxValue, Color shade = default)
         {
             this.boxArea = area;
-            this.textArea = new Rectangle(area.Location + margin.ToPoint(), area.Size - (2 * margin).ToPoint());
+            this.textArea = new Rectangle(area.Location + margin, area.Size - margin * new Point(2));
             this.textures = texturePack;
-            this.content = new SpriteText(font, "", CalculateAnchorPoint(textArea, textAnchor).ToVector2(), textAnchor);
-            this.characterLimit = characterLimit;
+            this.boxContent = new SpriteText(textFont, string.Empty, textColor, CalculateAnchorPoint(textArea, textAnchor), textAnchor);
+            this.CharacterLimit = charLimit;
             this.boxShade = shade == default ? Color.White : shade;
         }
 
         /// <summary>
-        /// Create a TextBox at the desired position, by specifying the size of the element
-        /// and the margin between the box area and the text area
+        /// Create a TextBox at the desired position, by specifying its size and the margin between the border and the text.
         /// </summary>
         /// <param name="position">The position (in pixels) of the center of this element.</param>
-        /// <param name="boxSize">Pixel size of the element.</param>
-        /// <param name="margin">Size of the separation between the element Rectangle and the area showing the text contained in it.</param>
+        /// <param name="boxSize">The size of the TextBox in pixels.</param>
+        /// <param name="margin">Size (in pixels) of the separation between the element's border and the text.</param>
         /// <param name="texturePack">A set of textures used to draw this element.</param>
-        /// <param name="font">SpriteFont used to render the text of this element.</param>
+        /// <param name="textFont">SpriteFont used to render the text of this element.</param>
+        /// <param name="textColor">Color of the TextBox's content.</param>
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
-        /// <param name="characterLimit">Maximum number of characters of the input string (default = unlimited)</param>
+        /// <param name="charLimit">Maximum number of characters of the input string (default = unlimited)</param>
         /// <param name="shade">Color used to shade the element's sprite (the default value is the same as Color.White)</param>
-        public TextBox(Vector2 position, Vector2 boxSize, Vector2 margin, GameResources.ButtonTexturePack texturePack,
-            SpriteFont font, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft,
-            int characterLimit = int.MaxValue, Color shade = default)
+        public TextBox(Point position, Point boxSize, Point margin, Button.TexturePack texturePack,
+            SpriteFont textFont, Color textColor, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft,
+            int charLimit = int.MaxValue, Color shade = default)
+            : this(new Rectangle(position - boxSize / new Point(2), boxSize), margin,
+                  texturePack, textFont, textColor, textAnchor, charLimit, shade)
         {
-            this.boxArea = new Rectangle((position - boxSize / 2f).ToPoint(), boxSize.ToPoint());
-            this.textArea = new Rectangle(boxArea.Location + margin.ToPoint(), boxArea.Size - (2 * margin).ToPoint());
-            this.textures = texturePack;
-            this.content = new SpriteText(font, "", CalculateAnchorPoint(textArea, textAnchor).ToVector2(), textAnchor);
-            this.characterLimit = characterLimit;
-            this.boxShade = shade == default ? Color.White : shade;
         }
 
 
         private Point CalculateAnchorPoint(Rectangle area, SpriteText.TextAnchor anchor)
         {
-            Point anchorPoint;
-
-            switch (anchor)
+            return anchor switch
             {
-                case SpriteText.TextAnchor.TopLeft:
-                    anchorPoint = new Point(area.Left, area.Top);
-                    break;
-
-                case SpriteText.TextAnchor.TopCenter:
-                    anchorPoint = new Point(area.Center.X, area.Top);
-                    break;
-
-                case SpriteText.TextAnchor.TopRight:
-                    anchorPoint = new Point(area.Right, area.Top);
-                    break;
-
-                case SpriteText.TextAnchor.MiddleLeft:
-                    anchorPoint = new Point(area.Left, area.Center.Y);
-                    break;
-
-                case SpriteText.TextAnchor.MiddleCenter:
-                    anchorPoint = area.Center;
-                    break;
-
-                case SpriteText.TextAnchor.MiddleRight:
-                    anchorPoint = new Point(area.Right, area.Center.Y);
-                    break;
-
-                case SpriteText.TextAnchor.BottomLeft:
-                    anchorPoint = new Point(area.Left, area.Bottom);
-                    break;
-
-                case SpriteText.TextAnchor.BottomCenter:
-                    anchorPoint = new Point(area.Center.X, area.Bottom);
-                    break;
-
-                case SpriteText.TextAnchor.BottomRight:
-                    anchorPoint = new Point(area.Right, area.Bottom);
-                    break;
-
-                default:
-                    anchorPoint = new Point();
-                    break;
-            }
-
-            return anchorPoint;
+                SpriteText.TextAnchor.TopLeft => new Point(area.Left, area.Top),
+                SpriteText.TextAnchor.TopCenter => new Point(area.Center.X, area.Top),
+                SpriteText.TextAnchor.TopRight => new Point(area.Right, area.Top),
+                SpriteText.TextAnchor.MiddleLeft => new Point(area.Left, area.Center.Y),
+                SpriteText.TextAnchor.MiddleCenter => area.Center,
+                SpriteText.TextAnchor.MiddleRight => new Point(area.Right, area.Center.Y),
+                SpriteText.TextAnchor.BottomLeft => new Point(area.Left, area.Bottom),
+                SpriteText.TextAnchor.BottomCenter => new Point(area.Center.X, area.Bottom),
+                SpriteText.TextAnchor.BottomRight => new Point(area.Right, area.Bottom),
+                _ => new Point(),
+            };
         }
 
 
         /// <summary>
-        /// Update the TextBox status, based on user actions/input
+        /// Update the TextBox status, based on user actions/input in the current frame.
         /// </summary>
-        /// <returns>Boolean flag indicating if the content of the TextBox has changed in the current frame</returns>
+        /// <returns>Boolean flag indicating if the content of the TextBox has changed in the current frame.</returns>
         public bool Update()
         {
             bool interacted = false;
@@ -208,16 +162,18 @@ namespace OldGoldMine.UI
             {
                 if (state == TextboxState.Selected)
                 {
-                    interacted = GetKeys();
+                    interacted = HandleKeys();
 
-                    if (ClickedOutside())
+                    // If the user clicked outside of the TextBox area
+                    if (InputManager.MouseLeftButtonClick && !boxArea.Contains(InputManager.MousePosition))
                         state = TextboxState.Normal;
                 }
                 else if (boxArea.Contains(InputManager.MousePosition))
                 {
                     state = TextboxState.Highlighted;
 
-                    if (ClickedInside())
+                    // If the user clicked inside the TextBox area
+                    if (InputManager.MouseLeftButtonClick && boxArea.Contains(InputManager.MousePosition))
                         state = TextboxState.Selected;
                 }
                 else state = TextboxState.Normal;
@@ -226,94 +182,48 @@ namespace OldGoldMine.UI
             return interacted;
         }
 
-        private bool ClickedInside()
+        
+        private bool HandleKeys()
         {
-            return InputManager.MouseSingleLeftClick && boxArea.Contains(InputManager.MousePosition);
-        }
-
-        private bool ClickedOutside()
-        {
-            return InputManager.MouseSingleLeftClick && !boxArea.Contains(InputManager.MousePosition);
-        }
-
-
-        private bool GetKeys()
-        {
-            KeyboardState kbState = Keyboard.GetState();
-            Keys[] pressedKeys = kbState.GetPressedKeys();
-            bool keyDown = false;
-
-            //check if any of the previous update's keys are no longer pressed
-            foreach (Keys key in lastPressedKeys)
+            foreach (Keys key in InputManager.PressedKeys)
             {
-                if (!pressedKeys.Contains(key))
-                    OnKeyUp(key);
-            }
+                int length = boxContent.Text.Length;
 
-            //check if the currently pressed keys were already pressed
-            foreach (Keys key in pressedKeys)
-            {
-                if (!lastPressedKeys.Contains(key))
+                // Handle numbers (D0...D9, NumPad0...NumPad9 keys)
+                if ((key >= Keys.D0 && key <= Keys.D9) || (key >= Keys.NumPad0 && key <= Keys.NumPad9))
                 {
-                    OnKeyDown(key);
-                    keyDown = true;
+                    if (length < CharacterLimit)
+                    {
+                        int numchar = (key >= Keys.D0 && key <= Keys.D9) ?
+                            (key - Keys.D0) : (key - Keys.NumPad0);
+
+                        boxContent.Text += numchar.ToString();
+                    }
+                }
+                else if (key.ToString().Length != 1)     // Special characters have names, not symbols
+                {
+                    if (key == Keys.Back && length > 0)    // Removes a letter from the textbox content
+                    {
+                        boxContent.Text = boxContent.Text.Remove(length - 1);
+                    }
+                    else if (key == Keys.Space && length < CharacterLimit)
+                    {
+                        boxContent.Text += " ";
+                    }
+                    else if (key == Keys.Enter || key == Keys.Escape)
+                    {
+                        state = TextboxState.Normal;        // The textbox loses focus on Enter or ESC
+                    }
+                }
+                else if (length < CharacterLimit)      // Standard character, insert it in the string
+                {
+                    if (!InputManager.CapsActive)
+                        boxContent.Text += key.ToString().ToLower();
+                    else boxContent.Text += key.ToString();
                 }
             }
 
-            //save the currently pressed keys so we can compare on the next update
-            lastPressedKeys = pressedKeys;
-
-            return keyDown;
-        }
-
-
-        private void OnKeyDown(Keys key)
-        {
-            int length = content.Text.Length;
-
-            // Handle numbers (D0...D9, NumPad0...NumPad9 keys)
-            if ((key >= Keys.D0 && key <= Keys.D9) || (key >= Keys.NumPad0 && key <= Keys.NumPad9))
-            {
-                int numchar = (key >= Keys.D0 && key <= Keys.D9) ?
-                    (int)(key - Keys.D0) : (int)(key - Keys.NumPad0);
-
-                if (length < characterLimit)
-                    content.Text += numchar.ToString();
-            }
-            else if (key.ToString().Length != 1)     // Special characters have corresponding names, not symbols
-            {
-                if (key == Keys.Back && length > 0)    // Removes a letter from the textbox content
-                {
-                    content.Text = content.Text.Remove(length - 1);
-                }
-                else if (key == Keys.LeftShift || key == Keys.RightShift || key == Keys.CapsLock)
-                {
-                    caps = !caps;       // Switch caps ON or OFF when shift keys or caps lock are pressed
-                }
-                /*else if (key == Keys.Space && length < characterLimit)
-                {
-                    content.Text += " ";
-                }*/
-                else if (key == Keys.Enter || key == Keys.Escape)
-                {
-                    state = TextboxState.Normal;        // The textbox loses focus on Enter or ESC
-                }
-            }
-            else if (length < characterLimit)      // Standard character, insert it in the string
-            {
-                if (!caps)
-                    content.Text += key.ToString().ToLower();
-                else content.Text += key.ToString();
-            }
-        }
-
-        private void OnKeyUp(Keys key)
-        {
-            // Invert caps when one of the shift keys goes up
-            if (key == Keys.LeftShift || key == Keys.RightShift)
-            {
-                caps = !caps;
-            }
+            return InputManager.PressedKeys.Count > 0;
         }
 
 
@@ -321,7 +231,7 @@ namespace OldGoldMine.UI
         {
             spriteBatch.Draw(textures[(int)state], boxArea, boxShade);
 
-            content.Draw(in spriteBatch);
+            boxContent.Draw(in spriteBatch);
         }
     }
 }

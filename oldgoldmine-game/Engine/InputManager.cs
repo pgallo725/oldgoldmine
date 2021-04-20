@@ -1,94 +1,168 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 
 namespace OldGoldMine.Engine
 {
-
     public static class InputManager
     {
-        private static Point mousePosition = Point.Zero;
-        private static Vector2 mouseMovement = Vector2.Zero;
-        private static bool mouseLeftClickSingle = false;
-        private static bool mouseLeftClickHold = false;
-        private static bool leftKeyHold = false;
-        private static bool rightKeyHold = false;
-        private static bool downKeyHold = false;
-        private static bool leftKeyReleased = false;
-        private static bool rightKeyReleased = false;
-        private static bool downKeyReleased = false;
-        private static bool jumpWasPressed = false;
-        private static bool jumpPressed = false;
-        private static bool pauseWasPressed = false;
-        private static bool pausePressed = false;
-        private static bool freelookKeyWasPressed = false;
-        private static bool freelookKeyPressed = false;
-        private static bool debugKeyWasPressed = false;
-        private static bool debugKeyPressed = false;
-        private static bool enterKeyWasPressed = false;
-        private static bool enterKeyPressed = false;
-        private static bool backKeyWasPressed = false;
-        private static bool backKeyPressed = false;
+        public static Point MouseMovement { get; private set; } = Point.Zero;
+        public static Point MousePosition { get; private set; } = Point.Zero;
+        public static float MouseMovementX { get { return MouseMovement.X; } }
+        public static float MouseMovementY { get { return -MouseMovement.Y; } }
 
-        public static Vector2 CurrentFrameMouseMovement { get { return mouseMovement; } }
-        public static Point MousePosition { get { return mousePosition; } }
-        public static float MouseMovementX { get { return mouseMovement.X; } }
-        public static float MouseMovementY { get { return -mouseMovement.Y; } }
-        public static bool MouseSingleLeftClick { get { return mouseLeftClickSingle; } }
-        public static bool MouseHoldLeftClick { get { return mouseLeftClickHold; } }
-        public static bool PauseKeyPressed { get { return pausePressed; } }
-        public static bool FreeLookKeyPressed { get { return freelookKeyPressed; } }
-        public static bool DebugKeyPressed { get { return debugKeyPressed; } }
-        public static bool EnterKeyPressed { get { return enterKeyPressed; } }
-        public static bool BackKeyPressed { get { return backKeyPressed; } }
+        public static bool MouseLeftButtonClick { get; private set; }
+        public static bool MouseLeftButtonHold { get; private set; }
+        public static bool MouseRightButtonClick { get; private set; }
+        public static bool MouseRightButtonHold { get; private set; }
+        public static bool MouseMiddleButtonClick { get; private set; }
+        public static bool MouseMiddleButtonHold { get; private set; }
 
-        public static bool LeftKeyHold { get { return leftKeyHold; } }
-        public static bool RightKeyHold { get { return rightKeyHold; } }
-        public static bool DownKeyHold { get { return downKeyHold; } }
-        public static bool LeftKeyReleased { get { return leftKeyReleased; } }
-        public static bool RightKeyReleased { get { return rightKeyReleased; } }
-        public static bool DownKeyReleased { get { return downKeyReleased; } }
-        public static bool JumpKeyPressed { get { return jumpPressed; } }
+        public static bool CapsActive { get; private set; }
+        public static HashSet<Keys> PressedKeys { get { return keysPresssed; } }
+        
+        public static bool PausePressed { get { return keysPresssed.Contains(Keys.Escape) || buttonsPressed.Contains(Buttons.Start); } }
+        public static bool FreeLookPressed { get { return keysPresssed.Contains(Keys.F) || buttonsPressed.Contains(Buttons.Back); } }
+        public static bool DebugPressed { get { return keysPresssed.Contains(Keys.G); } }
+        public static bool EnterPressed { get { return keysPresssed.Contains(Keys.Enter) || buttonsPressed.Contains(Buttons.A); } }
+        public static bool BackPressed { get { return keysPresssed.Contains(Keys.Escape) || buttonsPressed.Contains(Buttons.B); } }
+
+        public static bool LeftHold 
+        { 
+            get
+            { 
+                return keysDown.Contains(Keys.A) || keysDown.Contains(Keys.Left) ||
+                    buttonsDown.Contains(Buttons.DPadLeft) || buttonsDown.Contains(Buttons.LeftThumbstickLeft);
+            } 
+        }
+        public static bool RightHold
+        {
+            get
+            {
+                return keysDown.Contains(Keys.D) || keysDown.Contains(Keys.Right) ||
+                    buttonsDown.Contains(Buttons.DPadRight) || buttonsDown.Contains(Buttons.LeftThumbstickRight);
+            }
+        }
+        public static bool DownHold
+        {
+            get
+            {
+                return keysDown.Contains(Keys.S) || keysDown.Contains(Keys.Down) || keysDown.Contains(Keys.LeftControl) ||
+                    buttonsDown.Contains(Buttons.DPadDown) || buttonsDown.Contains(Buttons.LeftThumbstickDown);
+            }
+        }
+        public static bool LeftReleased
+        {
+            get
+            {
+                return keysReleased.Contains(Keys.A) || keysReleased.Contains(Keys.Left) ||
+                    buttonsReleased.Contains(Buttons.DPadLeft) || buttonsReleased.Contains(Buttons.LeftThumbstickLeft);
+            }
+        }
+        public static bool RightReleased
+        {
+            get
+            {
+                return keysReleased.Contains(Keys.D) || keysReleased.Contains(Keys.Right) ||
+                    buttonsReleased.Contains(Buttons.DPadRight) || buttonsReleased.Contains(Buttons.LeftThumbstickRight);
+            }
+        }
+        public static bool DownReleased
+        {
+            get
+            {
+                return keysReleased.Contains(Keys.S) || keysReleased.Contains(Keys.Down) || keysReleased.Contains(Keys.LeftControl) ||
+                    buttonsReleased.Contains(Buttons.DPadDown) || buttonsReleased.Contains(Buttons.LeftThumbstickDown);
+            }
+        }
+        public static bool JumpPressed 
+        { 
+            get
+            { 
+                return keysPresssed.Contains(Keys.Space) || keysPresssed.Contains(Keys.W) || keysPresssed.Contains(Keys.Up) ||
+                    buttonsPressed.Contains(Buttons.A) || buttonsPressed.Contains(Buttons.DPadUp) || buttonsPressed.Contains(Buttons.LeftThumbstickUp); 
+            } 
+        }
+
+
+        private readonly static HashSet<Keys> previousKeys = new HashSet<Keys>();
+        private readonly static HashSet<Keys> keysPresssed = new HashSet<Keys>();
+        private readonly static HashSet<Keys> keysDown = new HashSet<Keys>();
+        private readonly static HashSet<Keys> keysReleased = new HashSet<Keys>();
+
+        private readonly static HashSet<Buttons> previousButtons = new HashSet<Buttons>();
+        private readonly static HashSet<Buttons> buttonsPressed = new HashSet<Buttons>();
+        private readonly static HashSet<Buttons> buttonsDown = new HashSet<Buttons>();
+        private readonly static HashSet<Buttons> buttonsReleased = new HashSet<Buttons>();
 
 
         public static void UpdateFrameInput()
         {
+            // Retrieve the state from all supported input peripherals (mouse, keyboard, gamepad)
             MouseState mouseState = Mouse.GetState();
             KeyboardState keyboardState = Keyboard.GetState();
             GamePadState gamepadState = GamePad.GetState(PlayerIndex.One);
 
-            mouseMovement = (mouseState.Position - mousePosition).ToVector2();
-            mousePosition = mouseState.Position;
-            mouseLeftClickSingle = !mouseLeftClickHold && mouseState.LeftButton == ButtonState.Pressed;
-            mouseLeftClickHold = mouseState.LeftButton == ButtonState.Pressed;
+            // MOUSE
+            // Check user input (both position and clicks)
+            MouseMovement = mouseState.Position - MousePosition;
+            MousePosition = mouseState.Position;
+            MouseLeftButtonClick = !MouseLeftButtonHold && mouseState.LeftButton == ButtonState.Pressed;
+            MouseLeftButtonHold = mouseState.LeftButton == ButtonState.Pressed;
+            MouseRightButtonClick = !MouseRightButtonHold && mouseState.RightButton == ButtonState.Pressed;
+            MouseRightButtonHold = mouseState.RightButton == ButtonState.Pressed;
+            MouseMiddleButtonClick = !MouseMiddleButtonHold && mouseState.MiddleButton == ButtonState.Pressed;
+            MouseMiddleButtonHold = mouseState.MiddleButton == ButtonState.Pressed;
 
-            leftKeyReleased = leftKeyHold && (keyboardState.IsKeyUp(Keys.A) || keyboardState.IsKeyUp(Keys.Left) 
-                || gamepadState.IsButtonUp(Buttons.LeftThumbstickLeft));
-            rightKeyReleased = rightKeyHold && (keyboardState.IsKeyUp(Keys.D) || keyboardState.IsKeyUp(Keys.Right) 
-                || gamepadState.IsButtonUp(Buttons.LeftThumbstickRight));
-            downKeyReleased = downKeyHold && (keyboardState.IsKeyUp(Keys.S) || keyboardState.IsKeyUp(Keys.LeftControl) || keyboardState.IsKeyUp(Keys.Down) ||
-                gamepadState.IsButtonUp(Buttons.LeftThumbstickDown));
-            leftKeyHold = (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left) || 
-                gamepadState.IsButtonDown(Buttons.LeftThumbstickLeft));
-            rightKeyHold = (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right) || 
-                gamepadState.IsButtonDown(Buttons.LeftThumbstickRight));
-            downKeyHold = (keyboardState.IsKeyDown(Keys.S) || keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.Down) || 
-                gamepadState.IsButtonDown(Buttons.LeftThumbstickDown));
-            jumpPressed = !jumpWasPressed && (keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W) 
-                || gamepadState.IsButtonDown(Buttons.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickUp));
-            jumpWasPressed = (keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W) ||
-                gamepadState.IsButtonDown(Buttons.A) || gamepadState.IsButtonDown(Buttons.LeftThumbstickUp));
+            // KEYBOARD
+            // Determine which keys have been pressed, released or held down in the current frame
+            keysDown.Clear();
+            keysDown.UnionWith(keyboardState.GetPressedKeys());
 
-            pausePressed = !pauseWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
-            pauseWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.Start));
-            freelookKeyPressed = !freelookKeyWasPressed && (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
-            freelookKeyWasPressed = (keyboardState.IsKeyDown(Keys.F) || gamepadState.IsButtonDown(Buttons.Back));
-            debugKeyPressed = !debugKeyWasPressed && keyboardState.IsKeyDown(Keys.G);
-            debugKeyWasPressed = keyboardState.IsKeyDown(Keys.G);
-            enterKeyPressed = !enterKeyWasPressed && (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
-            enterKeyWasPressed = (keyboardState.IsKeyDown(Keys.Enter) || gamepadState.IsButtonDown(Buttons.A));
-            backKeyPressed = !backKeyWasPressed && (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.B));
-            backKeyWasPressed = (keyboardState.IsKeyDown(Keys.Escape) || gamepadState.IsButtonDown(Buttons.B));
+            keysPresssed.Clear();
+            keysPresssed.UnionWith(keysDown);
+            keysPresssed.ExceptWith(previousKeys);
+
+            keysReleased.Clear();
+            keysReleased.UnionWith(previousKeys);
+            keysReleased.ExceptWith(keysDown);
+
+            // Update the status of the Caps based on current keypresses
+            if (keysPresssed.Contains(Keys.CapsLock) || keysPresssed.Contains(Keys.LeftShift) || keysPresssed.Contains(Keys.RightShift))
+            {
+                CapsActive = !CapsActive;       // Switch caps ON or OFF when shift keys or caps lock are pressed
+            }
+            if (keysReleased.Contains(Keys.LeftShift) || keysReleased.Contains(Keys.RightShift))
+            {
+                CapsActive = !CapsActive;       // Invert caps when one of the shift keys goes up
+            }
+
+            // Save the currently pressed keys for the next update
+            previousKeys.Clear();
+            previousKeys.UnionWith(keysDown);
+
+            // GAMEPAD
+            // Determine which buttons have been pressed, released or held down in the current frame
+            buttonsDown.Clear();
+            foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+            {
+                if (gamepadState.IsButtonDown(button))
+                    buttonsDown.Add(button);
+            }
+
+            buttonsPressed.Clear();
+            buttonsPressed.UnionWith(buttonsDown);
+            buttonsPressed.ExceptWith(previousButtons);
+
+            buttonsReleased.Clear();
+            buttonsReleased.UnionWith(previousButtons);
+            buttonsReleased.ExceptWith(buttonsDown);
+
+            // Save the currently pressed buttons for the next update
+            previousButtons.Clear();
+            previousButtons.UnionWith(buttonsDown);
         }
 
     }

@@ -6,7 +6,6 @@ namespace OldGoldMine.Gameplay
 {
     public class HUD
     {
-
         SpriteText timerText;
         SpriteText framerateText;
         SpriteText scoreText;
@@ -18,17 +17,17 @@ namespace OldGoldMine.Gameplay
         public void Initialize(in GameWindow window)
         {
             // HUD elements setup
-            timerText = new SpriteText(OldGoldMineGame.resources.hudFont, "00:00:00", Color.White,
-                new Vector2(window.ClientBounds.Width / 2, 5), SpriteText.TextAnchor.TopCenter);
+            timerText = new SpriteText(OldGoldMineGame.resources.hudFont, "00:00:00", 
+                Color.White, new Point(window.ClientBounds.Width / 2, 5), SpriteText.TextAnchor.TopCenter);
 
-            framerateText = new SpriteText(OldGoldMineGame.resources.debugInfoFont, "0 FPS", Color.LightGreen,
-                new Vector2(window.ClientBounds.Width - 10, 5), SpriteText.TextAnchor.TopRight);
+            framerateText = new SpriteText(OldGoldMineGame.resources.debugInfoFont, "0 FPS",
+                Color.LightGreen, new Point(window.ClientBounds.Width - 10, 5), SpriteText.TextAnchor.TopRight);
 
-            scoreText = new SpriteText(OldGoldMineGame.resources.hudFont, "Score: 0", Color.White,
-                new Vector2(15, 5), SpriteText.TextAnchor.TopLeft);
+            scoreText = new SpriteText(OldGoldMineGame.resources.hudFont, "Score: 0",
+                Color.White, new Point(15, 5), SpriteText.TextAnchor.TopLeft);
 
-            speedText = new SpriteText(OldGoldMineGame.resources.hudFont, "Speed: 20 Km/h", Color.White,
-                new Vector2(15, 50), SpriteText.TextAnchor.TopLeft);
+            speedText = new SpriteText(OldGoldMineGame.resources.hudFont, "Speed: 20 Km/h",
+                Color.White, new Point(15, 50), SpriteText.TextAnchor.TopLeft);
         }
 
 

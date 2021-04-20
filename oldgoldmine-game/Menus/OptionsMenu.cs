@@ -13,97 +13,90 @@ namespace OldGoldMine.Menus
         private SpriteText menuTitle;
 
         private SpriteText masterVolumeLabel;
-        private ToggleSelector masterVolumeSelector;
+        private Selector masterVolumeSelector;
 
         private SpriteText musicVolumeLabel;
-        private ToggleSelector musicVolumeSelector;
+        private Selector musicVolumeSelector;
 
         private SpriteText effectsVolumeLabel;
-        private ToggleSelector effectsVolumeSelector;
+        private Selector effectsVolumeSelector;
 
         private SpriteText displayModeLabel;
-        private ToggleSelector displayModeSelector;
+        private Selector displayModeSelector;
 
         private SpriteText resolutionLabel;
-        private ToggleSelector resolutionSelector;
+        private Selector resolutionSelector;
 
         private Button cancelButton;
         private Button confirmButton;
-
-        private Vector2 anchorPointVolumes;
-        private Vector2 anchorPointDisplay;
-        private Vector2 anchorPointButtons;
 
 
         public override void Initialize(Viewport viewport, Texture2D background, Menu parent)
         {
             this.parent = parent;
-            this.menuBackground = background;
-            this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.66f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
+            this.background = background;
+            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.66f)), viewport.Bounds.Center, viewport.Bounds.Size);
 
-            Vector2 buttonSize = new Vector2(225, 75);
+            Point buttonSize = new Point(225, 75);
 
-            float screenWidth = viewport.Width;
-            float screenHeight = viewport.Height;
+            Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
+            Point anchorPointDisplay = new Point(viewport.Width / 2, (int)(viewport.Height * 0.625f));
+            Point anchorPointButtons = new Point(viewport.Width / 2, (int)(viewport.Height * 0.89f));
 
-            anchorPointVolumes = new Vector2(screenWidth * 0.50f, screenHeight * 0.25f);        // Position at centered X and -25% Y from the center
-            anchorPointDisplay = new Vector2(screenWidth * 0.50f, screenHeight * 0.625f);       // Position at centered X and +12.5% Y from the center
-            anchorPointButtons = new Vector2(screenWidth * 0.50f, screenHeight * 0.89f);        // Position at +25% X and +39% Y from the center
+            List<string> volumeValues = new List<string>() { "0", "5", "10", "15", "20", "25", "30",
+                "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100" };
 
 
             // OPTIONS MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "EDIT SETTINGS",
-                Color.LightGray, new Vector2(screenWidth / 2, screenHeight * 0.12f), SpriteText.TextAnchor.MiddleCenter);
+                Color.LightGray, new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f)));
 
 
             masterVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Master volume",
-                anchorPointVolumes - new Vector2(300, 0), SpriteText.TextAnchor.MiddleCenter);
+                Color.White, anchorPointVolumes - new Point(300, 0));
 
-            masterVolumeSelector = new ToggleSelector(masterVolumeLabel.Position + new Vector2(600, 0), new Vector2(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "0", "5", "10", "15", "20", "25", "30", "35", "40",
-                "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100" },
+            masterVolumeSelector = new Selector(masterVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
+                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
                 OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
 
             musicVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Music volume",
-                masterVolumeLabel.Position + new Vector2(0, 100), SpriteText.TextAnchor.MiddleCenter);
+                Color.White, masterVolumeLabel.Position + new Point(0, 100));
 
-            musicVolumeSelector = new ToggleSelector(musicVolumeLabel.Position + new Vector2(600, 0), new Vector2(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "0", "5", "10", "15", "20", "25", "30", "35", "40",
-                "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100" },
+            musicVolumeSelector = new Selector(musicVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
+                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
                 OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
 
-            effectsVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "SoundEffects volume",
-                musicVolumeLabel.Position + new Vector2(0, 100), SpriteText.TextAnchor.MiddleCenter);
+            effectsVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "SoundEffects volume", Color.White,
+                musicVolumeLabel.Position + new Point(0, 100), SpriteText.TextAnchor.MiddleCenter);
 
-            effectsVolumeSelector = new ToggleSelector(effectsVolumeLabel.Position + new Vector2(600, 0), new Vector2(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "0", "5", "10", "15", "20", "25", "30", "35", "40",
-                "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100" },
+            effectsVolumeSelector = new Selector(effectsVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
+                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
                 OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
 
 
-            displayModeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Display mode",
-                anchorPointDisplay - new Vector2(300, 0), SpriteText.TextAnchor.MiddleCenter);
+            displayModeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Display mode", Color.White,
+                anchorPointDisplay - new Point(300, 0), SpriteText.TextAnchor.MiddleCenter);
 
-            displayModeSelector = new ToggleSelector(displayModeLabel.Position + new Vector2(600, 0), new Vector2(75, 75), 300,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>(Enum.GetNames(typeof(OldGoldMineGame.Settings.DisplayMode))),
+            displayModeSelector = new Selector(displayModeLabel.Position + new Point(600, 0), new Point(75, 75), 300,
+                OldGoldMineGame.resources.menuItemsFont, Enum.GetNames(typeof(OldGoldMineGame.Settings.DisplayMode)).ToList(), Color.White,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
             resolutionLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Resolution",
-                displayModeLabel.Position + new Vector2(0, 100), SpriteText.TextAnchor.MiddleCenter);
+                Color.White, displayModeLabel.Position + new Point(0, 100));
 
-            resolutionSelector = new ToggleSelector(resolutionLabel.Position + new Vector2(600, 0), new Vector2(75, 75), 300,
+            resolutionSelector = new Selector(resolutionLabel.Position + new Point(600, 0), new Point(75, 75), 300,
                 OldGoldMineGame.resources.menuItemsFont,
-                GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Select(dm => dm.Width + " x " + dm.Height).ToList(),
+                GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Select(dm => dm.Width + " x " + dm.Height).ToList(), Color.White,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
 
-            cancelButton = new Button(anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
+            cancelButton = new Button(anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
 
-            confirmButton = new Button(anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
+            confirmButton = new Button(anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "APPLY", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
         }
@@ -128,7 +121,7 @@ namespace OldGoldMine.Menus
                 ApplySettings();
                 OldGoldMineGame.settings.Save();
             }
-            else if (cancelButton.Update() || InputManager.PauseKeyPressed)
+            else if (cancelButton.Update() || InputManager.PausePressed)
             {
                 parent.CloseSubmenu();
                 return;
@@ -155,34 +148,33 @@ namespace OldGoldMine.Menus
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Vector2 buttonSize = new Vector2(225, 75);
-            
-            anchorPointVolumes = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.25f);
-            anchorPointDisplay = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.625f);
-            anchorPointButtons = new Vector2(viewport.Width * 0.50f, viewport.Height * 0.89f);
+            Point buttonSize = new Point(225, 75);
 
-            this.semiTransparencyLayer.Position = viewport.Bounds.Center.ToVector2();
-            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+            Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
+            Point anchorPointDisplay = new Point(viewport.Width / 2, (int)(viewport.Height * 0.625f));
+            Point anchorPointButtons = new Point(viewport.Width / 2, (int)(viewport.Height * 0.89f));
 
-            menuTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.12f);
+            this.transparencyLayer.Area = viewport.Bounds;
 
-            masterVolumeLabel.Position = anchorPointVolumes - new Vector2(300, 0);
-            masterVolumeSelector.Position = masterVolumeLabel.Position + new Vector2(600, 0);
+            menuTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f));
 
-            musicVolumeLabel.Position = masterVolumeLabel.Position + new Vector2(0, 100);
-            musicVolumeSelector.Position = musicVolumeLabel.Position + new Vector2(600, 0);
+            masterVolumeLabel.Position = anchorPointVolumes - new Point(300, 0);
+            masterVolumeSelector.Position = masterVolumeLabel.Position + new Point(600, 0);
 
-            effectsVolumeLabel.Position = musicVolumeLabel.Position + new Vector2(0, 100);
-            effectsVolumeSelector.Position = effectsVolumeLabel.Position + new Vector2(600, 0);
+            musicVolumeLabel.Position = masterVolumeLabel.Position + new Point(0, 100);
+            musicVolumeSelector.Position = musicVolumeLabel.Position + new Point(600, 0);
 
-            displayModeLabel.Position = anchorPointDisplay - new Vector2(300, 0);
-            displayModeSelector.Position = displayModeLabel.Position + new Vector2(600, 0);
+            effectsVolumeLabel.Position = musicVolumeLabel.Position + new Point(0, 100);
+            effectsVolumeSelector.Position = effectsVolumeLabel.Position + new Point(600, 0);
 
-            resolutionLabel.Position = displayModeLabel.Position + new Vector2(0, 100);
-            resolutionSelector.Position = resolutionLabel.Position + new Vector2(600, 0);
+            displayModeLabel.Position = anchorPointDisplay - new Point(300, 0);
+            displayModeSelector.Position = displayModeLabel.Position + new Point(600, 0);
 
-            cancelButton.Position = anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0);
-            confirmButton.Position = anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0);
+            resolutionLabel.Position = displayModeLabel.Position + new Point(0, 100);
+            resolutionSelector.Position = resolutionLabel.Position + new Point(600, 0);
+
+            cancelButton.Position = anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0);
+            confirmButton.Position = anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0);
         }
 
 
@@ -208,10 +200,10 @@ namespace OldGoldMine.Menus
 
             spriteBatch.Begin();
 
-            if (menuBackground != null)
+            if (background != null)
             {
-                spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
-                semiTransparencyLayer.Draw(spriteBatch);
+                spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
+                transparencyLayer.Draw(spriteBatch);
             }
 
             menuTitle.Draw(spriteBatch);

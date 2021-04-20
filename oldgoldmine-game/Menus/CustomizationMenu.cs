@@ -13,17 +13,17 @@ namespace OldGoldMine.Menus
         private SpriteText titleText;
 
         private SpriteText speedLabel;
-        private ToggleSelector speedToggle;
+        private Selector speedToggle;
 
         private SpriteText difficultyLabel;
-        private ToggleSelector difficultyToggle;
+        private Selector difficultyToggle;
 
         private SpriteText seedLabel;
         private TextBox seedBox;
 
         private Image cartPanel;
         private Image cartPreview;
-        private ToggleSelector cartSelector;
+        private Selector cartSelector;
         private SpriteText cartLockedLabel;
         private Image cartTransparencyLayer;
         private Image cartLockedIcon;
@@ -34,14 +34,7 @@ namespace OldGoldMine.Menus
         private Button backButton;
 
         
-        private int[] cartPointsNeeded = { -1, 2500, 8000, 20000 };
-
-
-        private Vector2 anchorPointTitle;
-        private Vector2 anchorPointCarts;
-        private Vector2 anchorPointSettings;
-        private Vector2 anchorPointScore;
-        private Vector2 anchorPointButtons;
+        private readonly int[] cartPointsNeeded = { -1, 2500, 8000, 20000 };
 
 
         // Level parameters
@@ -68,124 +61,121 @@ namespace OldGoldMine.Menus
         public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
         {
             this.parent = parent;
-            this.menuBackground = background;
-            this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.66f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
+            this.background = background;
+            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.66f)), viewport.Bounds.Center, viewport.Bounds.Size);
 
 
-            Vector2 buttonSize = new Vector2(240, 80);
+            Point buttonSize = new Point(240, 80);
 
-            float screenWidth = viewport.Width;
-            float screenHeight = viewport.Height;
-
-            anchorPointTitle = new Vector2(screenWidth * 0.5f, screenHeight * 0.08f);           // Position at center X and 8% Y from the top
-            anchorPointCarts = new Vector2(screenWidth * 0.25f, screenHeight * 0.45f);          // Position at -25% X and -5% Y from the center
-            anchorPointSettings = new Vector2(screenWidth * 0.75f, screenHeight * 0.45f);       // Position at +25% X and -5% Y from the center
-            anchorPointScore = new Vector2(screenWidth * 0.25f, screenHeight * 0.875f);         // Position at -25% X and -37.5% Y from the center
-            anchorPointButtons = new Vector2(screenWidth * 0.75f, screenHeight * 0.875f);       // Position at +25% X and -37.5% Y from the center
+            Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
+            Point anchorPointCarts = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.45f));
+            Point anchorPointSettings = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.45f));
+            Point anchorPointScore = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.875f));      
+            Point anchorPointButtons = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.875f));
 
 
             // CUSTOMIZATION MENU LAYOUT SETUP
 
-            backButton = new Button(anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
+            backButton = new Button(anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
 
-            startButton = new Button(anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0), buttonSize,
+            startButton = new Button(anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "START", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
 
 
-            titleText = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "CUSTOMIZE YOUR GAME", Color.DarkOrange,
-                anchorPointTitle, SpriteText.TextAnchor.MiddleCenter);
+            titleText = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "CUSTOMIZE YOUR GAME",
+                Color.DarkOrange, anchorPointTitle, SpriteText.TextAnchor.MiddleCenter);
 
 
             difficultyLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Difficulty",
-                anchorPointSettings - new Vector2(250, 0), SpriteText.TextAnchor.MiddleRight);
+                Color.White, anchorPointSettings - new Point(250, 0), SpriteText.TextAnchor.MiddleRight);
 
-            difficultyToggle = new ToggleSelector(difficultyLabel.Position + new Vector2(300, 0), new Vector2(70, 70), 240,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" },
+            difficultyToggle = new Selector(difficultyLabel.Position + new Point(300, 0), new Point(70, 70), 240,
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" }, Color.White,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
-            speedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Starting\n     speed",
-                difficultyLabel.Position - new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
+            speedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Starting\n   speed",
+                Color.White, difficultyLabel.Position - new Point(0, 150), SpriteText.TextAnchor.MiddleRight);
 
-            speedToggle = new ToggleSelector(speedLabel.Position + new Vector2(300, 0), new Vector2(60, 60), 180,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" },
+            speedToggle = new Selector(speedLabel.Position + new Point(300, 0), new Point(60, 60), 180,
+                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" }, Color.White,
                 OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
 
             seedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Seed",
-                difficultyLabel.Position + new Vector2(0, 150), SpriteText.TextAnchor.MiddleRight);
+                Color.White, difficultyLabel.Position + new Point(0, 150), SpriteText.TextAnchor.MiddleRight);
 
-            seedBox = new TextBox(seedLabel.Position + new Vector2(300, 0), new Vector2(320, 100), new Vector2(32, 20),
-                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, characterLimit: 10, shade: Color.BurlyWood);
+            seedBox = new TextBox(seedLabel.Position + new Point(300, 0), new Point(320, 100), new Point(32, 20),
+                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, Color.White, charLimit: 10, shade: Color.BurlyWood);
 
 
-            cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Vector2(450, 440));
+            cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Point(450, 440));
 
-            cartPreview = new Image(OldGoldMineGame.resources.cartPreviewImages[0], cartPanel.Position, new Vector2(380, 380));
+            cartPreview = new Image(OldGoldMineGame.resources.cartPreviewImages[0], cartPanel.Position, new Point(380, 380));
 
             cartTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.6f)), cartPanel.Position, new Vector2(400, 400));
+                new Color(Color.Black, 0.6f)), cartPanel.Position, new Point(400, 400));
 
-            cartSelector = new ToggleSelector(cartPanel.Position + new Vector2(0, 270), new Vector2(60, 60), 200,
-                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." },
+            cartSelector = new Selector(cartPanel.Position + new Point(0, 270), new Point(60, 60), 200,
+                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." }, Color.White,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
-            cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ", Color.DarkGray,
-                cartSelector.Position + new Vector2(0, 65));
+            cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ",
+                Color.DarkGray, cartSelector.Position + new Point(0, 65));
 
-            cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Vector2(300, 300));
+            cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Point(300, 300));
 
 
             scoreMultiplierLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Score multiplier: 1.0x",
-                anchorPointScore, SpriteText.TextAnchor.MiddleLeft);
+                Color.White, anchorPointScore, SpriteText.TextAnchor.MiddleLeft);
         }
 
 
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Vector2 buttonSize = new Vector2(240, 80);
+            Point buttonSize = new Point(240, 80);
 
-            this.semiTransparencyLayer.Position = viewport.Bounds.Center.ToVector2();
-            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+            this.transparencyLayer.Area = viewport.Bounds;
 
-            anchorPointTitle = new Vector2(viewport.Width * 0.5f, viewport.Height * 0.08f);
-            anchorPointCarts = new Vector2(viewport.Width * 0.25f, viewport.Height * 0.45f);
-            anchorPointSettings = new Vector2(viewport.Width * 0.75f, viewport.Height * 0.45f);
-            anchorPointScore = new Vector2(viewport.Width * 0.25f, viewport.Height * 0.875f);
-            anchorPointButtons = new Vector2(viewport.Width * 0.75f, viewport.Height * 0.875f);
+            Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
+            Point anchorPointCarts = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.45f));
+            Point anchorPointSettings = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.45f));
+            Point anchorPointScore = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.875f));
+            Point anchorPointButtons = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.875f));
 
-            backButton.Position = anchorPointButtons - new Vector2(buttonSize.X / 2f + 10f, 0);
-            startButton.Position = anchorPointButtons + new Vector2(buttonSize.X / 2f + 10f, 0);
+            backButton.Position = anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0);
+            startButton.Position = anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0);
 
             titleText.Position = anchorPointTitle;
 
-            difficultyLabel.Position = anchorPointSettings - new Vector2(250, 0);
-            difficultyToggle.Position = difficultyLabel.Position + new Vector2(300, 0);
+            difficultyLabel.Position = anchorPointSettings - new Point(250, 0);
+            difficultyToggle.Position = difficultyLabel.Position + new Point(300, 0);
 
-            speedLabel.Position = difficultyLabel.Position - new Vector2(0, 150);
-            speedToggle.Position = speedLabel.Position + new Vector2(300, 0);
+            speedLabel.Position = difficultyLabel.Position - new Point(0, 150);
+            speedToggle.Position = speedLabel.Position + new Point(300, 0);
 
-            seedLabel.Position = difficultyLabel.Position + new Vector2(0, 150);
-            seedBox.Position = seedLabel.Position + new Vector2(300, 0);
+            seedLabel.Position = difficultyLabel.Position + new Point(0, 150);
+            seedBox.Position = seedLabel.Position + new Point(300, 0);
 
             cartPanel.Position = anchorPointCarts;
             cartPreview.Position = cartPanel.Position;
             cartTransparencyLayer.Position = cartPanel.Position;
-            cartSelector.Position = cartPanel.Position + new Vector2(0, 270);
-            cartLockedLabel.Position = cartSelector.Position + new Vector2(0, 65);
+            cartSelector.Position = cartPanel.Position + new Point(0, 270);
+            cartLockedLabel.Position = cartSelector.Position + new Point(0, 65);
             cartLockedIcon.Position = cartPanel.Position;
 
             scoreMultiplierLabel.Position = anchorPointScore;
         }
 
 
-        // Reset all the UI elements and selectable values to their original status
         public override void Show()
         {
             Layout();
+
+            // Reset all the UI elements to their original status
 
             speedToggle.SelectedValueIndex = 0;
             difficultyToggle.SelectedValueIndex = 1;
@@ -209,14 +199,14 @@ namespace OldGoldMine.Menus
             UpdateScoreMultiplier();
             UpdateCartSelection();
 
-            if (startButton.Update() || InputManager.EnterKeyPressed )
+            if (startButton.Update() || InputManager.EnterPressed)
             {
-                OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings(
-                    ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
+                OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings
+                    (ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
 
                 OldGoldMineGame.Application.StartGame(newGameSettings);
             }
-            else if (backButton.Update() || InputManager.BackKeyPressed )
+            else if (backButton.Update() || InputManager.BackPressed)
             {
                 OldGoldMineGame.Application.ToMainMenu();
             }
@@ -265,10 +255,10 @@ namespace OldGoldMine.Menus
 
             spriteBatch.Begin();
 
-            if (menuBackground != null)
+            if (background != null)
             {
-                spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
-                semiTransparencyLayer.Draw(spriteBatch);
+                spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
+                transparencyLayer.Draw(spriteBatch);
             }
 
             titleText.Draw(spriteBatch);

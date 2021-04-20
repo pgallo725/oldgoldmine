@@ -16,18 +16,19 @@ namespace OldGoldMine.Menus
 
         private SpriteText highscoreText;
 
-        private OptionsMenu optionsMenu = new OptionsMenu();
+        // Sub-menu
+        private readonly OptionsMenu optionsMenu = new OptionsMenu();
         private bool optionsActive;
 
 
         public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
         {
             this.parent = null;
-            this.menuBackground = background;
-            this.semiTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.5f)), viewport.Bounds.Center.ToVector2(), viewport.Bounds.Size.ToVector2());
+            this.background = background;
+            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.5f)), viewport.Bounds.Center, viewport.Bounds.Size);
 
-            Vector2 buttonSize = new Vector2(400, 110);
+            Point buttonSize = new Point(400, 110);
 
             optionsMenu.Initialize(viewport, background, this);
 
@@ -35,43 +36,40 @@ namespace OldGoldMine.Menus
             // MAIN MENU LAYOUT SETUP
 
             gameTitle = new SpriteText(OldGoldMineGame.resources.gameTitleFont, "Old Gold Mine",
-                Color.DarkGoldenrod, new Vector2(viewport.Width / 2, viewport.Height * 0.16f), SpriteText.TextAnchor.MiddleCenter);
+                Color.DarkGoldenrod, new Point(viewport.Width / 2, (int)(viewport.Height * 0.16f)));
 
-            playButton = new Button(viewport.Bounds.Center.ToVector2() - new Vector2(0, 40), buttonSize, 
+            playButton = new Button(viewport.Bounds.Center - new Point(0, 40), buttonSize, 
                 OldGoldMineGame.resources.menuItemsFont, "PLAY", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-            optionsButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 80), buttonSize,
+            optionsButton = new Button(viewport.Bounds.Center + new Point(0, 80), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "OPTIONS", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-            exitButton = new Button(viewport.Bounds.Center.ToVector2() + new Vector2(0, 200), buttonSize,
+            exitButton = new Button(viewport.Bounds.Center + new Point(0, 200), buttonSize,
                 OldGoldMineGame.resources.menuItemsFont, "QUIT", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-
             highscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Highscore: " + OldGoldMineGame.BestScore,
-                new Color(120, 210, 50, 255), new Vector2(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3/2 + 150),
-                SpriteText.TextAnchor.MiddleCenter);
+                new Color(120, 210, 50, 255), new Point(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3/2 + 150));
         }
 
 
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Vector2 center = viewport.Bounds.Center.ToVector2();
-            Vector2 buttonSize = new Vector2(400, 110);
+            Point center = viewport.Bounds.Center;
+            Point buttonSize = new Point(400, 110);
 
-            this.semiTransparencyLayer.Position = center;
-            this.semiTransparencyLayer.Size = viewport.Bounds.Size.ToVector2();
+            this.transparencyLayer.Area = viewport.Bounds;
 
-            gameTitle.Position = new Vector2(viewport.Width / 2, viewport.Height * 0.16f);
+            gameTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.16f));
 
-            playButton.Position = center - new Vector2(0, 40);
-            optionsButton.Position = center + new Vector2(0, 80);
-            exitButton.Position = center + new Vector2(0, 200);
+            playButton.Position = center - new Point(0, 40);
+            optionsButton.Position = center + new Point(0, 80);
+            exitButton.Position = center + new Point(0, 200);
 
-            highscoreText.Position = new Vector2(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3 / 2 + 150);
+            highscoreText.Position = new Point(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3/2 + 150);
         }
 
 
@@ -123,10 +121,10 @@ namespace OldGoldMine.Menus
 
                 spriteBatch.Begin();
 
-                if (menuBackground != null)
+                if (background != null)
                 {
-                    spriteBatch.Draw(menuBackground, screen.Viewport.Bounds, Color.White);
-                    semiTransparencyLayer.Draw(spriteBatch);
+                    spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
+                    transparencyLayer.Draw(spriteBatch);
                 }
 
                 gameTitle.Draw(spriteBatch);

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
+using OldGoldMine.UI;
 using OldGoldMine.Menus;
 using OldGoldMine.Engine;
 using OldGoldMine.Gameplay;
@@ -25,68 +26,15 @@ namespace OldGoldMine
         public Model m3d_upperObstacle;
 
 
-        public struct ButtonTexturePack
-        {
-            public Texture2D normal;
-            public Texture2D highlighted;
-            public Texture2D pressed;
-            public Texture2D disabled;
-
-            /// <summary>
-            /// Create a new texture pack to define the look of a Button
-            /// </summary>
-            /// <param name="normal">Texture of the button used when in the Normal state.</param>
-            /// <param name="highlighted">Texture used to replace the normal look of the button when highlighted.</param>
-            /// <param name="pressed">Texture used to replace the normal look when the button is pressed.</param>
-            /// <param name="disabled">Texture used to replace the normal look when the button is disabled.</param>
-            public ButtonTexturePack(Texture2D normal, Texture2D highlighted = null,
-                Texture2D pressed = null, Texture2D disabled = null)
-            {
-                this.normal = normal;
-                this.highlighted = highlighted ?? normal;
-                this.pressed = pressed ?? normal;
-                this.disabled = disabled ?? normal;
-            }
-
-            // 0: Normal, 1: Highlighted, 2: Pressed, 3: Disabled
-            public Texture2D this[int i]
-            {
-                get
-                {
-                    switch (i)
-                    {
-                        case 0: return this.normal;
-                        case 1: return this.highlighted;
-                        case 2: return this.pressed;
-                        case 3: return this.disabled;
-                        default: throw new System.IndexOutOfRangeException();
-                    }
-                }
-
-                set
-                {
-                    switch (i)
-                    {
-                        case 0: this.normal = value; break;
-                        case 1: this.highlighted = value; break;
-                        case 2: this.pressed = value; break;
-                        case 3: this.disabled = value; break;
-                        default: throw new System.IndexOutOfRangeException();
-                    }
-                }
-            }
-        }
-
-
         /* UI elements texture packs */
 
-        public ButtonTexturePack menuButtonTextures;
-        public ButtonTexturePack standardButtonTextures;
-        public ButtonTexturePack leftArrowButtonTextures;
-        public ButtonTexturePack rightArrowButtonTextures;
-        public ButtonTexturePack plusButtonTextures;
-        public ButtonTexturePack minusButtonTextures;
-        public ButtonTexturePack textboxTextures;
+        public Button.TexturePack menuButtonTextures;
+        public Button.TexturePack standardButtonTextures;
+        public Button.TexturePack leftArrowButtonTextures;
+        public Button.TexturePack rightArrowButtonTextures;
+        public Button.TexturePack plusButtonTextures;
+        public Button.TexturePack minusButtonTextures;
+        public Button.TexturePack textboxTextures;
 
 
         /* Other UI images and textures */
@@ -426,35 +374,35 @@ namespace OldGoldMine
 
             // Load 2D assets for UI elements
 
-            resources.menuButtonTextures = new GameResources.ButtonTexturePack(
+            resources.menuButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_highlighted"));
 
-            resources.leftArrowButtonTextures = new GameResources.ButtonTexturePack(
+            resources.leftArrowButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed"),
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled"));
 
-            resources.rightArrowButtonTextures = new GameResources.ButtonTexturePack(
+            resources.rightArrowButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed"),
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled"));
 
-            resources.plusButtonTextures = new GameResources.ButtonTexturePack(
+            resources.plusButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed"),
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled"));
 
-            resources.minusButtonTextures = new GameResources.ButtonTexturePack(
+            resources.minusButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed"),
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled"));
 
-            resources.standardButtonTextures = new GameResources.ButtonTexturePack(
+            resources.standardButtonTextures = new Button.TexturePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed"),
@@ -465,7 +413,7 @@ namespace OldGoldMine
             Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
             Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
 
-            resources.textboxTextures = new GameResources.ButtonTexturePack(
+            resources.textboxTextures = new Button.TexturePack(
                 textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled);
 
 
@@ -540,17 +488,17 @@ namespace OldGoldMine
 
                 case GameState.Running:
                 {
-                    if (InputManager.PauseKeyPressed)
+                    if (InputManager.PausePressed)
                         PauseGame();
 
-                    if (InputManager.DebugKeyPressed)
+                    if (InputManager.DebugPressed)
                     {
                         Collectible.debugDrawHitbox = !Collectible.debugDrawHitbox;
                         Obstacle.debugDrawHitbox = !Obstacle.debugDrawHitbox;
                         hud.ToggleFramerateVisible();
                     }
                         
-                    if (InputManager.FreeLookKeyPressed)
+                    if (InputManager.FreeLookPressed)
                     {
                         freeLook = !freeLook;
                         player.ResetCameraLook();
@@ -577,34 +525,34 @@ namespace OldGoldMine
                     
                     player.Move(moveSpeed, Vector3.Backward);
 
-                    if (InputManager.RightKeyHold)
+                    if (InputManager.RightHold)
                     {
                         player.UpdateSideMovement(gameTime, Vector3.Right);
                     }
-                    else if (InputManager.RightKeyReleased)
+                    else if (InputManager.RightReleased)
                     {
                         player.ReverseSideMovement(Vector3.Left);
                     }
 
-                    if (InputManager.LeftKeyHold)
+                    if (InputManager.LeftHold)
                     {
                         player.UpdateSideMovement(gameTime, Vector3.Left);
                     }
-                    else if (InputManager.LeftKeyReleased)
+                    else if (InputManager.LeftReleased)
                     {
                         player.ReverseSideMovement(Vector3.Right);
                     }
 
-                    if (InputManager.DownKeyHold)
+                    if (InputManager.DownHold)
                     {
                         player.UpdateCrouchMovement(gameTime);
                     }
-                    else if (InputManager.DownKeyReleased)
+                    else if (InputManager.DownReleased)
                     {
                         player.ReverseCrouch();
                     }
 
-                    if (InputManager.JumpKeyPressed)
+                    if (InputManager.JumpPressed)
                     {
                         player.Jump();
                     }

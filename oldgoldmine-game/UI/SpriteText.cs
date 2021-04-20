@@ -3,9 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OldGoldMine.UI
 {
-    class SpriteText : IComponentUI
+    public class SpriteText : IComponentUI
     {
-
         public enum TextAnchor
         {
             TopLeft,
@@ -20,137 +19,109 @@ namespace OldGoldMine.UI
         }
 
 
-        private bool show = true;
-        private string text;
-        private SpriteFont font;
-        private Color color;
-        private Vector2 position;
-        private Vector2 alignmentOffset;
-        private TextAnchor anchorPoint;
-
-
         /// <summary>
-        /// The text string rendered by this element
+        /// The enabled flag determines if the label is visible or hidden.
         /// </summary>
-        public string Text { get { return text; } set { text = value; UpdateAlignmentOffset(); } }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// The SpriteFont used to render the text
+        /// The position of the anchor point of this text element.
         /// </summary>
-        public SpriteFont Font { get { return font; } set { font = value; UpdateAlignmentOffset(); } }
+        public Point Position { get; set; }
 
         /// <summary>
-        /// The color of the label's text
+        /// The size occupied by the SpriteText element, in pixels.
+        /// <para>NOTE: setting this value has no effect.</para>
         /// </summary>
-        public Color Color { get { return color; } set { color = value; } }
+        public Point Size { get; set; }
 
         /// <summary>
-        /// The enabled flag determines if the label is visible or hidden
+        /// The text string rendered by this element.
         /// </summary>
-        public bool Enabled { get { return show; } set { show = value; } }
+        public string Text { get { return textString; } set { textString = value; UpdateAlignmentOffset(); } }
+        private string textString;
 
         /// <summary>
-        /// The position of the anchor point of this text element
+        /// The SpriteFont used to render the text.
         /// </summary>
-        public Vector2 Position { get { return position; } set { position = value; } }
+        public SpriteFont Font { get { return textFont; } set { textFont = value; UpdateAlignmentOffset(); } }
+        private SpriteFont textFont;
 
         /// <summary>
-        /// Defines how the text is anchored to the point defined by the Position value
+        /// The color of the label's text.
         /// </summary>
-        public TextAnchor AnchorPoint { get { return anchorPoint; } set { anchorPoint = value; UpdateAlignmentOffset(); } }
+        public Color Color { get { return textColor; } set { textColor = value; } }
+        private Color textColor;
 
-        
         /// <summary>
-        /// Construct an empty SpriteText element, at default coordinates
+        /// Defines how the text is anchored to the point defined by the Position value.
         /// </summary>
-        /// <param name="font">The SpriteFont used to render the text.</param>
-        public SpriteText(SpriteFont font)
-        {
-            this.font = font;
-            this.text = string.Empty;
-            this.position = Vector2.Zero;
-            this.alignmentOffset = Vector2.Zero;
-            this.anchorPoint = TextAnchor.MiddleCenter;
-            this.color = Color.White;
-        }
+        public TextAnchor Anchor { get { return textAnchor; } set { textAnchor = value; UpdateAlignmentOffset(); } }
+        private TextAnchor textAnchor;
+        private Vector2 textOffset;
+
 
         /// <summary>
-        /// Construct a SpriteText element with specified font, text and position/alignment
-        /// </summary>
-        /// <param name="font">The SpriteFont used to render the text.</param>
-        /// <param name="text">The text to be shown in this element.</param>
-        /// <param name="position">The position of the anchor point of this text.</param>
-        /// <param name="anchorPoint">The type of anchor point specified by Position.</param>
-        public SpriteText(SpriteFont font, string text, Vector2 position, TextAnchor anchorPoint = TextAnchor.MiddleCenter)
-        {
-            this.font = font;
-            this.text = text;
-            this.position = position;
-            this.AnchorPoint = anchorPoint;
-            this.color = Color.White;
-        }
-
-        /// <summary>
-        /// Construct a SpriteText element with specified font, color, text and position/alignment
+        /// Construct a SpriteText element with specified font, color, text and position/alignment.
         /// </summary>
         /// <param name="font">The SpriteFont used to render the text.</param>
         /// <param name="text">The text to be shown in this element.</param>
         /// <param name="color">The color in which the text will be rendered.</param>
         /// <param name="position">The position of the anchor point of this text.</param>
-        /// <param name="anchorPoint">The type of anchor point specified by Position.</param>
-        public SpriteText(SpriteFont font, string text, Color color, Vector2 position, TextAnchor anchorPoint = TextAnchor.MiddleCenter)
+        /// <param name="anchor">The type of anchor point specified by Position.</param>
+        public SpriteText(SpriteFont font, string text, Color color, Point position, TextAnchor anchor = TextAnchor.MiddleCenter)
         {
-            this.font = font;
-            this.text = text;
-            this.position = position;
-            this.AnchorPoint = anchorPoint;
-            this.color = color;
+            this.textFont = font;
+            this.textString = text;
+            this.Position = position;
+            this.Anchor = anchor;     // Internally calculates the alignment offset
+            this.textColor = color;
         }
 
 
         private void UpdateAlignmentOffset()
         {
-            if (font == null)
+            if (textFont == null)
                 return;
-            Vector2 textSize = font.MeasureString(text);
+            Vector2 textSize = textFont.MeasureString(textString);
 
             // Calculate the offset needed to properly align the text
-            switch (anchorPoint)
+            switch (textAnchor)
             {
                 case TextAnchor.TopLeft:
-                    alignmentOffset = Vector2.Zero;
+                    textOffset = Vector2.Zero;
                     break;
 
                 case TextAnchor.TopCenter:
-                    alignmentOffset = new Vector2(-textSize.X / 2, 0f);
+                    textOffset = new Vector2(-textSize.X / 2, 0f);
                     break;
 
                 case TextAnchor.TopRight:
-                    alignmentOffset = new Vector2(-textSize.X, 0f);
+                    textOffset = new Vector2(-textSize.X, 0f);
                     break;
 
                 case TextAnchor.MiddleLeft:
-                    alignmentOffset = new Vector2(0f, -textSize.Y / 2);
+                    textOffset = new Vector2(0f, -textSize.Y / 2);
                     break;
 
                 case TextAnchor.MiddleCenter:
-                    alignmentOffset = -textSize / 2;
+                    textOffset = -textSize / 2;
                     break;
 
                 case TextAnchor.MiddleRight:
-                    alignmentOffset = new Vector2(-textSize.X, -textSize.Y / 2);
+                    textOffset = new Vector2(-textSize.X, -textSize.Y / 2);
                     break;
 
                 case TextAnchor.BottomLeft:
-                    alignmentOffset = new Vector2(0f, -textSize.Y);
+                    textOffset = new Vector2(0f, -textSize.Y);
                     break;
 
                 case TextAnchor.BottomCenter:
-                    alignmentOffset = new Vector2(textSize.X / 2, -textSize.Y);
+                    textOffset = new Vector2(textSize.X / 2, -textSize.Y);
                     break;
 
                 case TextAnchor.BottomRight:
-                    alignmentOffset = -textSize;
+                    textOffset = -textSize;
                     break;
             }
         }
@@ -158,11 +129,8 @@ namespace OldGoldMine.UI
 
         public void Draw(in SpriteBatch spriteBatch)
         {
-            if (!show)      // Do not draw the text if the element is flagged as disabled
-                return;
-
-            if (font != null)
-                spriteBatch.DrawString(font, text, position + alignmentOffset, color);
+            if (Enabled && textFont != null)
+                spriteBatch.DrawString(textFont, textString, Position.ToVector2() + textOffset, textColor);
         }
 
     }

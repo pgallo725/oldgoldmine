@@ -39,7 +39,7 @@
     <Compile Include="UI\Image.cs" />
     <Compile Include="UI\SpriteText.cs" />
     <Compile Include="UI\TextBox.cs" />
-    <Compile Include="UI\ToggleSelector.cs" />
+    <Compile Include="UI\Selector.cs" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
