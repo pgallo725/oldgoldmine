@@ -8,30 +8,29 @@ namespace OldGoldMine.Menus
 {
     class MainMenu : Menu
     {
-        private SpriteText gameTitle;
+        private readonly SpriteText gameTitle;
 
-        private Button playButton;
-        private Button optionsButton;
-        private Button exitButton;
+        private readonly Button playButton;
+        private readonly Button optionsButton;
+        private readonly Button exitButton;
 
-        private SpriteText highscoreText;
+        private readonly SpriteText highscoreText;
 
-        // Sub-menu
-        private readonly OptionsMenu optionsMenu = new OptionsMenu();
-        private bool optionsActive;
+        // SUB-MENUS
+        private readonly NewGameMenu newGameMenu;
+        private readonly OptionsMenu optionsMenu;
+        private bool newGameMenuActive;
+        private bool optionsMenuActive;
 
 
-        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
+        public MainMenu(Viewport viewport, Texture2D background, Menu parent = null)
+            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.5f)), new Point(400, 110), parent)
         {
-            this.parent = null;
-            this.background = background;
-            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.5f)), viewport.Bounds.Center, viewport.Bounds.Size);
+            // CREATE SUB-MENUS
 
-            Point buttonSize = new Point(400, 110);
-
-            optionsMenu.Initialize(viewport, background, this);
-
+            newGameMenu = new NewGameMenu(viewport, background, this);
+            optionsMenu = new OptionsMenu(viewport, background, this);
 
             // MAIN MENU LAYOUT SETUP
 
@@ -51,25 +50,21 @@ namespace OldGoldMine.Menus
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
             highscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Highscore: " + OldGoldMineGame.BestScore,
-                new Color(120, 210, 50, 255), new Point(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3/2 + 150));
+                new Color(120, 210, 50, 255), new Point(viewport.Width / 2, viewport.Height / 2 + (int)(buttonSize.Y * 1.5f) + 150));
         }
 
 
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Point center = viewport.Bounds.Center;
-            Point buttonSize = new Point(400, 110);
-
-            this.transparencyLayer.Area = viewport.Bounds;
 
             gameTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.16f));
 
-            playButton.Position = center - new Point(0, 40);
-            optionsButton.Position = center + new Point(0, 80);
-            exitButton.Position = center + new Point(0, 200);
+            playButton.Position = viewport.Bounds.Center - new Point(0, 40);
+            optionsButton.Position = viewport.Bounds.Center + new Point(0, 80);
+            exitButton.Position = viewport.Bounds.Center + new Point(0, 200);
 
-            highscoreText.Position = new Point(viewport.Width / 2, viewport.Height / 2 + buttonSize.Y * 3/2 + 150);
+            highscoreText.Position = new Point(viewport.Width / 2, viewport.Height / 2 + (int)(buttonSize.Y * 1.5f) + 150);
         }
 
 
@@ -82,21 +77,35 @@ namespace OldGoldMine.Menus
             playButton.Enabled = true;
             optionsButton.Enabled = true;
             exitButton.Enabled = true;
-            optionsActive = false;
+            optionsMenuActive = false;
+            newGameMenuActive = false;
         }
 
 
         public override void Update()
         {
-            if (!optionsActive)
+            if (optionsMenuActive)
+            {
+                // If the options menu is the one currently active, the Update call is forwarded
+                // without running any code inside the MainMenu
+                optionsMenu.Update();
+            }
+            else if (newGameMenuActive)
+            {
+                // If the new game menu is the one currently active, the Update call is forwarded
+                // without running any code inside the MainMenu
+                newGameMenu.Update();
+            }
+            else
             {
                 if (playButton.Update())
                 {
-                    OldGoldMineGame.Application.NewGame();
+                    newGameMenuActive = true;
+                    newGameMenu.Show();
                 }
                 else if (optionsButton.Update())
                 {
-                    optionsActive = true;
+                    optionsMenuActive = true;
                     optionsMenu.Show();
                 }
                 else if (exitButton.Update())
@@ -104,18 +113,22 @@ namespace OldGoldMine.Menus
                     OldGoldMineGame.Application.Exit();
                 }
             }
-            else
-            {
-                // If the options menu is the one currently active, the Update call is forwarded
-                // without running any code inside the MainMenu
-                optionsMenu.Update();
-            }
         }
 
 
         public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
-            if (!optionsActive)
+            if (optionsMenuActive)
+            {
+                // If the options menu is the one currently active, it gets drawn instead of the MainMenu
+                optionsMenu.Draw(screen, spriteBatch);
+            }
+            else if (newGameMenuActive)
+            {
+                // If the new game menu is the one currently active, it gets drawn instead of the MainMenu
+                newGameMenu.Draw(screen, spriteBatch);
+            }
+            else
             {
                 screen.Clear(Color.Black);
 
@@ -124,7 +137,7 @@ namespace OldGoldMine.Menus
                 if (background != null)
                 {
                     spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
-                    transparencyLayer.Draw(spriteBatch);
+                    spriteBatch.Draw(middleLayer, screen.Viewport.Bounds, Color.White);
                 }
 
                 gameTitle.Draw(spriteBatch);
@@ -137,20 +150,7 @@ namespace OldGoldMine.Menus
 
                 spriteBatch.End();
             }
-            else
-            {
-                // If the options menu is the one currently active, it gets drawn instead of the MainMenu
-                optionsMenu.Draw(screen, spriteBatch);
-            }
         }
 
-
-        // Hide the OptionsMenu entity and switch back to the MainMenu Update/Draw
-        public override void CloseSubmenu()
-        {
-            Layout();   // If the display options have changed, the layout needs to be updated
-
-            optionsActive = false;
-        }
     }
 }

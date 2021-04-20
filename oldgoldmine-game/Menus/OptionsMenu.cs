@@ -6,47 +6,42 @@ using Microsoft.Xna.Framework.Graphics;
 using OldGoldMine.Engine;
 using OldGoldMine.UI;
 
+
 namespace OldGoldMine.Menus
 {
     class OptionsMenu : Menu
     {
-        private SpriteText menuTitle;
+        private readonly SpriteText menuTitle;
 
-        private SpriteText masterVolumeLabel;
-        private Selector masterVolumeSelector;
+        private readonly SpriteText masterVolumeLabel;
+        private readonly Selector masterVolumeSelector;
 
-        private SpriteText musicVolumeLabel;
-        private Selector musicVolumeSelector;
+        private readonly SpriteText musicVolumeLabel;
+        private readonly Selector musicVolumeSelector;
 
-        private SpriteText effectsVolumeLabel;
-        private Selector effectsVolumeSelector;
+        private readonly SpriteText effectsVolumeLabel;
+        private readonly Selector effectsVolumeSelector;
 
-        private SpriteText displayModeLabel;
-        private Selector displayModeSelector;
+        private readonly SpriteText displayModeLabel;
+        private readonly Selector displayModeSelector;
 
-        private SpriteText resolutionLabel;
-        private Selector resolutionSelector;
+        private readonly SpriteText resolutionLabel;
+        private readonly Selector resolutionSelector;
 
-        private Button cancelButton;
-        private Button confirmButton;
+        private readonly Button cancelButton;
+        private readonly Button confirmButton;
 
 
-        public override void Initialize(Viewport viewport, Texture2D background, Menu parent)
+        public OptionsMenu(Viewport viewport, Texture2D background, Menu parent)
+            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.66f)), new Point(225, 75), parent)
         {
-            this.parent = parent;
-            this.background = background;
-            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.66f)), viewport.Bounds.Center, viewport.Bounds.Size);
-
-            Point buttonSize = new Point(225, 75);
-
             Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
             Point anchorPointDisplay = new Point(viewport.Width / 2, (int)(viewport.Height * 0.625f));
             Point anchorPointButtons = new Point(viewport.Width / 2, (int)(viewport.Height * 0.89f));
 
             List<string> volumeValues = new List<string>() { "0", "5", "10", "15", "20", "25", "30",
                 "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100" };
-
 
             // OPTIONS MENU LAYOUT SETUP
 
@@ -123,10 +118,10 @@ namespace OldGoldMine.Menus
             }
             else if (cancelButton.Update() || InputManager.PausePressed)
             {
-                parent.CloseSubmenu();
-                return;
+                parent.Show();
             }
         }
+
 
         public void ApplySettings()
         {
@@ -148,13 +143,10 @@ namespace OldGoldMine.Menus
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Point buttonSize = new Point(225, 75);
 
             Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
             Point anchorPointDisplay = new Point(viewport.Width / 2, (int)(viewport.Height * 0.625f));
             Point anchorPointButtons = new Point(viewport.Width / 2, (int)(viewport.Height * 0.89f));
-
-            this.transparencyLayer.Area = viewport.Bounds;
 
             menuTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f));
 
@@ -203,7 +195,7 @@ namespace OldGoldMine.Menus
             if (background != null)
             {
                 spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
-                transparencyLayer.Draw(spriteBatch);
+                spriteBatch.Draw(middleLayer, screen.Viewport.Bounds, Color.White);
             }
 
             menuTitle.Draw(spriteBatch);
@@ -229,11 +221,5 @@ namespace OldGoldMine.Menus
             spriteBatch.End();
         }
 
-
-        public override void CloseSubmenu()
-        {
-            // OptionsMenu has no nested submenus
-            throw new NotSupportedException();
-        }
     }
 }

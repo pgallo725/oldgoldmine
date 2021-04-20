@@ -7,27 +7,24 @@ namespace OldGoldMine.Menus
 {
     class PauseMenu : Menu
     {
-        private SpriteText menuTitle;
+        private readonly SpriteText menuTitle;
 
-        private Button resumeButton;
-        private Button optionsButton;
-        private Button menuButton;
+        private readonly Button resumeButton;
+        private readonly Button optionsButton;
+        private readonly Button menuButton;
 
-        private readonly OptionsMenu optionsMenu = new OptionsMenu();
+        // SUB-MENU
+        private readonly OptionsMenu optionsMenu;
         private bool optionsActive;
 
 
-        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
+        public PauseMenu(Viewport viewport, Texture2D background, Menu parent = null)
+            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.4f)), new Point(400, 120), parent)
         {
-            this.parent = parent;
-            this.background = background;
-            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.4f)), viewport.Bounds.Center, viewport.Bounds.Size);
+            // CREATE SUB-MENU
 
-            Point buttonSize = new Point(400, 120);
-
-            optionsMenu.Initialize(viewport, background, this);
-
+            optionsMenu = new OptionsMenu(viewport, background, this);
 
             // PAUSE MENU LAYOUT SETUP
 
@@ -51,21 +48,24 @@ namespace OldGoldMine.Menus
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Point center = viewport.Bounds.Center;
-
-            this.transparencyLayer.Area = viewport.Bounds;
 
             menuTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f));
 
-            resumeButton.Position = center - new Point(0, 80);
-            optionsButton.Position = center + new Point(0, 60);
-            menuButton.Position = center + new Point(0, 200);
+            resumeButton.Position = viewport.Bounds.Center - new Point(0, 80);
+            optionsButton.Position = viewport.Bounds.Center + new Point(0, 60);
+            menuButton.Position = viewport.Bounds.Center + new Point(0, 200);
         }
 
 
         public override void Update()
         {
-            if (!optionsActive)
+            if (optionsActive)
+            {
+                // If the options menu is the one currently active, the Update call is forwarded
+                // without running any code inside the PauseMenu
+                optionsMenu.Update();
+            }
+            else
             {
                 if (resumeButton.Update() || InputManager.PausePressed)
                 {
@@ -81,12 +81,6 @@ namespace OldGoldMine.Menus
                     OldGoldMineGame.Application.ToMainMenu();
                 }
             }
-            else
-            {
-                // If the options menu is the one currently active, the Update call is forwarded
-                // without running any code inside the PauseMenu
-                optionsMenu.Update();
-            }
         }
 
 
@@ -96,12 +90,18 @@ namespace OldGoldMine.Menus
 
             resumeButton.Enabled = true;
             menuButton.Enabled = true;
+            optionsActive = false;
         }
 
 
         public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
         {
-            if (!optionsActive)
+            if (optionsActive)
+            {
+                // If the options menu is the one currently active, it gets drawn instead of the PauseMenu
+                optionsMenu.Draw(screen, spriteBatch);
+            }
+            else
             {
                 screen.Clear(Color.Black);
 
@@ -110,7 +110,7 @@ namespace OldGoldMine.Menus
                 if (background != null)
                 {
                     spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
-                    transparencyLayer.Draw(spriteBatch);
+                    spriteBatch.Draw(middleLayer, screen.Viewport.Bounds, Color.White);
                 }
 
                 menuTitle.Draw(spriteBatch);
@@ -121,19 +121,6 @@ namespace OldGoldMine.Menus
 
                 spriteBatch.End();
             }
-            else
-            {
-                // If the options menu is the one currently active, it gets drawn instead of the PauseMenu
-                optionsMenu.Draw(screen, spriteBatch);
-            }
-        }
-
-
-        public override void CloseSubmenu()
-        {
-            Layout();   // If the display options have changed, the layout needs to be updated
-
-            optionsActive = false;
         }
     }
 }

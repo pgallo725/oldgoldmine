@@ -166,7 +166,6 @@ namespace OldGoldMine
         public enum GameState
         {
             MainMenu,
-            NewGame,
             Running,
             Paused,
             GameOver
@@ -186,11 +185,10 @@ namespace OldGoldMine
         
         GameState gameState;
 
-        HUD hud = new HUD();
-        MainMenu mainMenu = new MainMenu();
-        CustomizationMenu customMenu = new CustomizationMenu();
-        PauseMenu pauseMenu = new PauseMenu();
-        GameOverMenu deathMenu = new GameOverMenu();
+        private readonly HUD hud = new HUD();
+        private MainMenu mainMenu;
+        private PauseMenu pauseMenu;
+        private GameOverMenu deathMenu;
 
 
         public GameTime gameTime;
@@ -275,10 +273,9 @@ namespace OldGoldMine
 
 
             // Initialize menus
-            mainMenu.Initialize(GraphicsDevice.Viewport, resources.mainMenuBackground);
-            customMenu.Initialize(GraphicsDevice.Viewport, resources.mainMenuBackground);
-            pauseMenu.Initialize(GraphicsDevice.Viewport, resources.pauseMenuBackground);
-            deathMenu.Initialize(GraphicsDevice.Viewport, resources.deathMenuBackground);
+            mainMenu = new MainMenu(GraphicsDevice.Viewport, resources.mainMenuBackground);
+            pauseMenu = new PauseMenu(GraphicsDevice.Viewport, resources.pauseMenuBackground);
+            deathMenu = new GameOverMenu(GraphicsDevice.Viewport, resources.deathMenuBackground);
             
 
             // Setup HUD
@@ -480,12 +477,6 @@ namespace OldGoldMine
                     break;
                 }
 
-                case GameState.NewGame:
-                {
-                    customMenu.Update();
-                    break;
-                }
-
                 case GameState.Running:
                 {
                     if (InputManager.PausePressed)
@@ -604,12 +595,6 @@ namespace OldGoldMine
                     break;
                 }
 
-                case GameState.NewGame:
-                {
-                    customMenu.Draw(GraphicsDevice, spriteBatch);
-                    break;
-                }
-
                 case GameState.Running:
                 {
                     GraphicsDevice.Clear(Color.Black);
@@ -660,19 +645,9 @@ namespace OldGoldMine
 
         // Methods for managing game status changes
 
-        public void NewGame()
-        {
-            if (gameState == GameState.MainMenu)
-            {
-                customMenu.Show();
-                gameState = GameState.NewGame;
-                IsMouseVisible = true;
-            }
-        }
-
         public void StartGame(GameSettings gameSettings)
         {
-            if (gameState == GameState.NewGame)
+            if (gameState == GameState.MainMenu || gameState == GameState.GameOver)
             {
                 // Store the new game's settings
                 currentGameInfo = gameSettings;
@@ -715,7 +690,6 @@ namespace OldGoldMine
             if (gameState == GameState.GameOver)
             {
                 AudioManager.StopAllSoundEffects();
-                gameState = GameState.NewGame;
                 StartGame(currentGameInfo);
             }
         }
@@ -762,8 +736,7 @@ namespace OldGoldMine
         {
             if (gameState != GameState.MainMenu)
             {
-                if (gameState != GameState.NewGame)
-                    AudioManager.PlaySong("Cave_MainTheme", true);
+                AudioManager.PlaySong("Cave_MainTheme", true);
 
                 AudioManager.StopAllSoundEffects();      // Immediately stop all sound effects being played
 

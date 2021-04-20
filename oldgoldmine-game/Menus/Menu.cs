@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using OldGoldMine.UI;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace OldGoldMine.Menus
 {
@@ -18,16 +18,29 @@ namespace OldGoldMine.Menus
         /// </summary>
         protected Texture2D background;
 
-        protected Image transparencyLayer;      // to slightly obscure the background image and not interfere with the foreground
+        // This can be used to slightly obscure or cover the background image
+        protected Texture2D middleLayer;
+
+        /// <summary>
+        /// The reference size for buttons in this menu, also used for layout calculations.
+        /// </summary>
+        protected Point buttonSize;
 
 
         /// <summary>
-        /// Initialize the elements of this menu and their layout.
+        /// Contructs a Menu object by defining its characteristics.
         /// </summary>
-        /// <param name="viewport">A reference to the current application window (GraphicsDevice.Viewport).</param>
         /// <param name="background">The background image to use for this menu (or null).</param>
+        /// <param name="middleLayer">The texture to be used as a middle layer between background and foreground (or null).</param>
+        /// <param name="buttonSize">Reference size for buttons in this menu, also used for layout calculations.</param>
         /// <param name="parent">Specify the parent in case of nested menus (otherwise null).</param>
-        public abstract void Initialize(Viewport viewport, Texture2D background, Menu parent = null);
+        public Menu(Texture2D background, Texture2D middleLayer, Point buttonSize, Menu parent = null)
+        {
+            this.parent = parent;
+            this.background = background;
+            this.middleLayer = middleLayer;
+            this.buttonSize = buttonSize;
+        }
 
 
         /// <summary>
@@ -40,12 +53,6 @@ namespace OldGoldMine.Menus
         /// Prepare the menu to be shown on screen, applying the layout and setting the appropriate status to all elements.
         /// </summary>
         public abstract void Show();
-
-
-        /// <summary>
-        /// In the case of nested menus, this can be called from inside the submenu to go back to its parent.
-        /// </summary>
-        public abstract void CloseSubmenu();
 
 
         /// <summary>

@@ -26,7 +26,7 @@
     <Compile Include="Gameplay\Player.cs" />
     <Compile Include="Gameplay\ProceduralGenerator.cs" />
     <Compile Include="MainGame.cs" />
-    <Compile Include="Menus\CustomizationMenu.cs" />
+    <Compile Include="Menus\NewGameMenu.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />

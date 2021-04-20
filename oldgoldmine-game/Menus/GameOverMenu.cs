@@ -7,24 +7,19 @@ namespace OldGoldMine.Menus
 {
     class GameOverMenu : Menu
     {
-        private SpriteText menuTitle;
+        private readonly SpriteText menuTitle;
 
-        private Button replayButton;
-        private Button menuButton;
+        private readonly Button replayButton;
+        private readonly Button menuButton;
 
-        private SpriteText scoreText;
-        private SpriteText newHighscoreText;
+        private readonly SpriteText scoreText;
+        private readonly SpriteText newHighscoreText;
 
-        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
+
+        public GameOverMenu(Viewport viewport, Texture2D background, Menu parent = null)
+            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.33f)), new Point(400, 120), parent)
         {
-            this.parent = parent;
-            this.background = background;
-            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.33f)), viewport.Bounds.Center, viewport.Bounds.Size);
-
-            Point buttonSize = new Point(400, 120);
-
-
             // GAMEOVER MENU LAYOUT SETUP
 
             menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
@@ -50,9 +45,6 @@ namespace OldGoldMine.Menus
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
             Point center = viewport.Bounds.Center;
-            Point buttonSize = new Point(400, 120);
-
-            this.transparencyLayer.Area = viewport.Bounds;
 
             menuTitle.Position = new Point(viewport.Width / 2, viewport.Height / 10);
 
@@ -98,7 +90,7 @@ namespace OldGoldMine.Menus
             if (background != null)
             {
                 spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
-                transparencyLayer.Draw(spriteBatch);
+                spriteBatch.Draw(middleLayer, screen.Viewport.Bounds, Color.White);
             }
 
             menuTitle.Draw(spriteBatch);
@@ -110,11 +102,5 @@ namespace OldGoldMine.Menus
             spriteBatch.End();
         }
 
-
-        public override void CloseSubmenu()
-        {
-            // GameOverMenu has no nested submenus
-            throw new System.NotSupportedException();
-        }
     }
 }

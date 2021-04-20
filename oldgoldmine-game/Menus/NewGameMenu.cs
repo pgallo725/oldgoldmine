@@ -8,30 +8,30 @@ using OldGoldMine.UI;
 
 namespace OldGoldMine.Menus
 {
-    class CustomizationMenu : Menu
+    class NewGameMenu : Menu
     {
-        private SpriteText titleText;
+        private readonly SpriteText titleText;
 
-        private SpriteText speedLabel;
-        private Selector speedToggle;
+        private readonly SpriteText speedLabel;
+        private readonly Selector speedToggle;
 
-        private SpriteText difficultyLabel;
-        private Selector difficultyToggle;
+        private readonly SpriteText difficultyLabel;
+        private readonly Selector difficultyToggle;
 
-        private SpriteText seedLabel;
-        private TextBox seedBox;
+        private readonly SpriteText seedLabel;
+        private readonly TextBox seedBox;
 
-        private Image cartPanel;
-        private Image cartPreview;
-        private Selector cartSelector;
-        private SpriteText cartLockedLabel;
-        private Image cartTransparencyLayer;
-        private Image cartLockedIcon;
+        private readonly Image cartPanel;
+        private readonly Image cartPreview;
+        private readonly Selector cartSelector;
+        private readonly SpriteText cartLockedLabel;
+        private readonly Image cartTransparencyLayer;
+        private readonly Image cartLockedIcon;
 
-        private SpriteText scoreMultiplierLabel;
+        private readonly SpriteText scoreMultiplierLabel;
 
-        private Button startButton;
-        private Button backButton;
+        private readonly Button startButton;
+        private readonly Button backButton;
 
         
         private readonly int[] cartPointsNeeded = { -1, 2500, 8000, 20000 };
@@ -58,22 +58,15 @@ namespace OldGoldMine.Menus
         }
 
 
-        public override void Initialize(Viewport viewport, Texture2D background, Menu parent = null)
+        public NewGameMenu(Viewport viewport, Texture2D background, Menu parent = null)
+            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+                new Color(Color.Black, 0.66f)), new Point(240, 80), parent)
         {
-            this.parent = parent;
-            this.background = background;
-            this.transparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
-                new Color(Color.Black, 0.66f)), viewport.Bounds.Center, viewport.Bounds.Size);
-
-
-            Point buttonSize = new Point(240, 80);
-
             Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
             Point anchorPointCarts = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.45f));
             Point anchorPointSettings = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.45f));
             Point anchorPointScore = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.875f));      
             Point anchorPointButtons = new Point((int)(viewport.Width * 0.75f), (int)(viewport.Height * 0.875f));
-
 
             // CUSTOMIZATION MENU LAYOUT SETUP
 
@@ -136,9 +129,6 @@ namespace OldGoldMine.Menus
         protected override void Layout()
         {
             Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
-            Point buttonSize = new Point(240, 80);
-
-            this.transparencyLayer.Area = viewport.Bounds;
 
             Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
             Point anchorPointCarts = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.45f));
@@ -208,7 +198,7 @@ namespace OldGoldMine.Menus
             }
             else if (backButton.Update() || InputManager.BackPressed)
             {
-                OldGoldMineGame.Application.ToMainMenu();
+                parent.Show();
             }
         }
 
@@ -258,7 +248,7 @@ namespace OldGoldMine.Menus
             if (background != null)
             {
                 spriteBatch.Draw(background, screen.Viewport.Bounds, Color.White);
-                transparencyLayer.Draw(spriteBatch);
+                spriteBatch.Draw(middleLayer, screen.Viewport.Bounds, Color.White);
             }
 
             titleText.Draw(spriteBatch);
@@ -287,11 +277,5 @@ namespace OldGoldMine.Menus
             spriteBatch.End();
         }
 
-
-        public override void CloseSubmenu()
-        {
-            // CustomizationMenu has no nested submenus
-            throw new System.NotSupportedException();
-        }
     }
 }
