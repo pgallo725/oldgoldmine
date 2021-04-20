@@ -191,7 +191,6 @@ namespace OldGoldMine
         private GameOverMenu deathMenu;
 
 
-        public GameTime gameTime;
         public static Timer timer;
         public static Player player;
         ProceduralGenerator level;
@@ -463,11 +462,9 @@ namespace OldGoldMine
             if (!IsActive)
                 return;
 
-            this.gameTime = gameTime;
-
             InputManager.UpdateFrameInput();
 
-            AudioManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            AudioManager.Update(gameTime);
 
             switch (gameState)
             {
@@ -557,7 +554,7 @@ namespace OldGoldMine
 
                     player.Update(gameTime);
                         
-                    level.Update(player.Position);
+                    level.Update(gameTime, player.Position);
 
                     break;
                 }

@@ -129,7 +129,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             if (!IsActive)
                 return;

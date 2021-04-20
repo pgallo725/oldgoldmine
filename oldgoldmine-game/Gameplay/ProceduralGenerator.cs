@@ -516,7 +516,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void Update(Vector3 playerPosition)
+        public void Update(GameTime gameTime, Vector3 playerPosition)
         {
             if (playerPosition.Z >= nextCavePosition - popupDistance)
             {
@@ -547,7 +547,7 @@ namespace OldGoldMine.Gameplay
                     gold.IsActive = false;
                     collectibles.Dequeue();     // Remove element from the queue (knowing that collectibles are sorted in order of encounter)
                 }
-                else gold.Update();
+                else gold.Update(gameTime);
             }
 
             foreach (Obstacle obstacle in obstacles.ToArray())
@@ -557,7 +557,7 @@ namespace OldGoldMine.Gameplay
                     obstacle.IsActive = false;
                     obstacles.Dequeue();        // Remove element from the queue (knowing that obstacles are sorted in order of encounter)
                 }
-                else obstacle.Update();
+                else obstacle.Update(gameTime);
             }
         }
 

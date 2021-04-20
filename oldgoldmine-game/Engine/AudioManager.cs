@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
@@ -103,11 +104,11 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Update the internal status of the AudioManager over time.
         /// </summary>
-        public static void Update(float deltaTime)
+        public static void Update(GameTime gameTime)
         {
             if (fadeout)
             {
-                MediaPlayer.Volume -= fadeSpeed * deltaTime;
+                MediaPlayer.Volume -= fadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (MediaPlayer.Volume <= 0.0f)
                 {
                     StopMusic();

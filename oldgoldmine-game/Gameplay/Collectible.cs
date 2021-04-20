@@ -130,13 +130,12 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             if (!IsActive)
                 return;
 
-            float rotationAmount = rotationSpeed *
-                (float)OldGoldMineGame.Application.gameTime.ElapsedGameTime.TotalSeconds;
+            float rotationAmount = rotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             this.RotateAroundAxis(Vector3.Up, rotationAmount);
 
             if (CheckPlayerCollision(OldGoldMineGame.player))
