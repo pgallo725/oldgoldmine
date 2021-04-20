@@ -1,22 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using OldGoldMine.Engine;
 using OldGoldMine.UI;
+
 
 namespace OldGoldMine.Gameplay
 {
     public class HUD
     {
-        SpriteText timerText;
-        SpriteText framerateText;
-        SpriteText scoreText;
-        SpriteText speedText;
+        private readonly SpriteText timerText;
+        private readonly SpriteText framerateText;
+        private readonly SpriteText scoreText;
+        private readonly SpriteText speedText;
 
         private bool framerateVisible = false;
+        private Rectangle area;
 
 
-        public void Initialize(in GameWindow window)
+        public HUD(in GameWindow window)
         {
-            // HUD elements setup
+            this.area = window.ClientBounds;
+
+            // SETUP HUD ELEMENTS
+
             timerText = new SpriteText(OldGoldMineGame.resources.hudFont, "00:00:00", 
                 Color.White, new Point(window.ClientBounds.Width / 2, 5), SpriteText.TextAnchor.TopCenter);
 
@@ -31,7 +37,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void UpdateTimer(Engine.Timer timer)
+        public void UpdateTimer(Timer timer)
         {
             timerText.Text = timer.ToString();
         }
@@ -61,12 +67,24 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void Show(Engine.Timer time, double framerate, int score, float speed)
+        private void Layout()
         {
-            UpdateTimer(time);
-            UpdateFramerate(framerate);
-            UpdateScore(score);
-            UpdateSpeed(speed);
+            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+
+            timerText.Position = new Point(viewport.Bounds.Width / 2, 5);
+            framerateText.Position = new Point(viewport.Bounds.Width - 10, 5);
+            scoreText.Position = new Point(15, 5);
+            speedText.Position = new Point(15, 50);
+        }
+
+        public void Show(in GameWindow window)
+        {
+            // Update the HUD layout if the window area has been resized
+            if (window.ClientBounds != area)
+            {
+                area = window.ClientBounds;
+                Layout();
+            }
         }
 
 

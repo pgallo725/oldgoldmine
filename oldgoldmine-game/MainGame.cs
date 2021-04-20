@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Input;
 using OldGoldMine.UI;
 using OldGoldMine.Menus;
 using OldGoldMine.Engine;
@@ -154,11 +153,11 @@ namespace OldGoldMine
                 {
                     var screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                     var screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    var windowWidth = application.Window.ClientBounds.Width;
-                    var windowHeight = application.Window.ClientBounds.Height;
+                    var windowWidth = Application.Window.ClientBounds.Width;
+                    var windowHeight = Application.Window.ClientBounds.Height;
 
-                    application.Window.IsBorderless = (CurrentDisplayMode == DisplayMode.Borderless);
-                    application.Window.Position = new Point((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
+                    Application.Window.IsBorderless = (CurrentDisplayMode == DisplayMode.Borderless);
+                    Application.Window.Position = new Point((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
                 }
             }
         }
@@ -171,27 +170,25 @@ namespace OldGoldMine
             GameOver
         }
 
-        // Statically accessible graphics and rendering tools
+        // Globally accessible graphics and rendering tools
         public static GraphicsDeviceManager graphics;
         public static SpriteBatch spriteBatch;
         public static BasicEffect basicEffect;
 
-
-        private static OldGoldMineGame application;
-        public static OldGoldMineGame Application { get { return application; } }
+        public static OldGoldMineGame Application { get; private set; }
 
         public static Settings settings = new Settings();
         public static GameResources resources = new GameResources();
         
         GameState gameState;
 
-        private readonly HUD hud = new HUD();
+        private HUD hud;
         private MainMenu mainMenu;
         private PauseMenu pauseMenu;
-        private GameOverMenu deathMenu;
+        private GameOverMenu gameOverMenu;
 
 
-        public static Timer timer;
+        Timer timer;
         public static Player player;
         ProceduralGenerator level;
 
@@ -237,15 +234,16 @@ namespace OldGoldMine
 
         public OldGoldMineGame()
         {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            graphics = new GraphicsDeviceManager(this)
+            {
+                GraphicsProfile = GraphicsProfile.HiDef,
+                SynchronizeWithVerticalRetrace = false
+            };
 
             Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
-            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);
-            OldGoldMineGame.graphics.SynchronizeWithVerticalRetrace = false;
-            OldGoldMineGame.application = this;
+            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);    // 250 FPS target
 
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -253,6 +251,8 @@ namespace OldGoldMine
 
             Window.IsBorderless = false;
             Window.Title = "The Old Gold Mine";
+
+            Application = this;
         }
 
         /// <summary>
@@ -274,12 +274,12 @@ namespace OldGoldMine
             // Initialize menus
             mainMenu = new MainMenu(GraphicsDevice.Viewport, resources.mainMenuBackground);
             pauseMenu = new PauseMenu(GraphicsDevice.Viewport, resources.pauseMenuBackground);
-            deathMenu = new GameOverMenu(GraphicsDevice.Viewport, resources.deathMenuBackground);
+            gameOverMenu = new GameOverMenu(GraphicsDevice.Viewport, resources.deathMenuBackground);
             
 
             // Setup HUD
             timer = new Timer();
-            hud.Initialize(Window);
+            hud = new HUD(Window);
 
 
             float popupDistance = 400f;
@@ -505,6 +505,7 @@ namespace OldGoldMine
 
                     hud.UpdateTimer(timer);
                     hud.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
+                    hud.Show(Window);
 
                     float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -567,7 +568,7 @@ namespace OldGoldMine
 
                 case GameState.GameOver:
                 {
-                    deathMenu.Update();
+                    gameOverMenu.Update();
                     break;
                 }
 
@@ -628,7 +629,7 @@ namespace OldGoldMine
 
                 case GameState.GameOver:
                 {
-                    deathMenu.Draw(GraphicsDevice, spriteBatch);
+                    gameOverMenu.Draw(GraphicsDevice, spriteBatch);
                     break;
                 }
 
@@ -667,14 +668,16 @@ namespace OldGoldMine
                 level.InitializeSeed(gameSettings.seed);
                 level.Difficulty = gameSettings.difficulty;
 
-                // Show the game HUD
-                hud.Show(timer, 60f, Score, Speed);
+                // Reset the game HUD
+                hud.UpdateTimer(timer);
+                hud.UpdateScore(Score);
+                hud.UpdateSpeed(Speed);
 
                 player.Start();
                 gameState = GameState.Running;
                 IsMouseVisible = false;
 
-                // Fade*out the menu music
+                // Fade-out the menu music
                 AudioManager.FadeOutMusic(1.5f);
 
                 // Start playing ambient sounds
@@ -717,7 +720,7 @@ namespace OldGoldMine
             if (gameState == GameState.Running)
             {
                 player.Kill();
-                deathMenu.Show();
+                gameOverMenu.Show();
                 gameState = GameState.GameOver;
                 IsMouseVisible = true;
 
@@ -749,7 +752,7 @@ namespace OldGoldMine
         public static void UpdateScore(int points)
         {
             Score += (int)(points * scoreMultiplier + 0.5f);    // extra 0.5f added to avoid int conversion errors
-            OldGoldMineGame.application.hud.UpdateScore(score);
+            OldGoldMineGame.Application.hud.UpdateScore(score);
         }
 
         public void SaveScore(int score)
