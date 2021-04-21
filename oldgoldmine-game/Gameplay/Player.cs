@@ -288,6 +288,9 @@ namespace OldGoldMine.Gameplay
         }
 
 
+        /// <summary>
+        /// Render the Player object.
+        /// </summary>
         public void Draw()
         {
             if (model != null)

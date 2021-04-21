@@ -11,7 +11,7 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Flag indicating if this instance is actively being used or is available in the ObjectPool.
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public abstract object Clone();
     }
