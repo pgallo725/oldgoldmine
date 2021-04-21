@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OldGoldMine.Engine;
+using OldGoldMine.Gameplay;
 using OldGoldMine.UI;
 
 
@@ -49,7 +50,7 @@ namespace OldGoldMine.Menus
                 OldGoldMineGame.resources.menuItemsFont, "QUIT", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-            highscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Highscore: " + OldGoldMineGame.BestScore,
+            highscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Highscore: " + Score.Best,
                 new Color(120, 210, 50, 255), new Point(viewport.Width / 2, viewport.Height / 2 + (int)(buttonSize.Y * 1.5f) + 150));
         }
 
@@ -72,7 +73,7 @@ namespace OldGoldMine.Menus
         {
             Layout();
 
-            highscoreText.Text = "Highscore: " + OldGoldMineGame.BestScore;
+            highscoreText.Text = "Highscore: " + Score.Best;
 
             playButton.Enabled = true;
             optionsButton.Enabled = true;

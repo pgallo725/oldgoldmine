@@ -182,11 +182,9 @@ namespace OldGoldMine
         
         GameState gameState;
 
-        private HUD hud;
         private MainMenu mainMenu;
         private PauseMenu pauseMenu;
         private GameOverMenu gameOverMenu;
-
 
         Timer timer;
         public static Player player;
@@ -214,12 +212,6 @@ namespace OldGoldMine
         }
 
         private GameSettings currentGameInfo;
-
-        private static float scoreMultiplier = 1f;
-        private static int score = 0;
-        public static int Score { get { return score; } set { score = value; } }
-        private static int bestScore = 0;
-        public static int BestScore { get { return bestScore; } set { bestScore = value; } }
 
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
@@ -265,18 +257,16 @@ namespace OldGoldMine
             settings.Load();
             settings.Apply();
 
-            BestScore = LoadScore();
+            Score.Load();
 
+            timer = new Timer();
 
-            // Initialize menus
+            // Initialize menus and HUD
             mainMenu = new MainMenu(GraphicsDevice.Viewport, resources.mainMenuBackground);
             pauseMenu = new PauseMenu(GraphicsDevice.Viewport, resources.pauseMenuBackground);
             gameOverMenu = new GameOverMenu(GraphicsDevice.Viewport, resources.deathMenuBackground);
-            
 
-            // Setup HUD
-            timer = new Timer();
-            hud = new HUD(Window);
+            HUD.Create(Window);           
 
 
             float popupDistance = 400f;
@@ -482,7 +472,7 @@ namespace OldGoldMine
                     {
                         Collectible.debugDrawHitbox = !Collectible.debugDrawHitbox;
                         Obstacle.debugDrawHitbox = !Obstacle.debugDrawHitbox;
-                        hud.ToggleFramerateVisible();
+                        HUD.Instance.ToggleFramerateVisible();
                     }
 
                     // Update time-related information and parameters
@@ -493,12 +483,12 @@ namespace OldGoldMine
                     {
                         Speed = MathHelper.Clamp(Speed + 1f, 0f, maxSpeed);
                         lastSpeedUpdate = (float)timer.Time.TotalSeconds;
-                        hud.UpdateSpeed(Speed);
+                        HUD.Instance.UpdateSpeed(Speed);
                     }
 
-                    hud.UpdateTimer(timer);
-                    hud.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
-                    hud.Show(Window);
+                    HUD.Instance.UpdateTimer(timer);
+                    HUD.Instance.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
+                    HUD.Instance.Show(Window);
 
                     // Update the player and level status in the current frame
 
@@ -563,7 +553,7 @@ namespace OldGoldMine
                     level.Draw(player.Camera);
 
                     // Draw the HUD on top of the rendered scene
-                    hud.Draw(spriteBatch);
+                    HUD.Instance.Draw(spriteBatch);
 
                     break;
                 }
@@ -599,8 +589,8 @@ namespace OldGoldMine
 
                 // Reset the level information
                 Speed = gameSettings.startSpeed;
-                Score = 0;
-                scoreMultiplier = gameSettings.multiplier;
+                Score.Current = 0;
+                Score.Multiplier = gameSettings.multiplier;
                 lastSpeedUpdate = 0f;
                 timer.Reset();
                 level.Reset();
@@ -616,9 +606,9 @@ namespace OldGoldMine
                 level.Difficulty = gameSettings.difficulty;
 
                 // Reset the game HUD
-                hud.UpdateTimer(timer);
-                hud.UpdateScore(Score);
-                hud.UpdateSpeed(Speed);
+                HUD.Instance.UpdateTimer(timer);
+                HUD.Instance.UpdateScore(0);
+                HUD.Instance.UpdateSpeed(Speed);
 
                 player.Start();
                 gameState = GameState.Running;
@@ -671,11 +661,8 @@ namespace OldGoldMine
                 gameState = GameState.GameOver;
                 IsMouseVisible = true;
 
-                if (Score > BestScore)
-                {
-                    BestScore = Score;
-                    SaveScore(Score);
-                } 
+                if (Score.Current > Score.Best)
+                    Score.Save();
             }
         }
 
@@ -687,44 +674,17 @@ namespace OldGoldMine
 
                 AudioManager.StopAllSoundEffects();      // Immediately stop all sound effects being played
 
+                if (gameState == GameState.Paused)
+                {
+                    // Save any highscore even if the user leaves the game without losing
+                    if (Score.Current > Score.Best)
+                        Score.Save();
+                }
+
                 mainMenu.Show();
                 gameState = GameState.MainMenu;
                 IsMouseVisible = true;
             }
-        }
-
-
-        // Score handling methods
-
-        public static void UpdateScore(int points)
-        {
-            Score += (int)(points * scoreMultiplier + 0.5f);    // extra 0.5f added to avoid int conversion errors
-            OldGoldMineGame.Application.hud.UpdateScore(score);
-        }
-
-        public void SaveScore(int score)
-        {
-            const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
-            Registry.SetValue(key, "Best_Score", score);
-        }
-
-        public int LoadScore()
-        {
-            const string key = "HKEY_CURRENT_USER\\Software\\OldGoldMine\\Game";
-            int? score;
-
-            try
-            {
-                score = Registry.GetValue(key, "Highscore", 0) as int?;   // type int? is nullable (if key doesn't exist)
-                if (score == null)
-                    score = 0;
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-
-            return score.Value;
         }
 
     }

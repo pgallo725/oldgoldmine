@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OldGoldMine.Engine;
+using OldGoldMine.Gameplay;
 using OldGoldMine.UI;
 
 
@@ -221,7 +222,7 @@ namespace OldGoldMine.Menus
         {
             cartPreview.ImageTexture = OldGoldMineGame.resources.cartPreviewImages[SelectedCart];
 
-            if (OldGoldMineGame.BestScore > cartPointsNeeded[SelectedCart])
+            if (Score.Best > cartPointsNeeded[SelectedCart])
             {
                 cartTransparencyLayer.Enabled = false;
                 cartLockedLabel.Enabled = false;

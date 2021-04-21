@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OldGoldMine.Engine;
+using OldGoldMine.Gameplay;
 using OldGoldMine.UI;
 
 namespace OldGoldMine.Menus
@@ -33,7 +34,7 @@ namespace OldGoldMine.Menus
                 OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
                 OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
 
-            scoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Final score: " + OldGoldMineGame.Score,
+            scoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Final score: " + Score.Current,
                 Color.LightGoldenrodYellow, new Point(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175));
 
             newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "NEW HIGHSCORE!",
@@ -60,8 +61,8 @@ namespace OldGoldMine.Menus
         {
             Layout();
 
-            scoreText.Text = "Final score: " + OldGoldMineGame.Score;
-            newHighscoreText.Enabled = OldGoldMineGame.Score > OldGoldMineGame.BestScore;
+            scoreText.Text = "Final score: " + Score.Current;
+            newHighscoreText.Enabled = Score.Current > Score.Best;
 
             replayButton.Enabled = true;
             menuButton.Enabled = true;

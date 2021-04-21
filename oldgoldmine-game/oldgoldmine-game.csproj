@@ -25,6 +25,7 @@
     <Compile Include="Gameplay\Obstacle.cs" />
     <Compile Include="Gameplay\Player.cs" />
     <Compile Include="Gameplay\ProceduralGenerator.cs" />
+    <Compile Include="Gameplay\Score.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Menus\NewGameMenu.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />

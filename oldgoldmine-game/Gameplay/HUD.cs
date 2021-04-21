@@ -8,6 +8,8 @@ namespace OldGoldMine.Gameplay
 {
     public class HUD
     {
+        public static HUD Instance;
+
         private readonly SpriteText timerText;
         private readonly SpriteText framerateText;
         private readonly SpriteText scoreText;
@@ -17,7 +19,16 @@ namespace OldGoldMine.Gameplay
         private Rectangle area;
 
 
-        public HUD(in GameWindow window)
+        /// <summary>
+        /// Create a singleton instance of the HUD class, accessible via the static Instance field.
+        /// </summary>
+        /// <param name="window">The application window in which the HUD will be drawn.</param>
+        public static void Create(in GameWindow window)
+        {
+            Instance = new HUD(window);
+        }
+
+        private HUD(in GameWindow window)
         {
             this.area = window.ClientBounds;
 
@@ -37,11 +48,19 @@ namespace OldGoldMine.Gameplay
         }
 
 
+        /// <summary>
+        /// Update the timer shown in the HUD with the value of the provided object.
+        /// </summary>
+        /// <param name="timer">Timer object that will be used to update the HUD timer.</param>
         public void UpdateTimer(Timer timer)
         {
             timerText.Text = timer.ToString();
         }
 
+        /// <summary>
+        /// Update the framerate counter shown in the HUD with the provided value.
+        /// </summary>
+        /// <param name="framerate">Framerate to be shown on the HUD (if enabled), in FPS.</param>
         public void UpdateFramerate(double framerate)
         {
             if (framerateVisible)
@@ -51,21 +70,46 @@ namespace OldGoldMine.Gameplay
             }
         }
 
+        /// <summary>
+        /// Toggle the visibility of the framerate counter in the HUD.
+        /// </summary>
         public void ToggleFramerateVisible()
         {
             framerateVisible = !framerateVisible;
         }
 
+        /// <summary>
+        /// Update the score label of the HUD with the provided value.
+        /// </summary>
+        /// <param name="score">Score value to be shown on the HUD, in points.</param>
         public void UpdateScore(int score)
         {
             scoreText.Text = score.ToString("Score: 0.#");
         }
 
+        /// <summary>
+        /// Update the speed indicator of the HUD with the provided value.
+        /// </summary>
+        /// <param name="speed">Speed value to be shown on the HUD, in Km/h.</param>
         public void UpdateSpeed(float speed)
         {
             speedText.Text = speed.ToString("Speed: 0.# Km/h");
         }
 
+
+        /// <summary>
+        /// Prepares the HUD to be shown on screen, laying out its elements in the available window.
+        /// </summary>
+        /// <param name="window">The application window in which the HUD is drawn.</param>
+        public void Show(in GameWindow window)
+        {
+            // Update the HUD layout if the window area has been resized
+            if (window.ClientBounds != area)
+            {
+                area = window.ClientBounds;
+                Layout();
+            }
+        }
 
         private void Layout()
         {
@@ -77,17 +121,12 @@ namespace OldGoldMine.Gameplay
             speedText.Position = new Point(15, 50);
         }
 
-        public void Show(in GameWindow window)
-        {
-            // Update the HUD layout if the window area has been resized
-            if (window.ClientBounds != area)
-            {
-                area = window.ClientBounds;
-                Layout();
-            }
-        }
 
-
+        /// <summary>
+        /// Draw the HUD on the screen.
+        /// </summary>
+        /// <param name="spriteBatch">A SpriteBatch object that will be used to draw the menu elements.
+        /// It will Begin() and End() inside this call.</param>
         public void Draw(in SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();

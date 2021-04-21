@@ -141,7 +141,7 @@ namespace OldGoldMine.Gameplay
             if (CheckPlayerCollision(OldGoldMineGame.player))
             {
                 this.IsActive = false;
-                OldGoldMineGame.UpdateScore(100);
+                Score.Add(100);
                 AudioManager.PlaySoundEffect("Gold_Pickup", false, 1f, 0f);
             }
         }
