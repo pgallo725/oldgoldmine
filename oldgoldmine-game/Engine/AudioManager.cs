@@ -171,7 +171,6 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Move the current song index of the MediaPlayer to the next song in the queue.
         /// </summary>
-        /// <param name="fade">Whether the next song has to fade-in its playback.</param>
         public static void NextSong()
         {
             fadeout = false;
@@ -185,8 +184,7 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Move the current song index of the MediaPlayer to the previous song in the queue.
         /// </summary>
-        /// /// <param name="fade">Whether the previous song has to fade-in its playback.</param>
-        public static void PreviousSong(bool fade = false)
+        public static void PreviousSong()
         {
             fadeout = false;
 

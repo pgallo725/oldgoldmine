@@ -489,10 +489,10 @@ namespace OldGoldMine
 
                     timer.Update(gameTime);
 
-                    if (timer.time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
+                    if (timer.Time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
                     {
                         Speed = MathHelper.Clamp(Speed + 1f, 0f, maxSpeed);
-                        lastSpeedUpdate = (float)timer.time.TotalSeconds;
+                        lastSpeedUpdate = (float)timer.Time.TotalSeconds;
                         hud.UpdateSpeed(Speed);
                     }
 

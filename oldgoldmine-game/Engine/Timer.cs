@@ -5,24 +5,46 @@ namespace OldGoldMine.Engine
 {
     public class Timer
     {
+        /// <summary>
+        /// The TimeSpan measured by the Timer since it was last reset.
+        /// </summary>
+        public TimeSpan Time = new TimeSpan(0, 0, 0);
 
-        public TimeSpan time = new TimeSpan(0, 0, 0);
+        /// <summary>
+        /// Set the Timer value to the specified number of hours, minutes and seconds.
+        /// </summary>
+        /// <param name="hours">Amount of hours for the Timer value.</param>
+        /// <param name="minutes">Amount of minutes for the Timer value.</param>
+        /// <param name="seconds">Amount of seconds for the Timer value.</param>
+        public void Set(int hours, int minutes, int seconds)
+        {
+            Time = new TimeSpan(hours, minutes, seconds);
+        }
 
+        /// <summary>
+        /// Reset the Timer to 0 hours, 0 minutes, 0 seconds.
+        /// </summary>
         public void Reset()
         {
-            time = new TimeSpan(0, 0, 0);
+            Time = new TimeSpan(0, 0, 0);
         }
 
+        /// <summary>
+        /// Tick the Timer in the current frame, updating its value accordingly.
+        /// </summary>
+        /// <param name="elapsedTime">Time signature of the current frame.</param>
         public void Update(GameTime elapsedTime)
         {
-            time = time.Add(elapsedTime.ElapsedGameTime);
+            Time = Time.Add(elapsedTime.ElapsedGameTime);
         }
 
+        /// <summary>
+        /// Format the Timer value to a string.
+        /// </summary>
+        /// <returns>String representation of the Timer value (in the format hh:mm:ss).</returns>
         public override string ToString()
         {
-            return time.Hours.ToString("00") +
-                ":" + time.Minutes.ToString("00") +
-                ":" + time.Seconds.ToString("00");
+            return Time.ToString("hh\\:mm\\:ss");
         }
 
     }

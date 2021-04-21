@@ -98,6 +98,9 @@ namespace OldGoldMine.Engine
         private readonly static HashSet<Buttons> buttonsReleased = new HashSet<Buttons>();
 
 
+        /// <summary>
+        /// Process the input for the current frame (mouse, keyboard and gamepad).
+        /// </summary>
         public static void UpdateFrameInput()
         {
             // Retrieve the state from all supported input peripherals (mouse, keyboard, gamepad)
