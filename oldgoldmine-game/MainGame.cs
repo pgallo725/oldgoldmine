@@ -221,11 +221,8 @@ namespace OldGoldMine
         private static int bestScore = 0;
         public static int BestScore { get { return bestScore; } set { bestScore = value; } }
 
-        bool freeLook = false;
-
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
-
 
         const float speedIncreaseInterval = 4f;
         const float maxSpeed = 200f;
@@ -477,19 +474,15 @@ namespace OldGoldMine
                 case GameState.Running:
                 {
                     if (InputManager.PausePressed)
+                    {
                         PauseGame();
-
+                    }
+                        
                     if (InputManager.DebugPressed)
                     {
                         Collectible.debugDrawHitbox = !Collectible.debugDrawHitbox;
                         Obstacle.debugDrawHitbox = !Obstacle.debugDrawHitbox;
                         hud.ToggleFramerateVisible();
-                    }
-                        
-                    if (InputManager.FreeLookPressed)
-                    {
-                        freeLook = !freeLook;
-                        player.ResetCameraLook();
                     }
 
                     // Update time-related information and parameters
@@ -507,54 +500,9 @@ namespace OldGoldMine
                     hud.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
                     hud.Show(Window);
 
-                    float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                    // Move the player according to the current frame inputs
-                    
-                    player.Move(moveSpeed, Vector3.Backward);
-
-                    if (InputManager.RightHold)
-                    {
-                        player.UpdateSideMovement(gameTime, Vector3.Right);
-                    }
-                    else if (InputManager.RightReleased)
-                    {
-                        player.ReverseSideMovement(Vector3.Left);
-                    }
-
-                    if (InputManager.LeftHold)
-                    {
-                        player.UpdateSideMovement(gameTime, Vector3.Left);
-                    }
-                    else if (InputManager.LeftReleased)
-                    {
-                        player.ReverseSideMovement(Vector3.Right);
-                    }
-
-                    if (InputManager.DownHold)
-                    {
-                        player.UpdateCrouchMovement(gameTime);
-                    }
-                    else if (InputManager.DownReleased)
-                    {
-                        player.ReverseCrouch();
-                    }
-
-                    if (InputManager.JumpPressed)
-                    {
-                        player.Jump();
-                    }
-
-                    if (freeLook)
-                    {
-                        player.LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
-                        player.LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
-                    }
-                    
+                    // Update the player and level status in the current frame
 
                     player.Update(gameTime);
-                        
                     level.Update(gameTime, player.Position);
 
                     break;
@@ -613,7 +561,6 @@ namespace OldGoldMine
 
                     player.Draw();
                     level.Draw(player.Camera);
-
 
                     // Draw the HUD on top of the rendered scene
                     hud.Draw(spriteBatch);

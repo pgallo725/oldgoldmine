@@ -15,16 +15,29 @@ namespace OldGoldMine.Gameplay
         private float verticalLookAngle = 0.0f;
         private float horizontalLookAngle = 0.0f;
 
-        private GameCamera camera;
-        private GameObject3D model;
-        private SoundEffectInstance sound;
+        bool freeLook = false;
 
-        private readonly Vector3 hitboxOffset = new Vector3(0f, -0.5f, 0f);
-        internal BoundingSphere hitbox;
+        private readonly GameCamera camera;
+        private readonly GameObject3D model;
+        private readonly SoundEffectInstance sound;
 
+        private BoundingSphere hitbox;
+        private Vector3 hitboxOffset;
+
+        /// <summary>
+        /// The camera object through which the Player observes the game world.
+        /// </summary>
         public GameCamera Camera { get { return camera; } }
 
+        /// <summary>
+        /// The current position of the Player object in the game world.
+        /// </summary>
         public Vector3 Position { get { return camera.Position; } }
+
+        /// <summary>
+        /// The hitbox tied to the Player object, used to determine triggers and collisions.
+        /// </summary>
+        public BoundingSphere Hitbox { get { return hitbox; } }
         
 
         private enum AnimationState
@@ -78,38 +91,27 @@ namespace OldGoldMine.Gameplay
         private float currentVerticalPosition = normalVerticalPosition;
 
 
-
-        /* Constructors first calculate jump animation values based on configuration parameters,
-         * then initialize AudioManager so that it can play the proper sound effects and 
-         * finally creates the Player object by putting together a Camera, a 3D model and an hitbox */
-
-        public Player(GameCamera playerCamera)
+        /// <summary>
+        /// Construct a Player object with a camera and an hitbox, without a 3D model.
+        /// </summary>
+        /// <param name="playerCamera">Camera used by the Player to see the world.</param>
+        /// <param name="hitboxRadius">Radius of the bounding sphere used as the Player's hitbox.</param>
+        /// <param name="hitboxOffset">Offset of the hitbox w.r.t. the camera position.</param>
+        public Player(GameCamera playerCamera, float hitboxRadius, Vector3 hitboxOffset)
+            : this(playerCamera, null, Vector3.Zero, hitboxRadius, hitboxOffset)
         {
-            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
-            jumpAcceleration = -(jumpVelocity / jumpDuration);
-
-            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
-            sound.Pause();
-
-            this.camera = playerCamera;
-            this.model = null;
-            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
         }
 
-        public Player(GameCamera playerCamera, float hitboxRadius)
-        {
-            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
-            jumpAcceleration = -(jumpVelocity / jumpDuration);
-
-            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
-            sound.Pause();
-
-            this.camera = playerCamera;
-            this.model = null;
-            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
-        }
-
-        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset)
+        /// <summary>
+        /// Construct a Player object with a camera, a 3D model and an hitbox.
+        /// </summary>
+        /// <param name="playerCamera">Camera used by the Player to see the world.</param>
+        /// <param name="playerModel">3D model of the Player entity.</param>
+        /// <param name="modelOffset">Offset of the 3D model w.r.t. the camera position.</param>
+        /// <param name="hitboxRadius">Radius of the bounding sphere used as the Player's hitbox.</param>
+        /// <param name="hitboxOffset">Offset of the hitbox w.r.t. the camera position.</param>
+        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset,
+            float hitboxRadius, Vector3 hitboxOffset)
         {
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
@@ -119,36 +121,25 @@ namespace OldGoldMine.Gameplay
 
             this.camera = playerCamera;
             this.model = playerModel;
-            this.model.EnableDefaultLighting();
-            this.model.Position = playerCamera.Position + modelOffset;
-            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, 1f);
-        }
-
-        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset, float hitboxRadius)
-        {
-            jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
-            jumpAcceleration = -(jumpVelocity / jumpDuration);
-
-            sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
-            sound.Pause();
-
-            this.camera = playerCamera;
-            this.model = playerModel;
-            this.model.EnableDefaultLighting();
-            this.model.Position = playerCamera.Position + modelOffset;
+            if (this.model != null)
+            {
+                this.model.EnableDefaultLighting();
+                this.model.Position = playerCamera.Position + modelOffset;
+            }
+            this.hitboxOffset = hitboxOffset;
             this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
         }
 
 
         // Rotate the whole player (model + view) horizontally or vertically
 
-        public void RotateUpDown(float degrees)
+        private void RotateUpDown(float degrees)
         {
             camera.RotateViewVertical(degrees);
             model.RotateAroundAxis(Vector3.Left, degrees);
         }
 
-        public void RotateLeftRight(float degrees)
+        private void RotateLeftRight(float degrees)
         {
             camera.RotateViewHorizontal(degrees);
             model.RotateAroundAxis(Vector3.Down, degrees);
@@ -158,7 +149,7 @@ namespace OldGoldMine.Gameplay
         // Rotate the player's view horizontally or vertically,
         // constraining it to the maxVerticalAngle and maxHorizontalAngle values
 
-        public void LookUpDown(float degrees, bool freeMovement = false)
+        private void LookUpDown(float degrees, bool freeMovement = false)
         {
             float targetAngle = verticalLookAngle + degrees;
 
@@ -169,7 +160,7 @@ namespace OldGoldMine.Gameplay
             verticalLookAngle = targetAngle;
         }
 
-        public void LookLeftRight(float degrees, bool freeMovement = false)
+        private void LookLeftRight(float degrees, bool freeMovement = false)
         {
             float targetAngle = horizontalLookAngle + degrees;
 
@@ -183,7 +174,7 @@ namespace OldGoldMine.Gameplay
 
         // Fix the player's camera view back to the center 
         // (aligned with movement direction on Z axis)
-        public void ResetCameraLook()
+        private void ResetCameraLook()
         {
             LookUpDown(-verticalLookAngle, true);
             verticalLookAngle = 0f;
@@ -193,7 +184,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public void Move(float speed, Vector3 direction)
+        private void Move(float speed, Vector3 direction)
         {
             camera.Move(speed * direction);
             if (model != null)
@@ -225,13 +216,63 @@ namespace OldGoldMine.Gameplay
         }
 
 
+        /// <summary>
+        /// Update the Player object's status in the current frame, handling any related input.
+        /// </summary>
+        /// <param name="gameTime">Time signature of the current frame.</param>
         public void Update(GameTime gameTime)
         {
-            timeBeforeNextJump = MathHelper.Clamp(
-                timeBeforeNextJump - (float)gameTime.ElapsedGameTime.TotalSeconds,
-                0f, float.MaxValue);
+            if (InputManager.FreeLookPressed)
+            {
+                freeLook = !freeLook;
+                ResetCameraLook();
+            }
 
-            this.UpdateJump(gameTime);
+            // Move the player according to the current frame inputs
+            float moveSpeed = OldGoldMineGame.Application.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Move(moveSpeed, Vector3.Backward);
+
+            if (InputManager.RightHold)
+            {
+                UpdateSideMovement(gameTime, Vector3.Right);
+            }
+            else if (InputManager.RightReleased)
+            {
+                ReverseSideMovement(Vector3.Left);
+            }
+
+            if (InputManager.LeftHold)
+            {
+                UpdateSideMovement(gameTime, Vector3.Left);
+            }
+            else if (InputManager.LeftReleased)
+            {
+                ReverseSideMovement(Vector3.Right);
+            }
+
+            if (InputManager.DownHold)
+            {
+                UpdateCrouchMovement(gameTime);
+            }
+            else if (InputManager.DownReleased)
+            {
+                ReverseCrouch();
+            }
+
+            if (InputManager.JumpPressed)
+            {
+                Jump();
+            }
+
+            if (freeLook)
+            {
+                float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
+                LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
+            }
+
+            UpdateJump(gameTime);
 
             // Update "automatic" animations 
             // (reversing previous movements when the key is released)
@@ -258,7 +299,7 @@ namespace OldGoldMine.Gameplay
         /* Based on the type of side movement animation, the player model and camera position are
          * interpolated between the 2 keyframe positions according to the current animation timepoint */
 
-        public void UpdateSideMovement(GameTime gameTime, Vector3 direction)
+        private void UpdateSideMovement(GameTime gameTime, Vector3 direction)
         {
             if (state == AnimationState.Idle && direction == Vector3.Right)
                 state = AnimationState.RightMovement;
@@ -337,7 +378,7 @@ namespace OldGoldMine.Gameplay
 
 
         // Start the animation of returning from a left or right position
-        public void ReverseSideMovement(Vector3 reverseDirection)
+        private void ReverseSideMovement(Vector3 reverseDirection)
         {
             if (state == AnimationState.RightMovement && reverseDirection == Vector3.Left)
             {
@@ -352,8 +393,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-
-        public void UpdateCrouchMovement(GameTime gameTime)
+        private void UpdateCrouchMovement(GameTime gameTime)
         {
             if (state == AnimationState.Idle)
                 state = AnimationState.Crouch;
@@ -398,7 +438,7 @@ namespace OldGoldMine.Gameplay
 
 
         // Start the animation of returning from the crouch position
-        public void ReverseCrouch()
+        private void ReverseCrouch()
         {
             if (state == AnimationState.Crouch)
             {
@@ -409,7 +449,7 @@ namespace OldGoldMine.Gameplay
 
 
         // Start the jumping animation
-        public void Jump()
+        private void Jump()
         {
             if (state == AnimationState.Idle && timeBeforeNextJump == 0f)
             {
@@ -424,6 +464,10 @@ namespace OldGoldMine.Gameplay
         // according to the physical law of x(t) = v0 * t + 1/2 * a * t^2
         private void UpdateJump(GameTime gameTime)
         {
+            timeBeforeNextJump = MathHelper.Clamp
+                (timeBeforeNextJump - (float)gameTime.ElapsedGameTime.TotalSeconds,
+                0f, float.MaxValue);
+
             if (state == AnimationState.Jump)
             {
                 jumpTimepoint += (float)gameTime.ElapsedGameTime.TotalSeconds;
