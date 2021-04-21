@@ -610,7 +610,7 @@ namespace OldGoldMine
                 camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
                 player = new Player(camera,
                     new GameObject3D(resources.m3d_carts[gameSettings.cart], Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
-                    new Vector3(0f, -2.4f, -0.75f), 1.2f);
+                    new Vector3(0f, -2.4f, -0.75f), 1.2f, new Vector3(0f, -0.5f, 0f));
 
                 level.InitializeSeed(gameSettings.seed);
                 level.Difficulty = gameSettings.difficulty;

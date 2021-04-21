@@ -145,7 +145,7 @@ namespace OldGoldMine.Gameplay
 
         bool CheckPlayerCollision(Player player)
         {
-            if (this.hitbox.Intersects(player.hitbox))
+            if (this.hitbox.Intersects(player.Hitbox))
                 return true;
             return false;
         }
