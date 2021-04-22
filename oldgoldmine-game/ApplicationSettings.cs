@@ -17,10 +17,12 @@ namespace OldGoldMine
         /// The volume level of the overall application (influences all sounds), on a range from 0 to 100.
         /// </summary>
         public static int MasterVolume { get; set; }
+
         /// <summary>
         /// The volume level of background music, on a range from 0 to 100.
         /// </summary>
         public static int MusicVolume { get; set; }
+
         /// <summary>
         /// The volume level of all sound effects played by the game, on a range from 0 to 100.
         /// </summary>
@@ -40,6 +42,7 @@ namespace OldGoldMine
         /// The display mode for the application window (Fullscreen, Windowed, Borderless).
         /// </summary>
         public static DisplayMode CurrentDisplayMode { get; set; }
+
         /// <summary>
         /// The index of the currently selected resolution mode, among those supported by the device.
         /// </summary>

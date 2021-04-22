@@ -11,10 +11,12 @@ namespace OldGoldMine.Gameplay
         /// The current score multiplier, set at the beginning of a new game.
         /// </summary>
         public static float Multiplier { get; set; } = 1f;
+
         /// <summary>
         /// The score of the current or latest game, in points.
         /// </summary>
         public static int Current { get; set; } = 0;
+
         /// <summary>
         /// The best score achieved by this user (on this machine) so far, in points.
         /// </summary>
