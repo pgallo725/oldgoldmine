@@ -75,7 +75,7 @@ namespace OldGoldMine.Menus
                 anchorPointDisplay - new Point(300, 0), SpriteText.TextAnchor.MiddleCenter);
 
             displayModeSelector = new Selector(displayModeLabel.Position + new Point(600, 0), new Point(75, 75), 300,
-                OldGoldMineGame.resources.menuItemsFont, Enum.GetNames(typeof(OldGoldMineGame.Settings.DisplayMode)).ToList(), Color.White,
+                OldGoldMineGame.resources.menuItemsFont, Enum.GetNames(typeof(ApplicationSettings.DisplayMode)).ToList(), Color.White,
                 OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
 
             resolutionLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Resolution",
@@ -114,7 +114,7 @@ namespace OldGoldMine.Menus
             if (confirmButton.Update())
             {
                 ApplySettings();
-                OldGoldMineGame.settings.Save();
+                ApplicationSettings.Save();
             }
             else if (cancelButton.Update() || InputManager.PausePressed)
             {
@@ -125,14 +125,14 @@ namespace OldGoldMine.Menus
 
         public void ApplySettings()
         {
-            OldGoldMineGame.settings.MasterVolume = int.Parse(masterVolumeSelector.SelectedValue);
-            OldGoldMineGame.settings.MusicVolume = int.Parse(musicVolumeSelector.SelectedValue);
-            OldGoldMineGame.settings.EffectsVolume = int.Parse(effectsVolumeSelector.SelectedValue);
+            ApplicationSettings.MasterVolume = int.Parse(masterVolumeSelector.SelectedValue);
+            ApplicationSettings.MusicVolume = int.Parse(musicVolumeSelector.SelectedValue);
+            ApplicationSettings.EffectsVolume = int.Parse(effectsVolumeSelector.SelectedValue);
 
-            OldGoldMineGame.settings.CurrentDisplayMode = Enum.Parse<OldGoldMineGame.Settings.DisplayMode>(displayModeSelector.SelectedValue);
-            OldGoldMineGame.settings.ResolutionSetting = resolutionSelector.SelectedValueIndex;
+            ApplicationSettings.CurrentDisplayMode = Enum.Parse<ApplicationSettings.DisplayMode>(displayModeSelector.SelectedValue);
+            ApplicationSettings.ResolutionSetting = resolutionSelector.SelectedValueIndex;
 
-            OldGoldMineGame.settings.Apply();
+            ApplicationSettings.Apply();
 
             Layout();   // Update menu layout on-the-fly when the game resolution is changed
 
@@ -174,12 +174,12 @@ namespace OldGoldMine.Menus
         {
             Layout();
 
-            masterVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MasterVolume / 5;
-            musicVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.MusicVolume / 5;
-            effectsVolumeSelector.SelectedValueIndex = OldGoldMineGame.settings.EffectsVolume / 5;
+            masterVolumeSelector.SelectedValueIndex = ApplicationSettings.MasterVolume / 5;
+            musicVolumeSelector.SelectedValueIndex = ApplicationSettings.MusicVolume / 5;
+            effectsVolumeSelector.SelectedValueIndex = ApplicationSettings.EffectsVolume / 5;
 
-            displayModeSelector.SelectedValueIndex = (int)OldGoldMineGame.settings.CurrentDisplayMode;
-            resolutionSelector.SelectedValueIndex = OldGoldMineGame.settings.ResolutionSetting;
+            displayModeSelector.SelectedValueIndex = (int)ApplicationSettings.CurrentDisplayMode;
+            resolutionSelector.SelectedValueIndex = ApplicationSettings.ResolutionSetting;
 
             confirmButton.Enabled = false;
             cancelButton.Enabled = true;

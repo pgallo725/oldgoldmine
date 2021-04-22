@@ -13,6 +13,7 @@
     <ApplicationIcon>oldgoldmine.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Engine\AudioManager.cs" />
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\GameObject3D.cs" />
