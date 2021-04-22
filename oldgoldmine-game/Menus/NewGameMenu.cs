@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Security.Cryptography;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OldGoldMine.Engine;
 using OldGoldMine.Gameplay;
 using OldGoldMine.UI;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 
 namespace OldGoldMine.Menus
@@ -39,13 +39,10 @@ namespace OldGoldMine.Menus
 
 
         // Level parameters
-        private float scoreMultiplier = 1f;
-
-        public int SelectedSpeed { get { return (20 + speedToggle.SelectedValueIndex * 10); } }
-        public int SelectedDifficulty { get { return difficultyToggle.SelectedValueIndex; } }
-        public float ScoreMultiplier { get { return scoreMultiplier; } }
-        public int SelectedCart { get { return cartSelector.SelectedValueIndex; } }
-        public long Seed
+        private int SelectedSpeed { get { return (20 + speedToggle.SelectedValueIndex * 10); } }
+        private int SelectedDifficulty { get { return difficultyToggle.SelectedValueIndex; } }
+        private int SelectedCart { get { return cartSelector.SelectedValueIndex; } }
+        private long Seed
         {
             get
             {
@@ -175,8 +172,7 @@ namespace OldGoldMine.Menus
 
             cartSelector.SelectedValueIndex = 0;
 
-            UpdateScoreMultiplier();
-            UpdateCartSelection();
+            UpdateSettingsDisplay();
         }
 
 
@@ -187,15 +183,12 @@ namespace OldGoldMine.Menus
             seedBox.Update();
             cartSelector.Update();
 
-            UpdateScoreMultiplier();
-            UpdateCartSelection();
+            UpdateSettingsDisplay();
 
             if (startButton.Update() || InputManager.EnterPressed)
             {
-                OldGoldMineGame.GameSettings newGameSettings = new OldGoldMineGame.GameSettings
-                    (ScoreMultiplier, SelectedSpeed, SelectedDifficulty, Seed, SelectedCart);
-
-                OldGoldMineGame.Application.StartGame(newGameSettings);
+                OldGoldMineGame.Application.StartGame(new GameSettings
+                    (SelectedSpeed, SelectedDifficulty, Seed, SelectedCart));
             }
             else if (backButton.Update() || InputManager.BackPressed)
             {
@@ -204,22 +197,14 @@ namespace OldGoldMine.Menus
         }
 
 
-        private void UpdateScoreMultiplier()
+        private float ComputeMultiplier()
         {
-            scoreMultiplier = 1f + (difficultyToggle.SelectedValueIndex - 1) * 0.5f
-                + speedToggle.SelectedValueIndex * 0.05f;
-
-            if (scoreMultiplier > 1f)
-                scoreMultiplierLabel.Color = new Color(170, 240, 60, 255);
-            else if (scoreMultiplier < 1f)
-                scoreMultiplierLabel.Color = new Color(170, 0, 0, 255);
-            else scoreMultiplierLabel.Color = Color.White;
-
-            scoreMultiplierLabel.Text = scoreMultiplier.ToString("Score multiplier: 0.00#x");
+            return 1f + (SelectedDifficulty - 1) * 0.5f + (SelectedSpeed - 20) / 10 * 0.05f;
         }
 
-        private void UpdateCartSelection()
+        private void UpdateSettingsDisplay()
         {
+            // Update cart model preview 
             cartPreview.ImageTexture = OldGoldMineGame.resources.cartPreviewImages[SelectedCart];
 
             if (Score.Best > cartPointsNeeded[SelectedCart])
@@ -237,6 +222,17 @@ namespace OldGoldMine.Menus
                 cartLockedIcon.Enabled = true;
                 startButton.Enabled = false;
             }
+
+            // Update score multiplier
+            float scoreMultiplier = ComputeMultiplier();
+
+            if (scoreMultiplier > 1f)
+                scoreMultiplierLabel.Color = new Color(170, 240, 60, 255);    // Green tint
+            else if (scoreMultiplier < 1f)
+                scoreMultiplierLabel.Color = new Color(170, 0, 0, 255);       // Red tint
+            else scoreMultiplierLabel.Color = Color.White;
+
+            scoreMultiplierLabel.Text = scoreMultiplier.ToString("Score multiplier: 0.00#x");
         }
 
 

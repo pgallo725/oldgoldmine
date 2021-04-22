@@ -89,26 +89,6 @@ namespace OldGoldMine
         ProceduralGenerator level;
 
 
-        public struct GameSettings
-        {
-            public float multiplier;
-            public float startSpeed;
-            public int difficulty;
-            public long seed;
-            public int cart;
-
-
-            public GameSettings(float multiplier, int startSpeed, int difficulty, long seed, int cart) 
-                : this()
-            {
-                this.multiplier = multiplier;
-                this.startSpeed = startSpeed;
-                this.difficulty = difficulty;
-                this.seed = seed;
-                this.cart = cart;
-            }
-        }
-
         private GameSettings currentGameInfo;
 
         private float currentSpeed = 20f;
@@ -486,9 +466,9 @@ namespace OldGoldMine
                 currentGameInfo = gameSettings;
 
                 // Reset the level information
-                Speed = gameSettings.startSpeed;
+                Speed = gameSettings.StartSpeed;
                 Score.Current = 0;
-                Score.Multiplier = gameSettings.multiplier; 
+                Score.Multiplier = gameSettings.ScoreMultiplier; 
                 lastSpeedUpdate = 0f;
                 timer.Reset();
                 level.Reset();
@@ -497,11 +477,11 @@ namespace OldGoldMine
                 GameCamera camera = (player != null) ? player.Camera : new GameCamera();
                 camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
                 player = new Player(camera,
-                    new GameObject3D(resources.m3d_carts[gameSettings.cart], Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                    new GameObject3D(resources.m3d_carts[gameSettings.Cart], Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                     new Vector3(0f, -2.4f, -0.75f), 1.2f, new Vector3(0f, -0.5f, 0f));
 
-                level.InitializeSeed(gameSettings.seed);
-                level.Difficulty = gameSettings.difficulty;
+                level.InitializeSeed(gameSettings.Seed);
+                level.Difficulty = gameSettings.Difficulty;
 
                 // Reset the game HUD
                 HUD.Instance.UpdateTimer(timer);

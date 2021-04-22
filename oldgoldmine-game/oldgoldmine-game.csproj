@@ -22,6 +22,7 @@
     <Compile Include="Engine\SolidColorTexture.cs" />
     <Compile Include="Engine\Timer.cs" />
     <Compile Include="Gameplay\Collectible.cs" />
+    <Compile Include="Gameplay\GameSettings.cs" />
     <Compile Include="Gameplay\HUD.cs" />
     <Compile Include="Gameplay\Obstacle.cs" />
     <Compile Include="Gameplay\Player.cs" />
