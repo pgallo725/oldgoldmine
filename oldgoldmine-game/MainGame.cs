@@ -10,52 +10,6 @@ using OldGoldMine.Gameplay;
 
 namespace OldGoldMine
 {
-    public struct GameResources
-    {
-        /* 3D models for the game */
-
-        public Model[] m3d_carts;
-        public Model m3d_gold;
-        public Model m3d_cave;
-        public Model m3d_lowerObstacle;
-        public Model m3d_leftObstacle;
-        public Model m3d_rightObstacle;
-        public Model m3d_upperObstacle;
-
-
-        /* UI elements texture packs */
-
-        public Button.TexturePack menuButtonTextures;
-        public Button.TexturePack standardButtonTextures;
-        public Button.TexturePack leftArrowButtonTextures;
-        public Button.TexturePack rightArrowButtonTextures;
-        public Button.TexturePack plusButtonTextures;
-        public Button.TexturePack minusButtonTextures;
-        public Button.TexturePack textboxTextures;
-
-
-        /* Other UI images and textures */
-
-        public Texture2D mainMenuBackground;
-        public Texture2D pauseMenuBackground;
-        public Texture2D deathMenuBackground;
-
-        public Texture2D[] cartPreviewImages;
-
-        public Texture2D framedPanelTexture;
-        public Texture2D lockIcon;
-
-
-        /* Fonts */
-
-        public SpriteFont gameTitleFont;
-        public SpriteFont menuTitleFont;
-        public SpriteFont menuItemsFont;
-        public SpriteFont menuSmallFont;
-        public SpriteFont hudFont;
-        public SpriteFont debugInfoFont;
-    }
-
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -75,8 +29,6 @@ namespace OldGoldMine
         public static BasicEffect basicEffect;
 
         public static OldGoldMineGame Application { get; private set; }
-
-        public static GameResources resources = new GameResources();
         
         GameState gameState;
 
@@ -87,7 +39,6 @@ namespace OldGoldMine
         Timer timer;
         public static Player player;
         ProceduralGenerator level;
-
 
         private GameSettings currentGameInfo;
 
@@ -122,6 +73,7 @@ namespace OldGoldMine
             Application = this;
         }
 
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -140,9 +92,9 @@ namespace OldGoldMine
             timer = new Timer();
 
             // Initialize menus and HUD
-            mainMenu = new MainMenu(GraphicsDevice.Viewport, resources.mainMenuBackground);
-            pauseMenu = new PauseMenu(GraphicsDevice.Viewport, resources.pauseMenuBackground);
-            gameOverMenu = new GameOverMenu(GraphicsDevice.Viewport, resources.deathMenuBackground);
+            mainMenu = new MainMenu(GraphicsDevice.Viewport, Resources.GetTexture("MainBackground"));
+            pauseMenu = new PauseMenu(GraphicsDevice.Viewport, Resources.GetTexture("PauseBackground"));
+            gameOverMenu = new GameOverMenu(GraphicsDevice.Viewport, Resources.GetTexture("GameOverBackground"));
 
             HUD.Create(Window);           
 
@@ -151,29 +103,30 @@ namespace OldGoldMine
 
             // Set-up the properties of the GameObjects that will be used in the level generation
                        
-            Collectible gold = new Collectible(resources.m3d_gold, Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
+            Collectible gold = new Collectible(Resources.GetModel("GoldOre"), 
+                Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
             gold.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance);
             gold.SetEmissiveColor(Color.Gold);
 
-            Obstacle lowerObstacle = new Obstacle(new GameObject3D(resources.m3d_lowerObstacle,
+            Obstacle lowerObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LowerObstacle"),
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
                 new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
             lowerObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle leftObstacle = new Obstacle(new GameObject3D(resources.m3d_leftObstacle),
+            Obstacle leftObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LeftObstacle")),
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
             leftObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle rightObstacle = new Obstacle(new GameObject3D(resources.m3d_rightObstacle),
+            Obstacle rightObstacle = new Obstacle(new GameObject3D(Resources.GetModel("RightObstacle")),
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
             rightObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle upperObstacle = new Obstacle(new GameObject3D(resources.m3d_upperObstacle,
+            Obstacle upperObstacle = new Obstacle(new GameObject3D(Resources.GetModel("UpperObstacle"),
                 new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity),
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
             upperObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            GameObject3D cave = new GameObject3D(resources.m3d_cave);
+            GameObject3D cave = new GameObject3D(Resources.GetModel("CaveSegment"));
             cave.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
 
@@ -208,23 +161,21 @@ namespace OldGoldMine
             };
 
 
-            // Load 3D models for the game
+            // LOAD 3D MODELS
 
-            resources.m3d_carts = new Model[4] 
-            {
-                Content.Load<Model>("models_3d/Minecarts/cart_wooden"),
-                Content.Load<Model>("models_3d/Minecarts/cart_iron"),
-                Content.Load<Model>("models_3d/Minecarts/cart_tank"),
-                Content.Load<Model>("models_3d/Minecarts/cart_golden")
-            };
-            resources.m3d_gold = Content.Load<Model>("models_3d/GoldCollectible/goldOre");
-            resources.m3d_cave = Content.Load<Model>("models_3d/Cave/cave_segment");
-            resources.m3d_lowerObstacle = Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris");
-            resources.m3d_leftObstacle = Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left");
-            resources.m3d_rightObstacle = Content.Load<Model>("models_3d/ObstacleRight/obstacle_right");
-            resources.m3d_upperObstacle = Content.Load<Model>("models_3d/ObstacleTop/obstacle_top");
+            Resources.AddModel("Cart_0", Content.Load<Model>("models_3d/Minecarts/cart_wooden"));
+            Resources.AddModel("Cart_1", Content.Load<Model>("models_3d/Minecarts/cart_iron"));
+            Resources.AddModel("Cart_2", Content.Load<Model>("models_3d/Minecarts/cart_tank"));
+            Resources.AddModel("Cart_3", Content.Load<Model>("models_3d/Minecarts/cart_golden"));
 
-            // Load sound effects and music for AudioManager
+            Resources.AddModel("GoldOre", Content.Load<Model>("models_3d/GoldCollectible/goldOre"));
+            Resources.AddModel("CaveSegment", Content.Load<Model>("models_3d/Cave/cave_segment"));
+            Resources.AddModel("LowerObstacle", Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris"));
+            Resources.AddModel("LeftObstacle", Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left"));
+            Resources.AddModel("RightObstacle", Content.Load<Model>("models_3d/ObstacleRight/obstacle_right"));
+            Resources.AddModel("UpperObstacle", Content.Load<Model>("models_3d/ObstacleTop/obstacle_top"));
+
+            // LOAD SOUND EFFECTS AND MUSIC
 
             AudioManager.AddSong("Cave_MainTheme", Content.Load<Song>("sounds/Music/Main_Cave_Theme"));
             AudioManager.AddSoundEffect("Cave_Ambient", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CaveAmbient"));
@@ -233,77 +184,68 @@ namespace OldGoldMine
             AudioManager.AddSoundEffect("Rails_Hit", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_RailsMetalHit"));
             AudioManager.AddSoundEffect("Minecart_Loop", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_MinecartLoop"));
 
-            // Load 2D assets for UI elements
+            // LOAD 2D ASSETS
 
-            resources.menuButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("MainButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_highlighted"));
+                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_highlighted")));
 
-            resources.leftArrowButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("LeftArrowButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled"));
+                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled")));
 
-            resources.rightArrowButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("RightArrowButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled"));
+                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled")));
 
-            resources.plusButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("PlusButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled"));
+                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled")));
 
-            resources.minusButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("MinusButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled"));
+                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled")));
 
-            resources.standardButtonTextures = new Button.TexturePack(
+            Resources.AddSpritePack("StandardButton", new Button.SpritePack(
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal"),
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted"),
                 Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled"));
-
+                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled")));
 
             Texture2D textboxNormal = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_normal");
             Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
             Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
 
-            resources.textboxTextures = new Button.TexturePack(
-                textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled);
+            Resources.AddSpritePack("Textbox", new Button.SpritePack(
+                textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled));
 
+            Resources.AddTexture("CartPreview_0", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_wooden"));
+            Resources.AddTexture("CartPreview_1", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_iron"));
+            Resources.AddTexture("CartPreview_2", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_tank"));
+            Resources.AddTexture("CartPreview_3", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_golden"));
 
-            resources.cartPreviewImages = new Texture2D[4]
-            {
-                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_wooden"),
-                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_iron"),
-                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_tank"),
-                Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_golden")
-            };
+            Resources.AddTexture("FramedPanel", Content.Load<Texture2D>("ui_elements_2d/panel/panel_framed"));
+            Resources.AddTexture("LockIcon", Content.Load<Texture2D>("ui_elements_2d/lock_icon"));
+            Resources.AddTexture("MainBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_01"));
+            Resources.AddTexture("PauseBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_02"));
+            Resources.AddTexture("GameOverBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_03"));
 
+            // LOAD FONTS
 
-            resources.framedPanelTexture = Content.Load<Texture2D>("ui_elements_2d/panel/panel_framed");
-            resources.lockIcon = Content.Load<Texture2D>("ui_elements_2d/lock_icon");
-
-            resources.mainMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_01");
-            resources.pauseMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_02");
-            resources.deathMenuBackground = Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_03");
-
-
-            // Load fonts
-
-            resources.gameTitleFont = Content.Load<SpriteFont>("fonts/MainGame_Title_Font");
-            resources.menuTitleFont = Content.Load<SpriteFont>("fonts/MenuTitle_Bahnschrift_Font");
-            resources.menuItemsFont = Content.Load<SpriteFont>("fonts/MenuItem_Bahnschrift_Font");
-            resources.menuSmallFont = Content.Load<SpriteFont>("fonts/MenuSmall_Bahnschrift_Font");
-
-            resources.hudFont = resources.menuItemsFont;
-            resources.debugInfoFont = Content.Load<SpriteFont>("fonts/DebugInfo_Font");
+            Resources.AddFont("GameTitle", Content.Load<SpriteFont>("fonts/MainGame_Title_Font"));
+            Resources.AddFont("MenuTitle", Content.Load<SpriteFont>("fonts/MenuTitle_Bahnschrift_Font"));
+            Resources.AddFont("MenuItem", Content.Load<SpriteFont>("fonts/MenuItem_Bahnschrift_Font"));
+            Resources.AddFont("MenuSmall", Content.Load<SpriteFont>("fonts/MenuSmall_Bahnschrift_Font"));
+            Resources.AddFont("HUD", Resources.GetFont("MenuItem"));
+            Resources.AddFont("DebugInfo", Content.Load<SpriteFont>("fonts/DebugInfo_Font"));
         }
 
 
@@ -477,7 +419,7 @@ namespace OldGoldMine
                 GameCamera camera = (player != null) ? player.Camera : new GameCamera();
                 camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
                 player = new Player(camera,
-                    new GameObject3D(resources.m3d_carts[gameSettings.Cart], Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                    new GameObject3D(Resources.GetModel($"Cart_{gameSettings.Cart}"), Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
                     new Vector3(0f, -2.4f, -0.75f), 1.2f, new Vector3(0f, -0.5f, 0f));
 
                 level.InitializeSeed(gameSettings.Seed);

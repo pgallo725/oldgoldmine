@@ -19,6 +19,7 @@
     <Compile Include="Engine\GameObject3D.cs" />
     <Compile Include="Engine\InputManager.cs" />
     <Compile Include="Engine\ObjectPool.cs" />
+    <Compile Include="Engine\Resources.cs" />
     <Compile Include="Engine\SolidColorTexture.cs" />
     <Compile Include="Engine\Timer.cs" />
     <Compile Include="Gameplay\Collectible.cs" />

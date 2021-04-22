@@ -28,20 +28,20 @@ namespace OldGoldMine.Menus
 
             // PAUSE MENU LAYOUT SETUP
 
-            menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "GAME PAUSED",
+            menuTitle = new SpriteText(Resources.GetFont("MenuTitle"), "GAME PAUSED",
                 Color.LightGray, new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f)));
 
             resumeButton = new Button(viewport.Bounds.Center - new Point(0, 80), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "RESUME", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "RESUME", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
             optionsButton = new Button(viewport.Bounds.Center + new Point(0, 60), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "OPTIONS", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "OPTIONS", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
             menuButton = new Button(viewport.Bounds.Center + new Point(0, 200), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "BACK TO MENU", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
         }
 
 

@@ -16,7 +16,7 @@ namespace OldGoldMine.UI
         }
 
         private TextboxState state = TextboxState.Normal;
-        private Button.TexturePack textures;
+        private Button.SpritePack textures;
         
         /* UI ELEMENTS */
         private Rectangle boxArea;
@@ -100,7 +100,7 @@ namespace OldGoldMine.UI
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
         /// <param name="charLimit">Maximum number of characters of the input string (default = unlimited).</param>
         /// <param name="shade">Color used to shade the element's sprite (Color.White preserves original colors).</param>
-        public TextBox(Rectangle area, Point margin, Button.TexturePack texturePack, SpriteFont textFont, Color textColor,
+        public TextBox(Rectangle area, Point margin, Button.SpritePack texturePack, SpriteFont textFont, Color textColor,
             SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft, int charLimit = int.MaxValue, Color shade = default)
         {
             this.boxArea = area;
@@ -123,7 +123,7 @@ namespace OldGoldMine.UI
         /// <param name="textAnchor">Specifies which corner of the text rectangle is used for alignment.</param>
         /// <param name="charLimit">Maximum number of characters of the input string (default = unlimited)</param>
         /// <param name="shade">Color used to shade the element's sprite (the default value is the same as Color.White)</param>
-        public TextBox(Point position, Point boxSize, Point margin, Button.TexturePack texturePack,
+        public TextBox(Point position, Point boxSize, Point margin, Button.SpritePack texturePack,
             SpriteFont textFont, Color textColor, SpriteText.TextAnchor textAnchor = SpriteText.TextAnchor.TopLeft,
             int charLimit = int.MaxValue, Color shade = default)
             : this(new Rectangle(position - boxSize / new Point(2), boxSize), margin,

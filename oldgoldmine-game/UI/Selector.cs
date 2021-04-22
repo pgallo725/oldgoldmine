@@ -122,7 +122,7 @@ namespace OldGoldMine.UI
         /// <param name="buttonTexturesRight">Texture pack to use for the right button.</param>
         /// <param name="buttonShade">Color used to shade the left and right buttons' sprites (Color.White equals leaving it at default).</param>
         public Selector(Rectangle area, Point buttonSize, SpriteFont textFont, List<string> textValues, Color textColor,
-            Button.TexturePack buttonTexturesLeft, Button.TexturePack buttonTexturesRight, Color buttonShade = default)
+            Button.SpritePack buttonTexturesLeft, Button.SpritePack buttonTexturesRight, Color buttonShade = default)
         {
             leftButton = new Button(area.Center - new Point(area.Width / 2 - buttonSize.X / 2, 0), 
                 buttonSize, buttonTexturesLeft, buttonShade);
@@ -155,7 +155,7 @@ namespace OldGoldMine.UI
         /// <param name="buttonShade">Color used to shade the left and right buttons' sprites (Color.White equals leaving it at default).</param>
         public Selector(Point position, Point buttonSize, int textWidth,
             SpriteFont textFont, List<string> textValues, Color textColor,
-            Button.TexturePack buttonTexturesLeft, Button.TexturePack buttonTexturesRight, Color buttonShade = default)
+            Button.SpritePack buttonTexturesLeft, Button.SpritePack buttonTexturesRight, Color buttonShade = default)
             : this(new Rectangle(position.X - textWidth / 2 - buttonSize.X, position.Y - buttonSize.Y / 2,
                 2 * buttonSize.X + textWidth, buttonSize.Y),
                   buttonSize, textFont, textValues, textColor, buttonTexturesLeft, buttonTexturesRight, buttonShade)

@@ -69,57 +69,57 @@ namespace OldGoldMine.Menus
             // CUSTOMIZATION MENU LAYOUT SETUP
 
             backButton = new Button(anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "BACK", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("StandardButton"), Color.BurlyWood);
 
             startButton = new Button(anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "START", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "START", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("StandardButton"), Color.BurlyWood);
 
 
-            titleText = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "CUSTOMIZE YOUR GAME",
+            titleText = new SpriteText(Resources.GetFont("MenuTitle"), "CUSTOMIZE YOUR GAME",
                 Color.DarkOrange, anchorPointTitle, SpriteText.TextAnchor.MiddleCenter);
 
 
-            difficultyLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Difficulty",
+            difficultyLabel = new SpriteText(Resources.GetFont("MenuItem"), "Difficulty",
                 Color.White, anchorPointSettings - new Point(250, 0), SpriteText.TextAnchor.MiddleRight);
 
             difficultyToggle = new Selector(difficultyLabel.Position + new Point(300, 0), new Point(70, 70), 240,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "Easy", "Medium", "Hard" }, Color.White,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), new List<string>() { "Easy", "Medium", "Hard" }, Color.White,
+                Resources.GetSpritePack("LeftArrowButton"), Resources.GetSpritePack("RightArrowButton"), Color.BurlyWood);
 
-            speedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Starting\n   speed",
+            speedLabel = new SpriteText(Resources.GetFont("MenuItem"), "Starting\n   speed",
                 Color.White, difficultyLabel.Position - new Point(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             speedToggle = new Selector(speedLabel.Position + new Point(300, 0), new Point(60, 60), 180,
-                OldGoldMineGame.resources.menuItemsFont, new List<string>() { "20", "30", "40", "50", "60", "70", "80" }, Color.White,
-                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), new List<string>() { "20", "30", "40", "50", "60", "70", "80" }, Color.White,
+                Resources.GetSpritePack("MinusButton"), Resources.GetSpritePack("PlusButton"), Color.BurlyWood);
 
-            seedLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Seed",
+            seedLabel = new SpriteText(Resources.GetFont("MenuItem"), "Seed",
                 Color.White, difficultyLabel.Position + new Point(0, 150), SpriteText.TextAnchor.MiddleRight);
 
             seedBox = new TextBox(seedLabel.Position + new Point(300, 0), new Point(320, 100), new Point(32, 20),
-                OldGoldMineGame.resources.textboxTextures, OldGoldMineGame.resources.menuItemsFont, Color.White, charLimit: 10, shade: Color.BurlyWood);
+                Resources.GetSpritePack("Textbox"), Resources.GetFont("MenuItem"), Color.White, charLimit: 10, shade: Color.BurlyWood);
 
 
-            cartPanel = new Image(OldGoldMineGame.resources.framedPanelTexture, anchorPointCarts, new Point(450, 440));
+            cartPanel = new Image(Resources.GetTexture("FramedPanel"), anchorPointCarts, new Point(450, 440));
 
-            cartPreview = new Image(OldGoldMineGame.resources.cartPreviewImages[0], cartPanel.Position, new Point(380, 380));
+            cartPreview = new Image(Resources.GetTexture("CartPreview_0"), cartPanel.Position, new Point(380, 380));
 
             cartTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
                 new Color(Color.Black, 0.6f)), cartPanel.Position, new Point(400, 400));
 
             cartSelector = new Selector(cartPanel.Position + new Point(0, 270), new Point(60, 60), 200,
-                OldGoldMineGame.resources.hudFont, new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." }, Color.White,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
+                Resources.GetFont("HUD"), new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." }, Color.White,
+                Resources.GetSpritePack("LeftArrowButton"), Resources.GetSpritePack("RightArrowButton"), Color.BurlyWood);
 
-            cartLockedLabel = new SpriteText(OldGoldMineGame.resources.menuSmallFont, "Unlock with score ",
+            cartLockedLabel = new SpriteText(Resources.GetFont("MenuSmall"), "Unlock with score ",
                 Color.DarkGray, cartSelector.Position + new Point(0, 65));
 
-            cartLockedIcon = new Image(OldGoldMineGame.resources.lockIcon, cartPanel.Position, new Point(300, 300));
+            cartLockedIcon = new Image(Resources.GetTexture("LockIcon"), cartPanel.Position, new Point(300, 300));
 
 
-            scoreMultiplierLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Score multiplier: 1.0x",
+            scoreMultiplierLabel = new SpriteText(Resources.GetFont("MenuItem"), "Score multiplier: 1.0x",
                 Color.White, anchorPointScore, SpriteText.TextAnchor.MiddleLeft);
         }
 
@@ -205,7 +205,7 @@ namespace OldGoldMine.Menus
         private void UpdateSettingsDisplay()
         {
             // Update cart model preview 
-            cartPreview.ImageTexture = OldGoldMineGame.resources.cartPreviewImages[SelectedCart];
+            cartPreview.ImageTexture = Resources.GetTexture($"CartPreview_{SelectedCart}");
 
             if (Score.Best > cartPointsNeeded[SelectedCart])
             {

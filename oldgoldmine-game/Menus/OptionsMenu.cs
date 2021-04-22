@@ -45,55 +45,55 @@ namespace OldGoldMine.Menus
 
             // OPTIONS MENU LAYOUT SETUP
 
-            menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "EDIT SETTINGS",
+            menuTitle = new SpriteText(Resources.GetFont("MenuTitle"), "EDIT SETTINGS",
                 Color.LightGray, new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f)));
 
 
-            masterVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Master volume",
+            masterVolumeLabel = new SpriteText(Resources.GetFont("MenuItem"), "Master volume",
                 Color.White, anchorPointVolumes - new Point(300, 0));
 
             masterVolumeSelector = new Selector(masterVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
-                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), volumeValues, Color.White,
+                Resources.GetSpritePack("MinusButton"), Resources.GetSpritePack("PlusButton"), Color.BurlyWood);
 
-            musicVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Music volume",
+            musicVolumeLabel = new SpriteText(Resources.GetFont("MenuItem"), "Music volume",
                 Color.White, masterVolumeLabel.Position + new Point(0, 100));
 
             musicVolumeSelector = new Selector(musicVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
-                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), volumeValues, Color.White,
+                Resources.GetSpritePack("MinusButton"), Resources.GetSpritePack("PlusButton"), Color.BurlyWood);
 
-            effectsVolumeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "SoundEffects volume", Color.White,
+            effectsVolumeLabel = new SpriteText(Resources.GetFont("MenuItem"), "SoundEffects volume", Color.White,
                 musicVolumeLabel.Position + new Point(0, 100), SpriteText.TextAnchor.MiddleCenter);
 
             effectsVolumeSelector = new Selector(effectsVolumeLabel.Position + new Point(600, 0), new Point(75, 75), 200,
-                OldGoldMineGame.resources.menuItemsFont, volumeValues, Color.White,
-                OldGoldMineGame.resources.minusButtonTextures, OldGoldMineGame.resources.plusButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), volumeValues, Color.White,
+                Resources.GetSpritePack("MinusButton"), Resources.GetSpritePack("PlusButton"), Color.BurlyWood);
 
 
-            displayModeLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Display mode", Color.White,
+            displayModeLabel = new SpriteText(Resources.GetFont("MenuItem"), "Display mode", Color.White,
                 anchorPointDisplay - new Point(300, 0), SpriteText.TextAnchor.MiddleCenter);
 
             displayModeSelector = new Selector(displayModeLabel.Position + new Point(600, 0), new Point(75, 75), 300,
-                OldGoldMineGame.resources.menuItemsFont, Enum.GetNames(typeof(ApplicationSettings.DisplayMode)).ToList(), Color.White,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), Enum.GetNames(typeof(ApplicationSettings.DisplayMode)).ToList(), Color.White,
+                Resources.GetSpritePack("LeftArrowButton"), Resources.GetSpritePack("RightArrowButton"), Color.BurlyWood);
 
-            resolutionLabel = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Resolution",
+            resolutionLabel = new SpriteText(Resources.GetFont("MenuItem"), "Resolution",
                 Color.White, displayModeLabel.Position + new Point(0, 100));
 
             resolutionSelector = new Selector(resolutionLabel.Position + new Point(600, 0), new Point(75, 75), 300,
-                OldGoldMineGame.resources.menuItemsFont,
+                Resources.GetFont("MenuItem"),
                 GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Select(dm => dm.Width + " x " + dm.Height).ToList(), Color.White,
-                OldGoldMineGame.resources.leftArrowButtonTextures, OldGoldMineGame.resources.rightArrowButtonTextures, Color.BurlyWood);
+                Resources.GetSpritePack("LeftArrowButton"), Resources.GetSpritePack("RightArrowButton"), Color.BurlyWood);
 
 
             cancelButton = new Button(anchorPointButtons - new Point(buttonSize.X / 2 + 10, 0), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "BACK", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "BACK", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("StandardButton"), Color.BurlyWood);
 
             confirmButton = new Button(anchorPointButtons + new Point(buttonSize.X / 2 + 10, 0), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "APPLY", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.standardButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "APPLY", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("StandardButton"), Color.BurlyWood);
         }
 
 

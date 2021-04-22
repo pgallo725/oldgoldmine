@@ -35,22 +35,22 @@ namespace OldGoldMine.Menus
 
             // MAIN MENU LAYOUT SETUP
 
-            gameTitle = new SpriteText(OldGoldMineGame.resources.gameTitleFont, "Old Gold Mine",
+            gameTitle = new SpriteText(Resources.GetFont("GameTitle"), "Old Gold Mine",
                 Color.DarkGoldenrod, new Point(viewport.Width / 2, (int)(viewport.Height * 0.16f)));
 
-            playButton = new Button(viewport.Bounds.Center - new Point(0, 40), buttonSize, 
-                OldGoldMineGame.resources.menuItemsFont, "PLAY", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+            playButton = new Button(viewport.Bounds.Center - new Point(0, 40), buttonSize,
+                Resources.GetFont("MenuItem"), "PLAY", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
             optionsButton = new Button(viewport.Bounds.Center + new Point(0, 80), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "OPTIONS", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "OPTIONS", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
             exitButton = new Button(viewport.Bounds.Center + new Point(0, 200), buttonSize,
-                OldGoldMineGame.resources.menuItemsFont, "QUIT", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+                Resources.GetFont("MenuItem"), "QUIT", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
-            highscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Highscore: " + Score.Best,
+            highscoreText = new SpriteText(Resources.GetFont("MenuItem"), "Highscore: " + Score.Best,
                 new Color(120, 210, 50, 255), new Point(viewport.Width / 2, viewport.Height / 2 + (int)(buttonSize.Y * 1.5f) + 150));
         }
 

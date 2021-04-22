@@ -6,7 +6,7 @@ namespace OldGoldMine.UI
 {
     public class Button : IComponentUI
     {
-        public struct TexturePack
+        public struct SpritePack
         {
             public Texture2D normal;
             public Texture2D highlighted;
@@ -20,7 +20,7 @@ namespace OldGoldMine.UI
             /// <param name="highlighted">Texture used to replace the normal look of the button when highlighted.</param>
             /// <param name="pressed">Texture used to replace the normal look when the button is pressed.</param>
             /// <param name="disabled">Texture used to replace the normal look when the button is disabled.</param>
-            public TexturePack(Texture2D normal, Texture2D highlighted = null, Texture2D pressed = null, Texture2D disabled = null)
+            public SpritePack(Texture2D normal, Texture2D highlighted = null, Texture2D pressed = null, Texture2D disabled = null)
             {
                 this.normal = normal;
                 this.highlighted = highlighted ?? normal;
@@ -66,7 +66,7 @@ namespace OldGoldMine.UI
         }
 
         private ButtonState buttonState;
-        private TexturePack buttonTextures;
+        private SpritePack buttonTextures;
         private Rectangle buttonArea;
 
 
@@ -129,7 +129,7 @@ namespace OldGoldMine.UI
         /// <param name="textColor">Color of the label's text.</param>
         /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         /// <param name="shade">Color used to filter the Button's sprite, Color.White (default) preserves original colors.</param>
-        public Button(Rectangle area, SpriteFont font, string text, Color textColor, TexturePack texturePack, Color shade = default)
+        public Button(Rectangle area, SpriteFont font, string text, Color textColor, SpritePack texturePack, Color shade = default)
         {
             this.buttonState = ButtonState.Normal;
             this.buttonArea = area;
@@ -144,7 +144,7 @@ namespace OldGoldMine.UI
         /// <param name="area">The Rectangle that will contain the Button, defining its position and size.</param>
         /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         /// <param name="shade">Color used to filter the Button's sprite, Color.White (default) preserves original colors.</param>
-        public Button(Rectangle area, TexturePack texturePack, Color shade = default)
+        public Button(Rectangle area, SpritePack texturePack, Color shade = default)
         {
             this.buttonState = ButtonState.Normal;
             this.buttonArea = area;
@@ -164,7 +164,7 @@ namespace OldGoldMine.UI
         /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         /// <param name="shade">Color used to filter the Button's sprite, Color.White (default) preserves original colors.</param>
         public Button(Point position, Point size, SpriteFont font, string text, Color textColor,
-            TexturePack texturePack, Color shade = default)
+            SpritePack texturePack, Color shade = default)
             : this(new Rectangle(position - size / new Point(2), size), font, text, textColor, texturePack, shade)
         {
         }
@@ -176,7 +176,7 @@ namespace OldGoldMine.UI
         /// <param name="size">The size of the Button in pixels.</param>
         /// <param name="texturePack">Texture pack with the different possible looks of the Button.</param>
         /// <param name="shade">Color used to filter the Button's sprite, Color.White (default) preserves original colors.</param>
-        public Button(Point position, Point size, TexturePack texturePack, Color shade = default)
+        public Button(Point position, Point size, SpritePack texturePack, Color shade = default)
             : this(new Rectangle(position - size / new Point(2), size), texturePack, shade)
         {
         }

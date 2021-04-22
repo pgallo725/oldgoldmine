@@ -23,21 +23,21 @@ namespace OldGoldMine.Menus
         {
             // GAMEOVER MENU LAYOUT SETUP
 
-            menuTitle = new SpriteText(OldGoldMineGame.resources.menuTitleFont, "YOU DIED",
+            menuTitle = new SpriteText(Resources.GetFont("MenuTitle"), "YOU DIED",
                 new Color(160, 0, 0, 255), new Point(viewport.Width / 2, viewport.Height / 10));
 
-            replayButton = new Button(viewport.Bounds.Center - new Point(0, 50), buttonSize, 
-                OldGoldMineGame.resources.menuItemsFont, "PLAY AGAIN", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+            replayButton = new Button(viewport.Bounds.Center - new Point(0, 50), buttonSize,
+                Resources.GetFont("MenuItem"), "PLAY AGAIN", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
-            menuButton = new Button(viewport.Bounds.Center + new Point(0, 100), buttonSize, 
-                OldGoldMineGame.resources.menuItemsFont, "BACK TO MENU", Color.LightGoldenrodYellow,
-                OldGoldMineGame.resources.menuButtonTextures, Color.BurlyWood);
+            menuButton = new Button(viewport.Bounds.Center + new Point(0, 100), buttonSize,
+                Resources.GetFont("MenuItem"), "BACK TO MENU", Color.LightGoldenrodYellow,
+                Resources.GetSpritePack("MainButton"), Color.BurlyWood);
 
-            scoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "Final score: " + Score.Current,
+            scoreText = new SpriteText(Resources.GetFont("MenuItem"), "Final score: " + Score.Current,
                 Color.LightGoldenrodYellow, new Point(viewport.Width / 2, (viewport.Height - buttonSize.Y) / 2 - 175));
 
-            newHighscoreText = new SpriteText(OldGoldMineGame.resources.menuItemsFont, "NEW HIGHSCORE!",
+            newHighscoreText = new SpriteText(Resources.GetFont("MenuItem"), "NEW HIGHSCORE!",
                 Color.Orange, scoreText.Position + new Point(0, 55));
         }
 

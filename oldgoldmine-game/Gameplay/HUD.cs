@@ -34,16 +34,16 @@ namespace OldGoldMine.Gameplay
 
             // SETUP HUD ELEMENTS
 
-            timerText = new SpriteText(OldGoldMineGame.resources.hudFont, "00:00:00", 
+            timerText = new SpriteText(Resources.GetFont("HUD"), "00:00:00", 
                 Color.White, new Point(window.ClientBounds.Width / 2, 5), SpriteText.TextAnchor.TopCenter);
 
-            framerateText = new SpriteText(OldGoldMineGame.resources.debugInfoFont, "0 FPS",
+            framerateText = new SpriteText(Resources.GetFont("DebugInfo"), "0 FPS",
                 Color.LightGreen, new Point(window.ClientBounds.Width - 10, 5), SpriteText.TextAnchor.TopRight);
 
-            scoreText = new SpriteText(OldGoldMineGame.resources.hudFont, "Score: 0",
+            scoreText = new SpriteText(Resources.GetFont("HUD"), "Score: 0",
                 Color.White, new Point(15, 5), SpriteText.TextAnchor.TopLeft);
 
-            speedText = new SpriteText(OldGoldMineGame.resources.hudFont, "Speed: 20 Km/h",
+            speedText = new SpriteText(Resources.GetFont("HUD"), "Speed: 20 Km/h",
                 Color.White, new Point(15, 50), SpriteText.TextAnchor.TopLeft);
         }
 
