@@ -58,7 +58,7 @@ namespace OldGoldMine
                 SynchronizeWithVerticalRetrace = false
             };
 
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "Assets";
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);    // 250 FPS target
@@ -163,89 +163,89 @@ namespace OldGoldMine
 
             // LOAD 3D MODELS
 
-            Resources.AddModel("Cart_0", Content.Load<Model>("models_3d/Minecarts/cart_wooden"));
-            Resources.AddModel("Cart_1", Content.Load<Model>("models_3d/Minecarts/cart_iron"));
-            Resources.AddModel("Cart_2", Content.Load<Model>("models_3d/Minecarts/cart_tank"));
-            Resources.AddModel("Cart_3", Content.Load<Model>("models_3d/Minecarts/cart_golden"));
+            Resources.AddModel("Cart_0", Content.Load<Model>("Models/Cart/WoodenCart/cart_wooden"));
+            Resources.AddModel("Cart_1", Content.Load<Model>("Models/Cart/IronCart/cart_iron"));
+            Resources.AddModel("Cart_2", Content.Load<Model>("Models/Cart/TankCart/cart_tank"));
+            Resources.AddModel("Cart_3", Content.Load<Model>("Models/Cart/GoldenCart/cart_golden"));
 
-            Resources.AddModel("GoldOre", Content.Load<Model>("models_3d/GoldCollectible/goldOre"));
-            Resources.AddModel("CaveSegment", Content.Load<Model>("models_3d/Cave/cave_segment"));
-            Resources.AddModel("LowerObstacle", Content.Load<Model>("models_3d/ObstacleBottom/obstacle_debris"));
-            Resources.AddModel("LeftObstacle", Content.Load<Model>("models_3d/ObstacleLeft/obstacle_left"));
-            Resources.AddModel("RightObstacle", Content.Load<Model>("models_3d/ObstacleRight/obstacle_right"));
-            Resources.AddModel("UpperObstacle", Content.Load<Model>("models_3d/ObstacleTop/obstacle_top"));
+            Resources.AddModel("GoldOre", Content.Load<Model>("Models/GoldOre/goldOre"));
+            Resources.AddModel("CaveSegment", Content.Load<Model>("Models/Cave/cave_segment"));
+            Resources.AddModel("LowerObstacle", Content.Load<Model>("Models/Obstacles/ObstacleBottom/obstacle_bottom"));
+            Resources.AddModel("LeftObstacle", Content.Load<Model>("Models/Obstacles/ObstacleLeft/obstacle_left"));
+            Resources.AddModel("RightObstacle", Content.Load<Model>("Models/Obstacles/ObstacleRight/obstacle_right"));
+            Resources.AddModel("UpperObstacle", Content.Load<Model>("Models/Obstacles/ObstacleTop/obstacle_top"));
 
             // LOAD SOUND EFFECTS AND MUSIC
 
-            AudioManager.AddSong("Cave_MainTheme", Content.Load<Song>("sounds/Music/Main_Cave_Theme"));
-            AudioManager.AddSoundEffect("Cave_Ambient", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CaveAmbient"));
-            AudioManager.AddSoundEffect("Gold_Pickup", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_GoldPickup"));
-            AudioManager.AddSoundEffect("Crash_Sound", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_CrashSounds"));
-            AudioManager.AddSoundEffect("Rails_Hit", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_RailsMetalHit"));
-            AudioManager.AddSoundEffect("Minecart_Loop", Content.Load<SoundEffect>("sounds/SoundEffects/SFX_MinecartLoop"));
+            AudioManager.AddSong("Cave_MainTheme", Content.Load<Song>("Sounds/Music/Main_Cave_Theme"));
+            AudioManager.AddSoundEffect("Cave_Ambient", Content.Load<SoundEffect>("Sounds/SoundEffects/SFX_CaveAmbient"));
+            AudioManager.AddSoundEffect("Gold_Pickup", Content.Load<SoundEffect>("Sounds/SoundEffects/SFX_GoldPickup"));
+            AudioManager.AddSoundEffect("Crash_Sound", Content.Load<SoundEffect>("Sounds/SoundEffects/SFX_CrashSounds"));
+            AudioManager.AddSoundEffect("Rails_Hit", Content.Load<SoundEffect>("Sounds/SoundEffects/SFX_RailsMetalHit"));
+            AudioManager.AddSoundEffect("Minecart_Loop", Content.Load<SoundEffect>("Sounds/SoundEffects/SFX_MinecartLoop"));
 
             // LOAD 2D ASSETS
 
             Resources.AddSpritePack("MainButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_main/woodButton_highlighted")));
+                Content.Load<Texture2D>("UI/button_main/woodButton_normal"),
+                Content.Load<Texture2D>("UI/button_main/woodButton_highlighted")));
 
             Resources.AddSpritePack("LeftArrowButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_highlighted"),
-                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_leftArrow/leftArrow_disabled")));
+                Content.Load<Texture2D>("UI/button_leftArrow/leftArrow_normal"),
+                Content.Load<Texture2D>("UI/button_leftArrow/leftArrow_highlighted"),
+                Content.Load<Texture2D>("UI/button_leftArrow/leftArrow_pressed"),
+                Content.Load<Texture2D>("UI/button_leftArrow/leftArrow_disabled")));
 
             Resources.AddSpritePack("RightArrowButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_highlighted"),
-                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_rightArrow/rightArrow_disabled")));
+                Content.Load<Texture2D>("UI/button_rightArrow/rightArrow_normal"),
+                Content.Load<Texture2D>("UI/button_rightArrow/rightArrow_highlighted"),
+                Content.Load<Texture2D>("UI/button_rightArrow/rightArrow_pressed"),
+                Content.Load<Texture2D>("UI/button_rightArrow/rightArrow_disabled")));
 
             Resources.AddSpritePack("PlusButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_highlighted"),
-                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_plus/plus_disabled")));
+                Content.Load<Texture2D>("UI/button_plus/plus_normal"),
+                Content.Load<Texture2D>("UI/button_plus/plus_highlighted"),
+                Content.Load<Texture2D>("UI/button_plus/plus_pressed"),
+                Content.Load<Texture2D>("UI/button_plus/plus_disabled")));
 
             Resources.AddSpritePack("MinusButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_highlighted"),
-                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_minus/minus_disabled")));
+                Content.Load<Texture2D>("UI/button_minus/minus_normal"),
+                Content.Load<Texture2D>("UI/button_minus/minus_highlighted"),
+                Content.Load<Texture2D>("UI/button_minus/minus_pressed"),
+                Content.Load<Texture2D>("UI/button_minus/minus_disabled")));
 
             Resources.AddSpritePack("StandardButton", new Button.SpritePack(
-                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_normal"),
-                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_highlighted"),
-                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_pressed"),
-                Content.Load<Texture2D>("ui_elements_2d/button_standard/standard_disabled")));
+                Content.Load<Texture2D>("UI/button_standard/standard_normal"),
+                Content.Load<Texture2D>("UI/button_standard/standard_highlighted"),
+                Content.Load<Texture2D>("UI/button_standard/standard_pressed"),
+                Content.Load<Texture2D>("UI/button_standard/standard_disabled")));
 
-            Texture2D textboxNormal = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_normal");
-            Texture2D textboxHighlighted = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_highlighted");
-            Texture2D textboxDisabled = Content.Load<Texture2D>("ui_elements_2d/textbox/textbox_disabled");
+            Texture2D textboxNormal = Content.Load<Texture2D>("UI/textbox/textbox_normal");
+            Texture2D textboxHighlighted = Content.Load<Texture2D>("UI/textbox/textbox_highlighted");
+            Texture2D textboxDisabled = Content.Load<Texture2D>("UI/textbox/textbox_disabled");
 
             Resources.AddSpritePack("Textbox", new Button.SpritePack(
                 textboxNormal, textboxHighlighted, textboxHighlighted, textboxDisabled));
 
-            Resources.AddTexture("CartPreview_0", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_wooden"));
-            Resources.AddTexture("CartPreview_1", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_iron"));
-            Resources.AddTexture("CartPreview_2", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_tank"));
-            Resources.AddTexture("CartPreview_3", Content.Load<Texture2D>("ui_elements_2d/preview/cart_preview_golden"));
+            Resources.AddTexture("CartPreview_0", Content.Load<Texture2D>("UI/preview/cart_preview_wooden"));
+            Resources.AddTexture("CartPreview_1", Content.Load<Texture2D>("UI/preview/cart_preview_iron"));
+            Resources.AddTexture("CartPreview_2", Content.Load<Texture2D>("UI/preview/cart_preview_tank"));
+            Resources.AddTexture("CartPreview_3", Content.Load<Texture2D>("UI/preview/cart_preview_golden"));
 
-            Resources.AddTexture("FramedPanel", Content.Load<Texture2D>("ui_elements_2d/panel/panel_framed"));
-            Resources.AddTexture("LockIcon", Content.Load<Texture2D>("ui_elements_2d/lock_icon"));
-            Resources.AddTexture("MainBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_01"));
-            Resources.AddTexture("PauseBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_02"));
-            Resources.AddTexture("GameOverBackground", Content.Load<Texture2D>("ui_elements_2d/background_images/scene_render_03"));
+            Resources.AddTexture("FramedPanel", Content.Load<Texture2D>("UI/panel/panel_framed"));
+            Resources.AddTexture("LockIcon", Content.Load<Texture2D>("UI/lock_icon"));
+            Resources.AddTexture("MainBackground", Content.Load<Texture2D>("UI/background_images/scene_render_01"));
+            Resources.AddTexture("PauseBackground", Content.Load<Texture2D>("UI/background_images/scene_render_02"));
+            Resources.AddTexture("GameOverBackground", Content.Load<Texture2D>("UI/background_images/scene_render_03"));
 
             // LOAD FONTS
 
-            Resources.AddFont("GameTitle", Content.Load<SpriteFont>("fonts/MainGame_Title_Font"));
-            Resources.AddFont("MenuTitle", Content.Load<SpriteFont>("fonts/MenuTitle_Bahnschrift_Font"));
-            Resources.AddFont("MenuItem", Content.Load<SpriteFont>("fonts/MenuItem_Bahnschrift_Font"));
-            Resources.AddFont("MenuSmall", Content.Load<SpriteFont>("fonts/MenuSmall_Bahnschrift_Font"));
+            Resources.AddFont("GameTitle", Content.Load<SpriteFont>("Fonts/MainGame_Title_Font"));
+            Resources.AddFont("MenuTitle", Content.Load<SpriteFont>("Fonts/MenuTitle_Bahnschrift_Font"));
+            Resources.AddFont("MenuItem", Content.Load<SpriteFont>("Fonts/MenuItem_Bahnschrift_Font"));
+            Resources.AddFont("MenuSmall", Content.Load<SpriteFont>("Fonts/MenuSmall_Bahnschrift_Font"));
             Resources.AddFont("HUD", Resources.GetFont("MenuItem"));
-            Resources.AddFont("DebugInfo", Content.Load<SpriteFont>("fonts/DebugInfo_Font"));
+            Resources.AddFont("DebugInfo", Content.Load<SpriteFont>("Fonts/DebugInfo_Font"));
         }
 
 
