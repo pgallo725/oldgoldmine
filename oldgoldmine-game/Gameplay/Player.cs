@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using OldGoldMine.Engine;
 
@@ -92,26 +93,27 @@ namespace OldGoldMine.Gameplay
 
 
         /// <summary>
-        /// Construct a Player object with a camera and an hitbox, without a 3D model.
+        /// Construct a Player object with an hitbox but without a 3D model.
         /// </summary>
-        /// <param name="playerCamera">Camera used by the Player to see the world.</param>
         /// <param name="hitboxRadius">Radius of the bounding sphere used as the Player's hitbox.</param>
         /// <param name="hitboxOffset">Offset of the hitbox w.r.t. the camera position.</param>
-        public Player(GameCamera playerCamera, float hitboxRadius, Vector3 hitboxOffset)
-            : this(playerCamera, null, Vector3.Zero, hitboxRadius, hitboxOffset)
+        public Player(float hitboxRadius, Vector3 hitboxOffset)
+            : this(null, Vector3.Zero, Vector3.One, Quaternion.Identity, Vector3.Zero, hitboxRadius, hitboxOffset)
         {
         }
 
         /// <summary>
-        /// Construct a Player object with a camera, a 3D model and an hitbox.
+        /// Construct a Player object with a 3D model and an hitbox.
         /// </summary>
-        /// <param name="playerCamera">Camera used by the Player to see the world.</param>
         /// <param name="playerModel">3D model of the Player entity.</param>
+        /// <param name="position">Position of the Player object (the game camera) in 3D space.</param>
+        /// <param name="scale">Scale of the 3D model representing the Player.</param>
+        /// <param name="rotation">Initial rotation of the Player object in the game world.</param>
         /// <param name="modelOffset">Offset of the 3D model w.r.t. the camera position.</param>
         /// <param name="hitboxRadius">Radius of the bounding sphere used as the Player's hitbox.</param>
         /// <param name="hitboxOffset">Offset of the hitbox w.r.t. the camera position.</param>
-        public Player(GameCamera playerCamera, GameObject3D playerModel, Vector3 modelOffset,
-            float hitboxRadius, Vector3 hitboxOffset)
+        public Player(Model playerModel, Vector3 position, Vector3 scale, Quaternion rotation,
+            Vector3 modelOffset, float hitboxRadius, Vector3 hitboxOffset)
         {
             jumpDuration = ((float)2 / 3 * jumpHeight) / jumpVelocity;
             jumpAcceleration = -(jumpVelocity / jumpDuration);
@@ -119,15 +121,21 @@ namespace OldGoldMine.Gameplay
             sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
             sound.Pause();
 
-            this.camera = playerCamera;
-            this.model = playerModel;
-            if (this.model != null)
+            this.camera = new GameCamera(OldGoldMineGame.graphics.GraphicsDevice.DisplayMode.AspectRatio, clippingPlaneNear: 0.2f)
             {
+                Position = position,
+                Target = position + Vector3.Transform(Vector3.Backward, Matrix.CreateFromQuaternion(rotation))
+            };
+
+            if (playerModel != null)
+            {
+                this.model = new GameObject3D(playerModel, position + modelOffset, scale, rotation);
                 this.model.EnableDefaultLighting();
-                this.model.Position = playerCamera.Position + modelOffset;
+                this.model.SetSpecularSettings(Color.Transparent, 1f);
             }
+
             this.hitboxOffset = hitboxOffset;
-            this.hitbox = new BoundingSphere(playerCamera.Position + hitboxOffset, hitboxRadius);
+            this.hitbox = new BoundingSphere(position + hitboxOffset, hitboxRadius);
         }
 
 

@@ -415,11 +415,9 @@ namespace OldGoldMine
                 timer.Reset();
                 level.Reset();
 
-                // Initialize Camera and Player objects
-                GameCamera camera = (player != null) ? player.Camera : new GameCamera();
-                camera.Initialize(new Vector3(0f, 2.5f, -15f), Vector3.Zero, GraphicsDevice.DisplayMode.AspectRatio);
-                player = new Player(camera,
-                    new GameObject3D(Resources.GetModel($"Cart_{gameSettings.Cart}"), Vector3.Zero, new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity),
+                // Initialize the Player object
+                player = new Player(Resources.GetModel($"Cart_{gameSettings.Cart}"), 
+                    new Vector3(0f, 2.5f, -15f), new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity,
                     new Vector3(0f, -2.4f, -0.75f), 1.2f, new Vector3(0f, -0.5f, 0f));
 
                 level.InitializeSeed(gameSettings.Seed);

@@ -1,53 +1,62 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-
+﻿using Microsoft.Xna.Framework;
 
 namespace OldGoldMine.Engine
 {
-
+    /// <summary>
+    /// Camera class, responsible for updating and holding the View and Projection matrices used to render the scene.
+    /// </summary>
     public class GameCamera
     {
         private Vector3 target;
         private Vector3 position;
-        private Vector3 direction;
 
-        private Matrix viewMatrix;
-        private Matrix projectionMatrix;
+        /// <summary>
+        /// The current position of the Camera in 3D space.
+        /// </summary>
+        public Vector3 Position { get { return position; } set { position = value; } }
 
-        public Matrix View { get { return viewMatrix; } private set { viewMatrix = value; } }
-        public Matrix Projection { get { return projectionMatrix; } }
+        /// <summary>
+        /// The position of the target which this Camera is currently looking at.
+        /// </summary>
+        public Vector3 Target { get { return target; } set { target = value; LookAt(target); } }
 
+        /// <summary>
+        /// The view matrix of the Camera for the current frame.
+        /// NOTE: if Update() hasn't been called yet, it refers to the previous frame.
+        /// </summary>
+        public Matrix View { get; private set; }
 
-        public Vector3 Position { get { return position; } private set { } }
-        public Vector3 Target { get { return target; } set { LookAt(value); } }
+        /// <summary>
+        /// The projection matrix generated for this Camera (based on FOV, aspect ratio and clipping planes).
+        /// </summary>
+        public readonly Matrix Projection;
 
-
-        // Normalized vectors representing the 6 directions relative to the camera's coordinate system (viewpoint)
-        public Vector3 Forward { get { return Vector3.Normalize(viewMatrix.Forward); } }
-        public Vector3 Back { get { return Vector3.Normalize(viewMatrix.Backward); } }
-        public Vector3 Left { get { return Vector3.Normalize(viewMatrix.Left); } }
-        public Vector3 Right { get { return Vector3.Normalize(viewMatrix.Right); } }
-        public Vector3 Up { get { return Vector3.Normalize(viewMatrix.Up); } }
-        public Vector3 Down { get { return Vector3.Normalize(viewMatrix.Down); } }
+        // Normalized vectors representing the 6 directions relative to the Camera's coordinate system (viewpoint)
+        public Vector3 Forward { get { return Vector3.Normalize(View.Forward); } }
+        public Vector3 Back { get { return Vector3.Normalize(View.Backward); } }
+        public Vector3 Left { get { return Vector3.Normalize(View.Left); } }
+        public Vector3 Right { get { return Vector3.Normalize(View.Right); } }
+        public Vector3 Up { get { return Vector3.Normalize(View.Up); } }
+        public Vector3 Down { get { return Vector3.Normalize(View.Down); } }
 
 
         /// <summary>
-        /// Setup the Camera object by assigning the position and the coordinates of the initial target,
-        /// but also specifying parameters such as FOV, aspect ratio and clipping planes which are
-        /// needed to create and initialize the view and projection matrices
+        /// Create a GameCamera object by specifying parameters such as FOV, aspect ratio and clipping planes
+        /// which are needed to create and initialize the view and projection matrices.
         /// </summary>
-        public void Initialize(Vector3 camPosition, Vector3 camTarget, float aspectRatio, 
-            float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
+        /// <param name="aspectRatio">Aspect ratio of the camera frustum, expressed as a float value (e.g. 4:3 = 1,333).</param>
+        /// <param name="fieldOfView">Field of view of the camera, in degrees.</param>
+        /// <param name="clippingPlaneNear">Distance of the near clipping plane.</param>
+        /// <param name="clippingPlaneFar">Distance of the far clipping plane.</param>
+        public GameCamera(float aspectRatio, float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
         {
-            this.position = camPosition;
-            this.target = camTarget;
-            this.direction = camTarget - camPosition;
+            this.position = Vector3.Zero;
+            this.target = position + Vector3.Forward;
 
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(fieldOfView), aspectRatio,
-                clippingPlaneNear, clippingPlaneFar);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(fieldOfView),
+                aspectRatio, clippingPlaneNear, clippingPlaneFar);
 
-            viewMatrix = Matrix.CreateLookAt(position, target, Vector3.Up);
+            View = Matrix.CreateLookAt(position, target, Vector3.Up);
         }
 
 
@@ -57,8 +66,9 @@ namespace OldGoldMine.Engine
         /// </summary>
         public void Update()
         {
-            viewMatrix = Matrix.CreateLookAt(position, target, Vector3.Up);
+            View = Matrix.CreateLookAt(position, target, Vector3.Up);
         }
+
 
         /// <summary>
         /// Point the camera to look at the specified position.
@@ -67,7 +77,6 @@ namespace OldGoldMine.Engine
         public void LookAt(Vector3 targetPosition)
         {
             this.target = targetPosition;
-            this.direction = target - position;
         }
 
         /// <summary>
@@ -75,47 +84,38 @@ namespace OldGoldMine.Engine
         /// it will keep looking in the same direction.
         /// </summary>
         /// <param name="movement">The movement vector.</param>
-        public void Move(Vector3 movement)
+        /// <param name="keepTarget">Whether the view has to be locked to the previous
+        /// target or move along with the camera.</param>
+        public void Move(Vector3 movement, bool keepTarget = false)
         {
             this.position += movement;
-            this.target += movement;
-        }
-
-        /// <summary>
-        /// Move the camera in an arbitrary direction in tri-dimensional space, 
-        /// the view will be locked on the previous target and therefore the camera will rotate.
-        /// </summary>
-        /// <param name="movement">The movement vector.</param>
-        public void MoveKeepTarget(Vector3 movement)
-        {
-            this.position += movement;
-            this.direction = target - position;
+            if (!keepTarget)
+                this.target += movement;
         }
 
 
         /// <summary>
         /// Rotate (vertically) the direction in which the camera is looking.
         /// </summary>
-        /// <param name="degrees">The amount of rotation, > 0 to look upwards, < 0 to look downwards.</param>
-        public void RotateViewVertical(float degrees)               // TODO: limit the vertical camera rotation between minLookDownAngle and maxLookUpAngle
+        /// <param name="degrees">The rotation amount, in degrees. Use > 0 to look upwards, < 0 to look downwards.</param>
+        public void RotateViewVertical(float degrees)
         {
             Matrix t = Matrix.CreateTranslation(-position);
             Quaternion q = Quaternion.CreateFromAxisAngle(this.Right, MathHelper.ToRadians(degrees));
 
-            this.LookAt(Vector3.Transform(target, (t * Matrix.CreateFromQuaternion(q)) * Matrix.Invert(t)));
+            this.LookAt(Vector3.Transform(target, t * Matrix.CreateFromQuaternion(q) * Matrix.Invert(t)));
         }
-
 
         /// <summary>
         /// Rotate (horizontally) the direction in which the camera is looking.
         /// </summary>
-        /// <param name="degrees">The amount of degrees of the rotation, > 0 to rotate Right, < 0 to rotate Left.</param>
+        /// <param name="degrees">The rotation amount, in degrees. Use > 0 to rotate Right, < 0 to rotate Left.</param>
         public void RotateViewHorizontal(float degrees)
         {
             Matrix t = Matrix.CreateTranslation(-position);
-            Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Down, MathHelper.ToRadians(degrees));
+            Quaternion q = Quaternion.CreateFromAxisAngle(this.Down, MathHelper.ToRadians(degrees));
 
-            this.LookAt(Vector3.Transform(target, (t * Matrix.CreateFromQuaternion(q)) * Matrix.Invert(t)));
+            this.LookAt(Vector3.Transform(target, t * Matrix.CreateFromQuaternion(q) * Matrix.Invert(t)));
         }
     }
 }
