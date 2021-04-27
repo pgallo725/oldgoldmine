@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-
 namespace OldGoldMine.Engine
 {
+    /// <summary>
+    /// Static class that acts as a single input processing unit, from which
+    /// other components can access their required information every frame.
+    /// </summary>
     public static class InputManager
     {
         public static Point MouseMovement { get; private set; } = Point.Zero;
