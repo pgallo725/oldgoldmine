@@ -418,7 +418,7 @@ namespace OldGoldMine
                 // Initialize the Player object
                 player = new Player(Resources.GetModel($"Cart_{gameSettings.Cart}"), 
                     new Vector3(0f, 2.5f, -15f), new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity,
-                    new Vector3(0f, -2.4f, -0.75f), 1.2f, new Vector3(0f, -0.5f, 0f));
+                    new Vector3(0f, -2.3f, -0.65f), 1.2f, new Vector3(0f, -0.5f, 0f));
 
                 level.InitializeSeed(gameSettings.Seed);
                 level.Difficulty = gameSettings.Difficulty;
