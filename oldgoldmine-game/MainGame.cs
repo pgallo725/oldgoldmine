@@ -165,8 +165,9 @@ namespace OldGoldMine
 
             Resources.AddModel("Cart_0", Content.Load<Model>("Models/Cart/WoodenCart/cart_wooden"));
             Resources.AddModel("Cart_1", Content.Load<Model>("Models/Cart/IronCart/cart_iron"));
-            Resources.AddModel("Cart_2", Content.Load<Model>("Models/Cart/TankCart/cart_tank"));
-            Resources.AddModel("Cart_3", Content.Load<Model>("Models/Cart/GoldenCart/cart_golden"));
+            Resources.AddModel("Cart_2", Content.Load<Model>("Models/Cart/AluminumCart/cart_aluminum"));
+            Resources.AddModel("Cart_3", Content.Load<Model>("Models/Cart/TankCart/cart_tank"));
+            Resources.AddModel("Cart_4", Content.Load<Model>("Models/Cart/GoldenCart/cart_golden"));
 
             Resources.AddModel("GoldOre", Content.Load<Model>("Models/GoldOre/goldOre"));
             Resources.AddModel("CaveSegment", Content.Load<Model>("Models/Cave/cave_segment"));
@@ -229,8 +230,9 @@ namespace OldGoldMine
 
             Resources.AddTexture("CartPreview_0", Content.Load<Texture2D>("UI/preview/cart_preview_wooden"));
             Resources.AddTexture("CartPreview_1", Content.Load<Texture2D>("UI/preview/cart_preview_iron"));
-            Resources.AddTexture("CartPreview_2", Content.Load<Texture2D>("UI/preview/cart_preview_tank"));
-            Resources.AddTexture("CartPreview_3", Content.Load<Texture2D>("UI/preview/cart_preview_golden"));
+            Resources.AddTexture("CartPreview_2", Content.Load<Texture2D>("UI/preview/cart_preview_aluminum"));
+            Resources.AddTexture("CartPreview_3", Content.Load<Texture2D>("UI/preview/cart_preview_tank"));
+            Resources.AddTexture("CartPreview_4", Content.Load<Texture2D>("UI/preview/cart_preview_golden"));
 
             Resources.AddTexture("FramedPanel", Content.Load<Texture2D>("UI/panel/panel_framed"));
             Resources.AddTexture("LockIcon", Content.Load<Texture2D>("UI/lock_icon"));

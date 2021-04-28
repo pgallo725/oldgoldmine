@@ -35,7 +35,7 @@ namespace OldGoldMine.Menus
         private readonly Button backButton;
 
         
-        private readonly int[] cartPointsNeeded = { -1, 2500, 8000, 20000 };
+        private readonly int[] cartPointsNeeded = { -1, 2500, 7500, 15000, 25000 };
 
 
         // Level parameters
@@ -110,7 +110,7 @@ namespace OldGoldMine.Menus
                 new Color(Color.Black, 0.6f)), cartPanel.Position, new Point(400, 400));
 
             cartSelector = new Selector(cartPanel.Position + new Point(0, 270), new Point(60, 60), 200,
-                Resources.GetFont("HUD"), new List<string>() { "Woody", "Ol' Rusty", "The Tank", "G.R.O.D.T." }, Color.White,
+                Resources.GetFont("HUD"), new List<string>() { "Woody", "Ol' Rusty", "Thunberg", "The Tank", "G.R.O.D.T." }, Color.White,
                 Resources.GetSpritePack("LeftArrowButton"), Resources.GetSpritePack("RightArrowButton"), Color.BurlyWood);
 
             cartLockedLabel = new SpriteText(Resources.GetFont("MenuSmall"), "Unlock with score ",
