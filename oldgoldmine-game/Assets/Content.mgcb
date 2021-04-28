@@ -91,7 +91,7 @@
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
 /processorParam:RotationX=-90
-/processorParam:RotationY=90
+/processorParam:RotationY=180
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
@@ -965,7 +965,7 @@
 /processorParam:TextureFormat=Color
 /build:UI/panel/panel_framed.png
 
-#begin UI/preview/cart_preview_aluminium.png
+#begin UI/preview/cart_preview_aluminum.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -975,7 +975,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Compressed
-/build:UI/preview/cart_preview_aluminium.png
+/build:UI/preview/cart_preview_aluminum.png
 
 #begin UI/preview/cart_preview_golden.png
 /importer:TextureImporter
