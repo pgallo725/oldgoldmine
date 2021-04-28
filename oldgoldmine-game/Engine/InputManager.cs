@@ -171,5 +171,17 @@ namespace OldGoldMine.Engine
             previousButtons.UnionWith(buttonsDown);
         }
 
+
+        /// <summary>
+        /// Reset the mouse cursor position at the center of the screen.
+        /// </summary>
+        public static void ResetMousePosition()
+        {
+            Vector2 screenCenter = new Vector2(OldGoldMineGame.graphics.GraphicsDevice.Viewport.Width,
+                OldGoldMineGame.graphics.GraphicsDevice.Viewport.Height) / 2;
+
+            MousePosition = screenCenter.ToPoint();
+            Mouse.SetPosition(MousePosition.X, MousePosition.Y);
+        }
     }
 }

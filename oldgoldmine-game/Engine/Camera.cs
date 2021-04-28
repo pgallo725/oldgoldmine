@@ -7,18 +7,13 @@ namespace OldGoldMine.Engine
     /// </summary>
     public class GameCamera
     {
-        private Vector3 target;
         private Vector3 position;
+        private Vector3 lookAt;
 
         /// <summary>
         /// The current position of the Camera in 3D space.
         /// </summary>
-        public Vector3 Position { get { return position; } set { position = value; } }
-
-        /// <summary>
-        /// The position of the target which this Camera is currently looking at.
-        /// </summary>
-        public Vector3 Target { get { return target; } set { target = value; LookAt(target); } }
+        public Vector3 Position { get { return position; } set { Move(value - position); } }
 
         /// <summary>
         /// The view matrix of the Camera for the current frame.
@@ -51,24 +46,34 @@ namespace OldGoldMine.Engine
         public GameCamera(float aspectRatio, float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
         {
             this.position = Vector3.Zero;
-            this.target = position + Vector3.Forward;
+            this.lookAt = position + Vector3.UnitZ;
 
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(fieldOfView),
                 aspectRatio, clippingPlaneNear, clippingPlaneFar);
 
-            View = Matrix.CreateLookAt(position, target, Vector3.Up);
+            View = Matrix.CreateLookAt(position, lookAt , Vector3.Up);
         }
 
 
         /// <summary>
-        /// Updates the camera's ViewMatrix with the latest position, rotation and target informations
-        /// NOTE: always call this method at the end of Game.Update() before Draw() begins
+        /// Updates the camera's ViewMatrix with the latest position and rotation settings.
+        /// NOTE: always call this method at the end of Game.Update() before Draw() begins.
         /// </summary>
         public void Update()
         {
-            View = Matrix.CreateLookAt(position, target, Vector3.Up);
+            View = Matrix.CreateLookAt(position, lookAt, Vector3.Up);
         }
 
+
+        /// <summary>
+        /// Move the camera in an arbitrary direction in tri-dimensional space.
+        /// </summary>
+        /// <param name="movement">The movement vector.</param>
+        public void Move(Vector3 movement)
+        {
+            this.position += movement;
+            this.lookAt += movement;
+        }
 
         /// <summary>
         /// Point the camera to look at the specified position.
@@ -76,46 +81,49 @@ namespace OldGoldMine.Engine
         /// <param name="targetPosition">The coordinates to look at.</param>
         public void LookAt(Vector3 targetPosition)
         {
-            this.target = targetPosition;
-        }
-
-        /// <summary>
-        /// Move the camera in an arbitrary direction in tri-dimensional space, 
-        /// it will keep looking in the same direction.
-        /// </summary>
-        /// <param name="movement">The movement vector.</param>
-        /// <param name="keepTarget">Whether the view has to be locked to the previous
-        /// target or move along with the camera.</param>
-        public void Move(Vector3 movement, bool keepTarget = false)
-        {
-            this.position += movement;
-            if (!keepTarget)
-                this.target += movement;
+            this.lookAt = targetPosition;
         }
 
 
         /// <summary>
-        /// Rotate (vertically) the direction in which the camera is looking.
+        /// Set the Camera rotation using a set of yaw, pitch and roll values.
         /// </summary>
-        /// <param name="degrees">The rotation amount, in degrees. Use > 0 to look upwards, < 0 to look downwards.</param>
-        public void RotateViewVertical(float degrees)
+        /// <param name="yaw">Yaw (rotation around vertical axis), in radians.</param>
+        /// <param name="pitch">Pitch (rotation around horizontal axis), in radians.</param>
+        /// <param name="roll">Roll (rotation forward axis), in radians.</param>
+        public void SetRotation(float yaw, float pitch, float roll)
         {
-            Matrix t = Matrix.CreateTranslation(-position);
-            Quaternion q = Quaternion.CreateFromAxisAngle(this.Right, MathHelper.ToRadians(degrees));
+            Matrix rotation = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
 
-            this.LookAt(Vector3.Transform(target, t * Matrix.CreateFromQuaternion(q) * Matrix.Invert(t)));
+            Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
+            lookAt = position + lookAtOffset;
         }
 
         /// <summary>
-        /// Rotate (horizontally) the direction in which the camera is looking.
+        /// Set the Camera rotation using a tri-dimensional vector.
         /// </summary>
-        /// <param name="degrees">The rotation amount, in degrees. Use > 0 to rotate Right, < 0 to rotate Left.</param>
-        public void RotateViewHorizontal(float degrees)
+        /// <param name="vRotation">Vector3 containing the rotation of the camera around each axis, in radians.</param>
+        public void SetRotation(Vector3 vRotation)
         {
-            Matrix t = Matrix.CreateTranslation(-position);
-            Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Down, MathHelper.ToRadians(degrees));
+            Matrix rotation = Matrix.CreateRotationX(vRotation.X) *
+                Matrix.CreateRotationX(vRotation.Y) *
+                Matrix.CreateRotationX(vRotation.Z);
 
-            this.LookAt(Vector3.Transform(target, t * Matrix.CreateFromQuaternion(q) * Matrix.Invert(t)));
+            Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
+            lookAt = position + lookAtOffset;
         }
+
+        /// <summary>
+        /// Set the Camera rotation using a quaternion.
+        /// </summary>
+        /// <param name="qRotation">Quaternion representing the desired Camera rotation.</param>
+        public void SetRotation(Quaternion qRotation)
+        {
+            Matrix rotation = Matrix.CreateFromQuaternion(qRotation);
+
+            Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
+            lookAt = position + lookAtOffset;
+        }
+
     }
 }

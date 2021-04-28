@@ -9,8 +9,8 @@ namespace OldGoldMine.Gameplay
     public class Player
     {
         // Maximum angles allowed for looking around vertically or horizontally
-        private const float maxVerticalAngle = 15f;
-        private const float maxHorizontalAngle = 40f;
+        private const float maxVerticalAngle = 20f;
+        private const float maxHorizontalAngle = 45f;
 
         // Current view angles (relative to movement direction, or Z axis)
         private float verticalLookAngle = 0.0f;
@@ -123,9 +123,10 @@ namespace OldGoldMine.Gameplay
 
             this.camera = new GameCamera(OldGoldMineGame.graphics.GraphicsDevice.DisplayMode.AspectRatio, clippingPlaneNear: 0.2f)
             {
-                Position = position,
-                Target = position + Vector3.Transform(Vector3.Backward, Matrix.CreateFromQuaternion(rotation))
+                Position = position
             };
+            this.camera.SetRotation(MathHelper.ToRadians(horizontalLookAngle),
+                MathHelper.ToRadians(verticalLookAngle), 0f);
 
             if (playerModel != null)
             {
@@ -139,43 +140,26 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        // Rotate the whole player (model + view) horizontally or vertically
-
-        private void RotateUpDown(float degrees)
-        {
-            camera.RotateViewVertical(degrees);
-            model.RotateAroundAxis(Vector3.Left, degrees);
-        }
-
-        private void RotateLeftRight(float degrees)
-        {
-            camera.RotateViewHorizontal(degrees);
-            model.RotateAroundAxis(Vector3.Down, degrees);
-        }
-
-
         // Rotate the player's view horizontally or vertically,
         // constraining it to the maxVerticalAngle and maxHorizontalAngle values
 
-        private void LookUpDown(float degrees, bool freeMovement = false)
+        private void LookUpDown(float degrees)
         {
-            float targetAngle = verticalLookAngle + degrees;
+            float targetAngle = MathHelper.Clamp(verticalLookAngle + degrees,
+                -maxVerticalAngle, maxVerticalAngle);
 
-            if (!freeMovement)
-                targetAngle = MathHelper.Clamp(targetAngle, -maxVerticalAngle, maxVerticalAngle);
-
-            camera.RotateViewVertical(targetAngle - verticalLookAngle);
+            camera.SetRotation(MathHelper.ToRadians(horizontalLookAngle),
+                MathHelper.ToRadians(verticalLookAngle), 0f);
             verticalLookAngle = targetAngle;
         }
 
-        private void LookLeftRight(float degrees, bool freeMovement = false)
+        private void LookLeftRight(float degrees)
         {
-            float targetAngle = horizontalLookAngle + degrees;
+            float targetAngle = MathHelper.Clamp(horizontalLookAngle + degrees,
+                -maxHorizontalAngle, maxHorizontalAngle);
 
-            if (!freeMovement)
-                targetAngle = MathHelper.Clamp(targetAngle, -maxHorizontalAngle, maxHorizontalAngle);
-
-            camera.RotateViewHorizontal(targetAngle - horizontalLookAngle);
+            camera.SetRotation(MathHelper.ToRadians(horizontalLookAngle),
+                MathHelper.ToRadians(verticalLookAngle), 0f);
             horizontalLookAngle = targetAngle;
         }
 
@@ -184,14 +168,15 @@ namespace OldGoldMine.Gameplay
         // (aligned with movement direction on Z axis)
         private void ResetCameraLook()
         {
-            LookUpDown(-verticalLookAngle, true);
-            verticalLookAngle = 0f;
-
-            LookLeftRight(-horizontalLookAngle, true);
             horizontalLookAngle = 0f;
+            verticalLookAngle = 0f;
+            camera.SetRotation(0f, 0f, 0f);
+
+            InputManager.ResetMousePosition();
         }
 
 
+        // Move the camera and the player object in the specified direction
         private void Move(float speed, Vector3 direction)
         {
             camera.Move(speed * direction);
@@ -274,7 +259,7 @@ namespace OldGoldMine.Gameplay
 
             if (freeLook)
             {
-                float lookAroundSpeed = 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                float lookAroundSpeed = -25f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 LookUpDown(InputManager.MouseMovementY * lookAroundSpeed);
                 LookLeftRight(InputManager.MouseMovementX * lookAroundSpeed);
