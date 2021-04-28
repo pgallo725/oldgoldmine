@@ -105,29 +105,29 @@ namespace OldGoldMine
                        
             Collectible gold = new Collectible(Resources.GetModel("GoldOre"), 
                 Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
-            gold.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance);
+            gold.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance);
             gold.SetEmissiveColor(Color.Gold);
 
             Obstacle lowerObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LowerObstacle"),
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
                 new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
-            lowerObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            lowerObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle leftObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LeftObstacle")),
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
-            leftObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            leftObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle rightObstacle = new Obstacle(new GameObject3D(Resources.GetModel("RightObstacle")),
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
-            rightObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            rightObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle upperObstacle = new Obstacle(new GameObject3D(Resources.GetModel("UpperObstacle"),
                 new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity),
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
-            upperObstacle.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            upperObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             GameObject3D cave = new GameObject3D(Resources.GetModel("CaveSegment"));
-            cave.SetFogEffectEnabled(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            cave.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
 
             // Instantiate the procedural generator and initialize the level

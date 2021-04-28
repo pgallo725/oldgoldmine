@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 
 namespace OldGoldMine.Engine
 {
-
-    public class GameObject3D : Poolable
+    /// <summary>
+    /// Class that represents any entity in the game world that has a 3D model attached to it.
+    /// </summary>
+    public class GameObject3D : IPoolable
     {
         protected readonly Model model3d;
 
@@ -14,10 +14,21 @@ namespace OldGoldMine.Engine
         protected Vector3 scale;
         protected Quaternion rotation;
 
-
+        /// <summary>
+        /// The current position of this object in 3D space.
+        /// </summary>
         public virtual Vector3 Position { get { return position; } set { position = value; updated = false; } }
+
+        /// <summary>
+        /// The current scale of the GameObject3D model.
+        /// </summary>
         public virtual Vector3 Scale { get { return scale; } set { scale = value; updated = false; } }
+
+        /// <summary>
+        /// The current rotation of the GameObject3D
+        /// </summary>
         public virtual Quaternion Rotation { get { return rotation; } set { rotation = value; updated = false; } }
+
 
         private Matrix objectWorldMatrix;
         private bool updated = false;
@@ -45,28 +56,30 @@ namespace OldGoldMine.Engine
             }
         }
 
+        // Normalized vectors representing the 6 directions relative to the object's local coordinate system
+        public Vector3 Up { get { return objectWorldMatrix.Up; } }
+        public Vector3 Down { get { return objectWorldMatrix.Down; } }
+        public Vector3 Left { get { return objectWorldMatrix.Left; } }
+        public Vector3 Right { get { return objectWorldMatrix.Right; } }
+        public Vector3 Forward { get { return objectWorldMatrix.Forward; } }
+        public Vector3 Backward { get { return objectWorldMatrix.Backward; } }
+
 
         /// <summary>
         /// Construct an empty GameObject3D, with default position, rotation and size.
         /// </summary>
         public GameObject3D()
+            : this(null, Vector3.Zero, Vector3.One, Quaternion.Identity)
         {
-            this.model3d = null;
-            this.position = Vector3.Zero;
-            this.scale = Vector3.One;
-            this.rotation = Quaternion.Identity;
         }
 
         /// <summary>
         /// GameObject3D copy constructor.
         /// </summary>
+        /// <param name="other">The GameObject3D to copy from.</param>
         public GameObject3D(GameObject3D other)
-            : base()
+            : this(other.model3d, other.position, other.scale, other.rotation)
         {
-            this.model3d = other.model3d;
-            this.position = other.position;
-            this.scale = other.scale;
-            this.rotation = other.rotation;
         }
 
         /// <summary>
@@ -74,11 +87,8 @@ namespace OldGoldMine.Engine
         /// </summary>
         /// <param name="model">The 3D model of this object.</param>
         public GameObject3D(Model model)
+            : this(model, Vector3.Zero, Vector3.One, Quaternion.Identity)
         {
-            this.model3d = model;
-            this.position = Vector3.Zero;
-            this.scale = Vector3.One;
-            this.rotation = Quaternion.Identity;
         }
 
         /// <summary>
@@ -100,7 +110,7 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Change the position of this object in 3D coordinate space.
         /// </summary>
-        /// <param name="movement">A Vector3 representing the amount of movement to apply on each axis.</param>
+        /// <param name="movement">A Vector3 representing the delta movement on each axis.</param>
         public virtual void MovePosition(Vector3 movement)
         {
             position += movement;
@@ -108,36 +118,15 @@ namespace OldGoldMine.Engine
         }
 
         /// <summary>
-        /// Change the scale (size) of the 3D model.
-        /// </summary>
-        /// <param name="scale">A value representing the uniform scaling factor for the entire object.</param>
-        public virtual void ScaleSize(float scale)
-        {
-            this.scale.X = scale;
-            this.scale.Y = scale;
-            this.scale.Z = scale;
-            updated = false;
-        }
-
-        /// <summary>
-        /// Change the scale (size) of the 3D model.
-        /// </summary>
-        /// <param name="scale">A Vector3 representing the scaling factors for each axis.</param>
-        public virtual void ScaleSize(Vector3 scale)
-        {
-            this.scale = scale;
-            updated = false;
-        }
-
-        /// <summary>
-        /// Rotate the 3D model around a custom axis in tridimensional space.
+        /// Rotate the 3D model around a given axis in world space.
         /// </summary>
         /// <param name="axis">A Vector3 representing the axis to rotate around.</param>
         /// <param name="degrees">The value of the rotation amount (in degrees).</param>
         public void RotateAroundAxis(Vector3 axis, float degrees)
         {
-            rotation *= Quaternion.CreateFromAxisAngle(axis, MathHelper.ToRadians(degrees));        // TODO: rotation changing the coordinate system
-            updated = false;                                                                        // of the object in a weird way
+            rotation = Quaternion.Concatenate(rotation,
+                Quaternion.CreateFromAxisAngle(axis, MathHelper.ToRadians(degrees)));
+            updated = false;
         }
 
 
@@ -177,9 +166,10 @@ namespace OldGoldMine.Engine
             }
         }
 
-
-        // Lighting properties
-
+        /// <summary>
+        /// Set the color for the ambient lighting pass (XNA default lighting model).
+        /// </summary>
+        /// <param name="color">The Color to set the ambient light to.</param>
         public void SetAmbientLightColor(Color color)
         {
             if (model3d == null)
@@ -194,6 +184,10 @@ namespace OldGoldMine.Engine
             }
         }
 
+        /// <summary>
+        /// Set the color for the diffuse shading pass (XNA default lighting model).
+        /// </summary>
+        /// <param name="color">The object's materials diffuse color.</param>
         public void SetDiffuseColor(Color color)
         {
             if (model3d == null)
@@ -208,6 +202,11 @@ namespace OldGoldMine.Engine
             }
         }
 
+        /// <summary>
+        /// Set the color and strength of the specular lighting pass (XNA default lighting model).
+        /// </summary>
+        /// <param name="color">The object's materials specular color.</param>
+        /// <param name="strength">The object's materials specular power.</param>
         public void SetSpecularSettings(Color color, float strength)
         {
             if (model3d == null)
@@ -223,7 +222,10 @@ namespace OldGoldMine.Engine
             }
         }
 
-
+        /// <summary>
+        /// Set the color for the emissive shading pass (XNA default lighting model).
+        /// </summary>
+        /// <param name="color">The object's materials emissive color.</param>
         public void SetEmissiveColor(Color color)
         {
             if (model3d == null)
@@ -238,7 +240,11 @@ namespace OldGoldMine.Engine
             }
         }
 
-
+        /// <summary>
+        /// Selectively enable or disable up to 3 lights contributing to the object's shading (XNA default lighting model).
+        /// </summary>
+        /// <param name="lightIndex">Index (0, 1 or 2) of the light that is being accessed.</param>
+        /// <param name="enabled">Flag indicating whether the selected light must be enabled or not.</param>
         public void SetLightEnabled(int lightIndex, bool enabled = true)
         {
             if (model3d == null)
@@ -270,7 +276,13 @@ namespace OldGoldMine.Engine
 
         }
 
-
+        /// <summary>
+        /// Set the main properties for up to 3 lights contributing to the object's shading (XNA default lighting model).
+        /// </summary>
+        /// <param name="lightIndex">Index (0, 1 or 2) of the light that is being accessed.</param>
+        /// <param name="diffuseColor">Diffuse color that the selected light will use.</param>
+        /// <param name="specularColor">Specular color that the selected light will use.</param>
+        /// <param name="direction">Set the direction of the selected light.</param>
         public void SetLightProperties(int lightIndex, Color diffuseColor, Color specularColor, Vector3 direction)
         {
             if (model3d == null)
@@ -308,20 +320,14 @@ namespace OldGoldMine.Engine
 
         }
 
-
-        public void SetFogEffectEnabled(bool enabled)
-        {
-            if (model3d == null)
-                return;
-
-            foreach (var mesh in model3d.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                    effect.FogEnabled = enabled;
-            }
-        }
-
-        public void SetFogEffectEnabled(bool enabled, Color fogColor, float fogStart, float fogEnd)
+        /// <summary>
+        /// Set properties for the fogging effect applied to distant objects.
+        /// </summary>
+        /// <param name="enabled">Toggle the rendering of distance fog on/off.</param>
+        /// <param name="fogColor">The color of the rendered fog.</param>
+        /// <param name="fogStart">The world space distance from the camera at which fogging begins.</param>
+        /// <param name="fogEnd">The distance from the camera at which fogging is fully applied (should be > fogStart).</param>
+        public void SetFogEffect(bool enabled, Color fogColor, float fogStart, float fogEnd)
         {
             if (model3d == null)
                 return;
@@ -345,13 +351,15 @@ namespace OldGoldMine.Engine
         /// <param name="camera">The camera that will be used to render the object.</param>
         public virtual void Draw(in GameCamera camera)
         {
-            if (!IsActive)
-                return;
-
-            if (model3d != null)
+            if (IsActive && model3d != null)
                 model3d.Draw(this.ObjectWorldMatrix, camera.View, camera.Projection);
         }
 
+
+        /// <summary>
+        /// Implementation of the Clone() method for the IPoolable interface.
+        /// </summary>
+        /// <returns>A new GameObject3D that is an exact copy of this one.</returns>
         public override object Clone()
         {
             return new GameObject3D(this.model3d, this.position, this.scale, this.rotation);

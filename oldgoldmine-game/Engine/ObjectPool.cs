@@ -6,7 +6,7 @@ namespace OldGoldMine.Engine
     /// <summary>
     /// Common interface implemented by all classes that can be used with an ObjectPool.
     /// </summary>
-    public abstract class Poolable : ICloneable
+    public abstract class IPoolable : ICloneable
     {
         /// <summary>
         /// Flag indicating if this instance is actively being used or is available in the ObjectPool.
@@ -17,7 +17,7 @@ namespace OldGoldMine.Engine
     }
 
 
-    class ObjectPool<T> where T : Poolable, new()
+    class ObjectPool<T> where T : IPoolable, new()
     {
         private readonly List<T> pool;
         private readonly T prototype;

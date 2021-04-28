@@ -110,24 +110,6 @@ namespace OldGoldMine.Gameplay
             this.Position += movement;
         }
 
-        /// <summary>
-        /// Change the scale (size) of the Obstacle object, both the model and its hitbox.
-        /// </summary>
-        /// <param name="scale">A value representing the uniform scaling factor for the entire object.</param>
-        public override void ScaleSize(float scale)
-        {
-            this.Scale = new Vector3(scale, scale, scale);
-        }
-
-        /// <summary>
-        /// Change the scale (size) of the Obstacle object, both the model and its hitbox.
-        /// </summary>
-        /// <param name="scale">A Vector3 representing the scaling factors for each axis.</param>
-        public override void ScaleSize(Vector3 scale)
-        {
-            this.Scale = scale;
-        }
-
 
         public void Update(GameTime gameTime)
         {
