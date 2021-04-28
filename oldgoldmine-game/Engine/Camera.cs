@@ -113,7 +113,7 @@ namespace OldGoldMine.Engine
         public void RotateViewHorizontal(float degrees)
         {
             Matrix t = Matrix.CreateTranslation(-position);
-            Quaternion q = Quaternion.CreateFromAxisAngle(this.Down, MathHelper.ToRadians(degrees));
+            Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Down, MathHelper.ToRadians(degrees));
 
             this.LookAt(Vector3.Transform(target, t * Matrix.CreateFromQuaternion(q) * Matrix.Invert(t)));
         }
