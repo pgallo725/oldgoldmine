@@ -17,6 +17,11 @@ namespace OldGoldMine.Engine
     }
 
 
+    /// <summary>
+    /// A collection of objects of type T, that keeps track of inactive entities in
+    /// order to re-use them instead of allocating new instances all the time.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be pooled (must implement IPoolable).</typeparam>
     class ObjectPool<T> where T : IPoolable, new()
     {
         private readonly List<T> pool;

@@ -4,6 +4,10 @@ using OldGoldMine.UI;
 
 namespace OldGoldMine.Engine
 {
+    /// <summary>
+    /// Static class responsible for managing the game's resources, such as 3D models, textures and fonts.
+    /// <br>It stores them inside a map and provides simple and fast access by name.</br>
+    /// </summary>
     public static class Resources
     {
         /* 3D models for the game */

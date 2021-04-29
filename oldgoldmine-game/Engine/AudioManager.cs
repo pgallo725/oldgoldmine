@@ -4,9 +4,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
-
 namespace OldGoldMine.Engine
 {
+    /// <summary>
+    /// Static class responsible for handling the storage and playback of
+    /// all music and sound effects in the game, with volume control.
+    /// </summary>
     public static class AudioManager
     {
         /* CUSTOM SOUND EFFECT CLASS */

@@ -3,6 +3,10 @@ using Microsoft.Xna.Framework;
 
 namespace OldGoldMine.Engine
 {
+    /// <summary>
+    /// Simple class useful for holding a time value that can be easily
+    /// set, reset and updated inside the game loop.
+    /// </summary>
     public class Timer
     {
         /// <summary>
