@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using OldGoldMine.Engine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using OldGoldMine.Engine;
 
 
 namespace OldGoldMine.Gameplay
 {
-    public class ProceduralGenerator
+    public class Level
     {
-
+        /// <summary>
+        /// Represent each possible type of object that can occupy a slot in the generated level.
+        /// </summary>
         private enum PatternElement
         {
             GoldLeft,
@@ -25,10 +26,15 @@ namespace OldGoldMine.Gameplay
             Empty
         };
 
-
+        /// <summary>
+        /// Represents a pre-defined set of obstacles and collectibles, manually laid out,
+        /// which could be randomly selected to be spawned inside the level.
+        /// </summary>
         private class Pattern : IEnumerable
         {
-            public List<PatternElement> patternObjects = new List<PatternElement>();
+            private readonly List<PatternElement> patternObjects = new List<PatternElement>(8);
+
+            public int Length { get { return patternObjects.Count; } }
 
             public PatternElement this[int key]
             {
@@ -36,58 +42,24 @@ namespace OldGoldMine.Gameplay
                 set { patternObjects[key] = value; }
             }
 
-
             public void Add(PatternElement item)
             {
                 patternObjects.Add(item);
             }
 
+            public bool Contains(PatternElement item)
+            {
+                return patternObjects.Contains(item);
+            }
+
             public IEnumerator GetEnumerator()
             {
-                return new PatternEnumerator(patternObjects);
+                return patternObjects.GetEnumerator();
             }
         }
 
 
-        private class PatternEnumerator : IEnumerator
-        {
-            private List<PatternElement> _objects;
-            int position = -1;
-
-            public PatternEnumerator(List<PatternElement> list)
-            {
-                _objects = list;
-            }
-
-            object IEnumerator.Current { get { return Current; } }
-
-            public PatternElement Current
-            {
-                get
-                {
-                    try
-                    {
-                        return _objects[position];
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        throw new InvalidOperationException();
-                    }
-                }
-            }
-
-            public bool MoveNext()
-            {
-                position++;
-                return (position < _objects.Count);
-            }
-
-            public void Reset()
-            {
-                position = -1;
-            }
-        }
-
+        /* PRE-DEFINED PATTERNS, GROUPED BY THEIR EXPECTED DIFFICULTY */
 
         private readonly Pattern[] easyPatterns = 
         {
@@ -408,92 +380,107 @@ namespace OldGoldMine.Gameplay
         };
 
 
-        Random rand = new Random();
-
+        private Random randomizer = new Random();
 
         private readonly float caveSegmentLength;
         private readonly float popupDistance;
 
-        private const float garbageCollectionDistance = 10f;
-
-        float nextCavePosition = 0f;
-        float nextObjectPosition = 80f;
+        private float nextCavePosition = 0f;
+        private float nextObjectPosition = 80f;
 
         private Pattern activePattern = null;
         private int curPatternElementIndex = 0;
 
-
+        // Offsets to correctly position collectibles around the level
         private readonly Vector3 normalCollectibleOffset = new Vector3(0f, 1.5f, 0f);
         private readonly Vector3 leftCollectibleOffset = new Vector3(2f, 1.7f, 0f);
         private readonly Vector3 rightCollectibleOffset = new Vector3(-2f, 1.7f, 0f);
         private readonly Vector3 topCollectibleOffset = new Vector3(0f, 4f, 0f);
         
+        // Collections of objects spawned in the level
+        private readonly Queue<GameObject3D> caves;
+        private readonly Queue<Collectible> collectibles;
+        private readonly Queue<Obstacle> obstacles;
 
-        Queue<GameObject3D> caves;
-        Queue<Collectible> collectibles;
-        Queue<Obstacle> obstacles;
+        // Object pools
+        private readonly ObjectPool<GameObject3D> cavePool;
+        private readonly ObjectPool<Collectible> goldPool;
+        private readonly ObjectPool<Obstacle> obstaclesLowPool;
+        private readonly ObjectPool<Obstacle> obstaclesLeftPool;
+        private readonly ObjectPool<Obstacle> obstaclesRightPool;
+        private readonly ObjectPool<Obstacle> obstaclesHighPool;
 
-
-        ObjectPool<GameObject3D> cavePool;
-        ObjectPool<Collectible> goldPool;
-        ObjectPool<Obstacle> obstaclesLowPool;
-        ObjectPool<Obstacle> obstaclesLeftPool;
-        ObjectPool<Obstacle> obstaclesRightPool;
-        ObjectPool<Obstacle> obstaclesHighPool;
-
-
-        private int difficulty = 1;
-        public int Difficulty {
+        /// <summary>
+        /// Difficulty setting used for level generation (0 = Easy, 1 = Medium, 2 = Hard)
+        /// </summary>
+        public int Difficulty 
+        {
             get { return difficulty; }
-            set { difficulty = MathHelper.Clamp(value, 0, 3); }
+            set { difficulty = MathHelper.Clamp(value, 0, 2); }
         }
+        private int difficulty = 1;
 
-        float[] marginMultiplier    = { 1.4f, 1.2f, 1.1f };     // Extra room for maneuver: Easy 40%, Medium 20%, Hard 10%
-        float[] easyProbability     = { 0.6f, 0.3f, 0.1f };     // Probability of easy patterns: Easy 60%, Medium 30%, Hard 10%
-        float[] mediumProbability   = { 0.3f, 0.4f, 0.3f };     // Probability of medium patterns: Easy 30%, Medium 40%, Hard 30%
-        float[] hardProbability     = { 0.1f, 0.3f, 0.6f };     // Probability of hard patterns: Easy 10%, Medium 30%, Hard 60%
+        // Additional level generation parameters based on difficulty
+        private readonly float[] marginMultiplier    = { 1.4f, 1.2f, 1.1f };     // Extra room for maneuver: Easy 40%, Medium 20%, Hard 10%
+        private readonly float[] easyProbability     = { 0.6f, 0.3f, 0.1f };     // Probability of easy patterns: Easy 60%, Medium 30%, Hard 10%
+        private readonly float[] mediumProbability   = { 0.3f, 0.4f, 0.3f };     // Probability of medium patterns: Easy 30%, Medium 40%, Hard 30%
+        private readonly float[] hardProbability     = { 0.1f, 0.3f, 0.6f };     // Probability of hard patterns: Easy 10%, Medium 30%, Hard 60%
 
 
-
-        public ProceduralGenerator(GameObject3D cave, float caveLength, Collectible gold,
+        /// <summary>
+        /// Create a new Level, feeding it with the parameters and assets for the procedural generation.
+        /// </summary>
+        /// <param name="cave">GameObject3D to be used as the cave environment for the level.</param>
+        /// <param name="caveLength">Length (in units) of the provided cave segment.</param>
+        /// <param name="gold">Object to be used as the archetype for gold Collectibles.</param>
+        /// <param name="lower">Archetype for the lower obstacles in the level.</param>
+        /// <param name="left">Archetype for the left obstacles in the level.</param>
+        /// <param name="right">Archetype for the right obstacles in the level.</param>
+        /// <param name="upper">Archetype for the upper obstacles in the level.</param>
+        /// <param name="popupDistance">Distance (in units) from the camera at which new objects are spawned.</param>
+        public Level(GameObject3D cave, float caveLength, Collectible gold,
             Obstacle lower, Obstacle left, Obstacle right, Obstacle upper, float popupDistance = 100f)
         {
             this.caves = new Queue<GameObject3D>();
             this.collectibles = new Queue<Collectible>();
             this.obstacles = new Queue<Obstacle>();
 
-            this.caveSegmentLength = caveLength;
-            this.nextCavePosition = -caveLength;        // First cave segment is spawned behind the player to avoid starting outside the cave
-            this.popupDistance = popupDistance;
-
+            // Initializing object pools for the procedural generator (Cave, Collectibles and Obstacles)
             this.cavePool = new ObjectPool<GameObject3D>(cave, 4);
-
-            // Generate the first few cave segments
-
-            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength)  + 1.5f); i++)
-            {
-                GenerateCave(nextCavePosition);
-                nextCavePosition += caveSegmentLength;
-            }
-
-            // Initializing GameObjects that will be spawned by the procedural generator (Collectibles and Obstacles)
-
             this.goldPool = new ObjectPool<Collectible>(gold, 10);
             this.obstaclesLowPool = new ObjectPool<Obstacle>(lower, 8);
             this.obstaclesLeftPool = new ObjectPool<Obstacle>(left, 8);
             this.obstaclesRightPool = new ObjectPool<Obstacle>(right, 8);
             this.obstaclesHighPool = new ObjectPool<Obstacle>(upper, 8);
+
+            // First cave segment is spawned behind the player to avoid starting outside the cave
+            this.caveSegmentLength = caveLength;
+            this.nextCavePosition = -caveLength;
+            this.popupDistance = popupDistance;
+
+            // Generate the first few cave segments
+            for (int i = 0; i <= (int)((popupDistance / caveSegmentLength) + 1.5f); i++)
+            {
+                GenerateCave(nextCavePosition);
+                nextCavePosition += caveSegmentLength;
+            }
         }
 
 
+        /// <summary>
+        /// Set the seed for the level's procedural generation.
+        /// </summary>
+        /// <param name="seed">64-bit integer seed (should be != 0).</param>
         public void InitializeSeed(long seed)
         {
             if (seed != 0)
-                rand = new Random((int)seed);
+                randomizer = new Random((int)seed);
         }
 
 
-        // Reset the level to its original state, removing all generated items
+        /// <summary>
+        /// Reset the level to its original state, removing all generated objects.
+        /// </summary>
         public void Reset()
         {
             while (caves.Count > 0)
@@ -516,8 +503,15 @@ namespace OldGoldMine.Gameplay
         }
 
 
+        /// <summary>
+        /// Update the level's status in the current frame.
+        /// </summary>
+        /// <param name="gameTime">Time signature of the current frame.</param>
+        /// <param name="playerPosition">The current position of the player inside the level.</param>
         public void Update(GameTime gameTime, Vector3 playerPosition)
         {
+            // Generate new cave segments and level objects when in range
+
             if (playerPosition.Z >= nextCavePosition - popupDistance)
             {
                 GenerateCave(nextCavePosition);
@@ -529,33 +523,36 @@ namespace OldGoldMine.Gameplay
                 GenerateObjects();
             }
 
-
-            // Garbage collect the items behind the player, update all active items
+            // Deactivate items behind the player (when they're further than caveSegmentLength),
+            // while also updating all active items
 
             foreach (GameObject3D cave in caves.ToArray())
             {
-                if (playerPosition.Z >= cave.Position.Z + caveSegmentLength + garbageCollectionDistance)
+                if (playerPosition.Z >= cave.Position.Z + 2 * caveSegmentLength)
                 {
-                    caves.Dequeue().IsActive = false;     // Remove previous cave segments from the active queue
+                    // Remove previous cave segments from the active queue
+                    caves.Dequeue().IsActive = false;
                 }
             }
 
             foreach (Collectible gold in collectibles.ToArray())
             {
-                if (playerPosition.Z >= gold.Position.Z + garbageCollectionDistance)
+                if (playerPosition.Z >= gold.Position.Z + caveSegmentLength)
                 {
+                    // Remove and deactivate a surpassed collectible from the queue (ordered by distance)
                     gold.IsActive = false;
-                    collectibles.Dequeue();     // Remove element from the queue (knowing that collectibles are sorted in order of encounter)
+                    collectibles.Dequeue();
                 }
                 else gold.Update(gameTime);
             }
 
             foreach (Obstacle obstacle in obstacles.ToArray())
             {
-                if (playerPosition.Z >= obstacle.Position.Z + garbageCollectionDistance)
+                if (playerPosition.Z >= obstacle.Position.Z + caveSegmentLength)
                 {
+                    // Remove and deactivate a surpassed obstacle from the queue (ordered by distance)
                     obstacle.IsActive = false;
-                    obstacles.Dequeue();        // Remove element from the queue (knowing that obstacles are sorted in order of encounter)
+                    obstacles.Dequeue();        
                 }
                 else obstacle.Update(gameTime);
             }
@@ -570,15 +567,11 @@ namespace OldGoldMine.Gameplay
             caves.Enqueue(newCave);
         }
 
-
         private void GenerateObjects()
         {
-            float speed = OldGoldMineGame.Application.Speed;
-            float distance = MathHelper.Clamp(0.5f * speed, 12f, 1000f);
-
             if (activePattern == null)
             {
-                int val = rand.Next(100);
+                int val = randomizer.Next(100);
                 int index;
 
                 // Choose the type of pattern to generate, 
@@ -586,23 +579,22 @@ namespace OldGoldMine.Gameplay
 
                 if (val <= easyProbability[difficulty] * 100)   // easy pattern
                 {
-                    index = rand.Next(easyPatterns.Length);
+                    index = randomizer.Next(easyPatterns.Length);
                     activePattern = easyPatterns[index];
                 }
                 else if (val <= (easyProbability[difficulty] + mediumProbability[difficulty]) * 100)    // medium pattern
                 {
-                    index = rand.Next(mediumPatterns.Length);
+                    index = randomizer.Next(mediumPatterns.Length);
                     activePattern = mediumPatterns[index];
                 }
                 else    // hard pattern
                 {
-                    index = rand.Next(hardPatterns.Length);
+                    index = randomizer.Next(hardPatterns.Length);
                     activePattern = hardPatterns[index];
                 }
 
                 curPatternElementIndex = 0;
             }
-
 
             // Spawn the next element in the currently active pattern
             PatternElement p = activePattern[curPatternElementIndex++];
@@ -653,13 +645,13 @@ namespace OldGoldMine.Gameplay
                 obstacles.Enqueue(newObstacle);
             }
 
+            float distance = MathHelper.Clamp(0.5f * OldGoldMineGame.Application.Speed, 12f, 1000f);
             nextObjectPosition += distance * marginMultiplier[difficulty];
 
-
             // If reached the end of the pattern, reset the variable so at the next 
-            // generation a new one will be randomly picked
+            // generation step a new one will be randomly picked
 
-            if (curPatternElementIndex == activePattern.patternObjects.Count)
+            if (curPatternElementIndex == activePattern.Length)
             {
                 activePattern = null;
                 curPatternElementIndex = 0;
@@ -668,8 +660,10 @@ namespace OldGoldMine.Gameplay
         }
 
 
-
-        // Draw the level objects according to the player's POV
+        /// <summary>
+        /// Draw the level environment and all gameplay objects (obstacles and collectibles)
+        /// </summary>
+        /// <param name="camera">The camera used to render the scene.</param>
         public void Draw (GameCamera camera)
         {
             foreach (GameObject3D cave in caves)
@@ -681,5 +675,6 @@ namespace OldGoldMine.Gameplay
             foreach (Obstacle obstacle in obstacles)
                 obstacle.Draw(camera);
         }
+
     }
 }

@@ -111,10 +111,27 @@ namespace OldGoldMine.Engine
         /// Change the position of this object in 3D coordinate space.
         /// </summary>
         /// <param name="movement">A Vector3 representing the delta movement on each axis.</param>
-        public virtual void MovePosition(Vector3 movement)
+        public void MovePosition(Vector3 movement)
         {
-            position += movement;
-            updated = false;
+            this.Position += movement;
+        }
+
+        /// <summary>
+        /// Change the size of the GameObject3D by scaling its size according to a factor.
+        /// </summary>
+        /// <param name="factor">Single value representing the scaling factor on all axis.</param>
+        public void ScaleSize(float factor)
+        {
+            this.Scale *= factor;
+        }
+
+        /// <summary>
+        /// Change the size of the GameObject3D by scaling its size according to a factor.
+        /// </summary>
+        /// <param name="factor">Vector3 representing the scale factor for each axis.</param>
+        public void ScaleSize(Vector3 factor)
+        {
+            this.Scale *= factor;
         }
 
         /// <summary>
@@ -124,9 +141,8 @@ namespace OldGoldMine.Engine
         /// <param name="degrees">The value of the rotation amount (in degrees).</param>
         public void RotateAroundAxis(Vector3 axis, float degrees)
         {
-            rotation = Quaternion.Concatenate(rotation,
+            this.Rotation = Quaternion.Concatenate(rotation,
                 Quaternion.CreateFromAxisAngle(axis, MathHelper.ToRadians(degrees)));
-            updated = false;
         }
 
 

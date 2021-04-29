@@ -38,7 +38,7 @@ namespace OldGoldMine
 
         Timer timer;
         public static Player player;
-        ProceduralGenerator level;
+        Level level;
 
         private GameSettings currentGameInfo;
 
@@ -108,21 +108,23 @@ namespace OldGoldMine
             gold.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance);
             gold.SetEmissiveColor(Color.Gold);
 
-            Obstacle lowerObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LowerObstacle"),
-                Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity), 
+            Obstacle lowerObstacle = new Obstacle(Resources.GetModel("LowerObstacle"),
+                Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity, 
                 new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
             lowerObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle leftObstacle = new Obstacle(new GameObject3D(Resources.GetModel("LeftObstacle")),
+            Obstacle leftObstacle = new Obstacle(Resources.GetModel("LeftObstacle"),
+                Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
             leftObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle rightObstacle = new Obstacle(new GameObject3D(Resources.GetModel("RightObstacle")),
+            Obstacle rightObstacle = new Obstacle(Resources.GetModel("RightObstacle"),
+                Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
             rightObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
-            Obstacle upperObstacle = new Obstacle(new GameObject3D(Resources.GetModel("UpperObstacle"),
-                new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity),
+            Obstacle upperObstacle = new Obstacle(Resources.GetModel("UpperObstacle"),
+                new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
             upperObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
@@ -131,7 +133,7 @@ namespace OldGoldMine
 
 
             // Instantiate the procedural generator and initialize the level
-            level = new ProceduralGenerator(cave, 220f, gold, lowerObstacle,
+            level = new Level(cave, 220f, gold, lowerObstacle,
                 leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
 
 
@@ -292,8 +294,8 @@ namespace OldGoldMine
                         
                     if (InputManager.DebugPressed)
                     {
-                        Collectible.debugDrawHitbox = !Collectible.debugDrawHitbox;
-                        Obstacle.debugDrawHitbox = !Obstacle.debugDrawHitbox;
+                        Collectible.DrawDebugHitbox = !Collectible.DrawDebugHitbox;
+                        Obstacle.DrawDebugHitbox = !Obstacle.DrawDebugHitbox;
                         HUD.Instance.ToggleFramerateVisible();
                     }
 
@@ -420,7 +422,7 @@ namespace OldGoldMine
                 // Initialize the Player object
                 player = new Player(Resources.GetModel($"Cart_{gameSettings.Cart}"), 
                     new Vector3(0f, 2.5f, -15f), new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity,
-                    new Vector3(0f, -2.3f, -0.65f), 1.2f, new Vector3(0f, -0.5f, 0f));
+                    new Vector3(0f, -2.3f, -0.65f), 1.2f, new Vector3(0f, -0.5f, 0.1f));
 
                 level.InitializeSeed(gameSettings.Seed);
                 level.Difficulty = gameSettings.Difficulty;
