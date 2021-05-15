@@ -116,6 +116,7 @@ namespace OldGoldMine
             }
 
             graphics.IsFullScreen = (CurrentDisplayMode == DisplayMode.Fullscreen);
+            graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 4;
             graphics.ApplyChanges();
 
             if (CurrentDisplayMode != DisplayMode.Fullscreen)

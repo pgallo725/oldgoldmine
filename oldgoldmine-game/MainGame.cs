@@ -52,20 +52,20 @@ namespace OldGoldMine
 
         public OldGoldMineGame()
         {
-            graphics = new GraphicsDeviceManager(this)
-            {
-                GraphicsProfile = GraphicsProfile.HiDef,
-                SynchronizeWithVerticalRetrace = false
-            };
-
             Content.RootDirectory = "Assets";
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);    // 250 FPS target
 
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            graphics.IsFullScreen = false;
+            graphics = new GraphicsDeviceManager(this)
+            {
+                GraphicsProfile = GraphicsProfile.HiDef,
+                SynchronizeWithVerticalRetrace = false,
+                PreferMultiSampling = true,
+                PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
+                PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
+                IsFullScreen = false
+            };
 
             Window.IsBorderless = false;
             Window.Title = "The Old Gold Mine";
@@ -365,11 +365,13 @@ namespace OldGoldMine
                     // Disable backface culling to avoid artifacts inside the player's cart
                     GraphicsDevice.RasterizerState = new RasterizerState
                     {
-                        CullMode = CullMode.None
+                        CullMode = CullMode.None,
+                        MultiSampleAntiAlias = true
                     };
 
                     // Enable anisotropic texture filtering
                     GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+                    GraphicsDevice.VertexSamplerStates[0] = SamplerState.AnisotropicWrap;
 
                     // Draw the player and the 3D level (according to the player's POV)
 
