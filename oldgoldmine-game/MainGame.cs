@@ -104,9 +104,9 @@ namespace OldGoldMine
             // Set-up the properties of the GameObjects that will be used in the level generation
                        
             Collectible gold = new Collectible(Resources.GetModel("GoldOre"), 
-                Vector3.Zero, 0.3f * Vector3.One, Quaternion.Identity);
+                Vector3.Zero, 0.33f * Vector3.One, Quaternion.Identity);
             gold.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance);
-            gold.SetEmissiveColor(Color.Gold);
+            gold.SetEmissiveColor(Color.Gold * 0.78f);
 
             Obstacle lowerObstacle = new Obstacle(Resources.GetModel("LowerObstacle"),
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity, 

@@ -405,7 +405,7 @@
 /processorParam:GenerateMipmaps=True
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
+/processorParam:MakeSquare=True
 /processorParam:TextureFormat=DxtCompressed
 /build:Models/GoldOre/goldOre_BakedTexture.png
 
