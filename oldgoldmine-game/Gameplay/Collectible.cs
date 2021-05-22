@@ -12,6 +12,15 @@ namespace OldGoldMine.Gameplay
         internal static bool DrawDebugHitbox = false;
         private static Color DebugColor = Color.Green;
 
+        // Tool for rendering the hitbox outlines in the scene (debug mode)
+        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.graphics.GraphicsDevice)
+        {
+            Alpha = 1f,
+            VertexColorEnabled = true,
+            TextureEnabled = false,
+            LightingEnabled = false
+        };
+
         private BoundingBox hitbox;
 
         public override Vector3 Position
@@ -143,8 +152,9 @@ namespace OldGoldMine.Gameplay
 
             if (DrawDebugHitbox)
             {
-                OldGoldMineGame.basicEffect.Projection = OldGoldMineGame.player.Camera.Projection;
-                OldGoldMineGame.basicEffect.View = OldGoldMineGame.player.Camera.View;
+                renderer.Projection = OldGoldMineGame.player.Camera.Projection;
+                renderer.View = OldGoldMineGame.player.Camera.View;
+                renderer.CurrentTechnique.Passes[0].Apply();
 
                 Vector3[] vertices = hitbox.GetCorners();
 
@@ -177,7 +187,6 @@ namespace OldGoldMine.Gameplay
                     new VertexPositionColor(vertices[7], DebugColor)
                 };
 
-                OldGoldMineGame.basicEffect.CurrentTechnique.Passes[0].Apply();
                 OldGoldMineGame.graphics.GraphicsDevice.
                     DrawUserPrimitives(PrimitiveType.LineList, lineVertices, 0, 12);
             }

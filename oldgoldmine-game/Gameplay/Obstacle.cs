@@ -7,8 +7,17 @@ namespace OldGoldMine.Gameplay
 {
     public class Obstacle : GameObject3D
     {
-        public static bool DrawDebugHitbox = false;
+        internal static bool DrawDebugHitbox = false;
         private static Color DebugColor = Color.Red;
+
+        // Tool for rendering the hitbox outlines in the scene (debug mode)
+        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.graphics.GraphicsDevice)
+        {
+            Alpha = 1f,
+            VertexColorEnabled = true,
+            TextureEnabled = false,
+            LightingEnabled = false
+        };
 
         private BoundingBox hitbox;
 
@@ -137,8 +146,9 @@ namespace OldGoldMine.Gameplay
 
             if (DrawDebugHitbox)
             {
-                OldGoldMineGame.basicEffect.Projection = OldGoldMineGame.player.Camera.Projection;
-                OldGoldMineGame.basicEffect.View = OldGoldMineGame.player.Camera.View;
+                renderer.Projection = OldGoldMineGame.player.Camera.Projection;
+                renderer.View = OldGoldMineGame.player.Camera.View;
+                renderer.CurrentTechnique.Passes[0].Apply();
 
                 Vector3[] vertices = hitbox.GetCorners();
 
@@ -170,8 +180,7 @@ namespace OldGoldMine.Gameplay
                     new VertexPositionColor(vertices[6], DebugColor),
                     new VertexPositionColor(vertices[7], DebugColor)
                 };
-
-                OldGoldMineGame.basicEffect.CurrentTechnique.Passes[0].Apply();
+                
                 OldGoldMineGame.graphics.GraphicsDevice.
                     DrawUserPrimitives(PrimitiveType.LineList, lineVertices, 0, 12);
             }
