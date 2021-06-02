@@ -213,7 +213,7 @@ namespace OldGoldMine.Gameplay
         /// Update the Player object's status in the current frame, handling any related input.
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
-        public void Update(GameTime gameTime)
+        public void Update(in GameTime gameTime)
         {
             if (InputManager.FreeLookPressed)
             {
@@ -295,7 +295,7 @@ namespace OldGoldMine.Gameplay
         /* Based on the type of side movement animation, the player model and camera position are
          * interpolated between the 2 keyframe positions according to the current animation timepoint */
 
-        private void UpdateSideMovement(GameTime gameTime, Vector3 direction)
+        private void UpdateSideMovement(in GameTime gameTime, Vector3 direction)
         {
             if (state == AnimationState.Idle && direction == Vector3.Right)
                 state = AnimationState.RightMovement;
@@ -333,7 +333,7 @@ namespace OldGoldMine.Gameplay
             }
         }
 
-        private void ReverseSideMovement(GameTime gameTime, Vector3 direction)
+        private void ReverseSideMovement(in GameTime gameTime, Vector3 direction)
         {
             if ((state == AnimationState.RightMovementReverse && direction == Vector3.Right) ||
                 (state == AnimationState.LeftMovementReverse && direction == Vector3.Left))
@@ -389,7 +389,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        private void UpdateCrouchMovement(GameTime gameTime)
+        private void UpdateCrouchMovement(in GameTime gameTime)
         {
             if (state == AnimationState.Idle)
                 state = AnimationState.Crouch;
@@ -458,7 +458,7 @@ namespace OldGoldMine.Gameplay
 
         // While the jumping animation is active, update at every frame the vertical position
         // according to the physical law of x(t) = v0 * t + 1/2 * a * t^2
-        private void UpdateJump(GameTime gameTime)
+        private void UpdateJump(in GameTime gameTime)
         {
             timeBeforeNextJump = MathHelper.Clamp
                 (timeBeforeNextJump - (float)gameTime.ElapsedGameTime.TotalSeconds,

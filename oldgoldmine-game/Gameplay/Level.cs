@@ -515,7 +515,7 @@ namespace OldGoldMine.Gameplay
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
         /// <param name="playerPosition">The current Player object navigating the level.</param>
-        public void Update(GameTime gameTime, Player player)
+        public void Update(in GameTime gameTime, in Player player)
         {
             // Generate new cave segments and level objects when in range
             if (player.Position.Z >= nextCavePosition - popupDistance)

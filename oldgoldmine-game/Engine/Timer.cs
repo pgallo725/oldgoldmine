@@ -37,7 +37,7 @@ namespace OldGoldMine.Engine
         /// Tick the Timer in the current frame, updating its value accordingly.
         /// </summary>
         /// <param name="elapsedTime">Time signature of the current frame.</param>
-        public void Update(GameTime elapsedTime)
+        public void Update(in GameTime elapsedTime)
         {
             Time = Time.Add(elapsedTime.ElapsedGameTime);
         }

@@ -125,7 +125,7 @@ namespace OldGoldMine.Gameplay
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
         /// <param name="player">Reference to the current Player object.</param>
-        public void Update(GameTime gameTime, Player player)
+        public void Update(in GameTime gameTime, in Player player)
         {
             if (!IsActive)
                 return;

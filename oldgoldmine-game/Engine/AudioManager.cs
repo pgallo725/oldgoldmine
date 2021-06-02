@@ -107,7 +107,8 @@ namespace OldGoldMine.Engine
         /// <summary>
         /// Update the internal status of the AudioManager over time.
         /// </summary>
-        public static void Update(GameTime gameTime)
+        /// <param name="gameTime">Time signature of the current frame.</param>
+        public static void Update(in GameTime gameTime)
         {
             if (fadeout)
             {
