@@ -26,7 +26,6 @@ namespace OldGoldMine
         // Globally accessible graphics and rendering tools
         public static GraphicsDeviceManager graphics;
         public static SpriteBatch spriteBatch;
-        public static BasicEffect basicEffect;
 
         public static OldGoldMineGame Application { get; private set; }
         
@@ -48,7 +47,7 @@ namespace OldGoldMine
         const float speedIncreaseInterval = 4f;
         const float maxSpeed = 200f;
         private float lastSpeedUpdate = 0f;
-        
+
 
         public OldGoldMineGame()
         {
@@ -117,23 +116,65 @@ namespace OldGoldMine
                 Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
             leftObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            leftObstacle.EnableDefaultLighting();
+            leftObstacle.SetSpecularSettings(Color.Transparent, 1f);
 
             Obstacle rightObstacle = new Obstacle(Resources.GetModel("RightObstacle"),
                 Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
             rightObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            rightObstacle.EnableDefaultLighting();
+            rightObstacle.SetSpecularSettings(Color.Transparent, 1f);
 
             Obstacle upperObstacle = new Obstacle(Resources.GetModel("UpperObstacle"),
                 new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
             upperObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            //upperObstacle.EnableDefaultLighting();
+            //upperObstacle.SetSpecularSettings(Color.Transparent, 1f);
+
 
             GameObject3D cave = new GameObject3D(Resources.GetModel("CaveSegment"));
             cave.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
 
+            Model[] caveProps = new Model[3]
+            {
+                Resources.GetModel("CaveProps_0"),
+                Resources.GetModel("CaveProps_1"),
+                Resources.GetModel("CaveProps_2")
+            };
+
+            // Prepare the props models to be used inside the cave
+            foreach (Model model in caveProps)
+            {
+                foreach (ModelMesh mesh in model.Meshes)
+                {
+                    if (mesh.Name.Contains("LanternEmissive"))
+                    {
+                        foreach (BasicEffect effect in mesh.Effects)
+                        {
+                            effect.FogEnabled = true;
+                            effect.FogColor = Color.Black.ToVector3();
+                            effect.FogStart = popupDistance - 15f;
+                            effect.FogEnd = popupDistance - 5f;
+
+                            effect.EmissiveColor = new Vector3(0.92f, 0.85f, 0.68f);
+                        }
+                    }
+                }
+            }
+
+            GameObject3D[] caveObjects = new GameObject3D[3]
+            {
+                new GameObject3D(caveProps[0]),
+                new GameObject3D(caveProps[1]),
+                new GameObject3D(caveProps[2])
+            };
+
+
             // Instantiate the procedural generator and initialize the level
-            level = new Level(cave, 220f, gold, lowerObstacle,
+            level = new Level(cave, 220f, caveObjects, gold, lowerObstacle,
                 leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
 
 
@@ -153,15 +194,6 @@ namespace OldGoldMine
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // BasicEffect for rendering out primitives
-            basicEffect = new BasicEffect(GraphicsDevice)
-            {
-                Alpha = 1f,
-
-                VertexColorEnabled = true,
-                LightingEnabled = false
-            };
-
 
             // LOAD 3D MODELS
 
@@ -171,8 +203,12 @@ namespace OldGoldMine
             Resources.AddModel("Cart_3", Content.Load<Model>("Models/Cart/TankCart/cart_tank"));
             Resources.AddModel("Cart_4", Content.Load<Model>("Models/Cart/GoldenCart/cart_golden"));
 
-            Resources.AddModel("GoldOre", Content.Load<Model>("Models/GoldOre/goldOre"));
             Resources.AddModel("CaveSegment", Content.Load<Model>("Models/Cave/cave_segment"));
+            Resources.AddModel("CaveProps_0", Content.Load<Model>("Models/Cave/cave_props_01"));
+            Resources.AddModel("CaveProps_1", Content.Load<Model>("Models/Cave/cave_props_02"));
+            Resources.AddModel("CaveProps_2", Content.Load<Model>("Models/Cave/cave_props_03"));
+
+            Resources.AddModel("GoldOre", Content.Load<Model>("Models/GoldOre/goldOre"));
             Resources.AddModel("LowerObstacle", Content.Load<Model>("Models/Obstacles/ObstacleBottom/obstacle_bottom"));
             Resources.AddModel("LeftObstacle", Content.Load<Model>("Models/Obstacles/ObstacleLeft/obstacle_left"));
             Resources.AddModel("RightObstacle", Content.Load<Model>("Models/Obstacles/ObstacleRight/obstacle_right"));
@@ -259,7 +295,7 @@ namespace OldGoldMine
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            Content.Unload();
         }
 
 

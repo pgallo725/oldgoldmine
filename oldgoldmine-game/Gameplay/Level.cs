@@ -399,6 +399,7 @@ namespace OldGoldMine.Gameplay
         
         // Collections of objects spawned in the level
         private readonly Queue<GameObject3D> caves;
+        private readonly Queue<GameObject3D> caveProps;
         private readonly Queue<Collectible> collectibles;
         private readonly Queue<Obstacle> obstacles;
 
@@ -409,6 +410,7 @@ namespace OldGoldMine.Gameplay
         private readonly ObjectPool<Obstacle> obstaclesLeftPool;
         private readonly ObjectPool<Obstacle> obstaclesRightPool;
         private readonly ObjectPool<Obstacle> obstaclesHighPool;
+        private readonly ObjectPool<GameObject3D>[] cavePropsPool;
 
         /// <summary>
         /// Difficulty setting used for level generation (0 = Easy, 1 = Medium, 2 = Hard)
@@ -438,15 +440,19 @@ namespace OldGoldMine.Gameplay
         /// <param name="right">Archetype for the right obstacles in the level.</param>
         /// <param name="upper">Archetype for the upper obstacles in the level.</param>
         /// <param name="popupDistance">Distance (in units) from the camera at which new objects are spawned.</param>
-        public Level(GameObject3D cave, float caveLength, Collectible gold,
+        public Level(GameObject3D cave, float caveLength, GameObject3D[] caveProps, Collectible gold,
             Obstacle lower, Obstacle left, Obstacle right, Obstacle upper, float popupDistance = 100f)
         {
             this.caves = new Queue<GameObject3D>();
+            this.caveProps = new Queue<GameObject3D>();
             this.collectibles = new Queue<Collectible>();
             this.obstacles = new Queue<Obstacle>();
 
-            // Initializing object pools for the procedural generator (Cave, Collectibles and Obstacles)
+            // Initializing object pools for the procedural generator (Cave, Props, Collectibles and Obstacles)
             this.cavePool = new ObjectPool<GameObject3D>(cave, 4);
+            this.cavePropsPool = new ObjectPool<GameObject3D>[caveProps.Length];
+            for (int i = 0; i < caveProps.Length; i++)
+                this.cavePropsPool[i] = new ObjectPool<GameObject3D>(caveProps[i], 2);
             this.goldPool = new ObjectPool<Collectible>(gold, 10);
             this.obstaclesLowPool = new ObjectPool<Obstacle>(lower, 8);
             this.obstaclesLeftPool = new ObjectPool<Obstacle>(left, 8);
@@ -485,6 +491,9 @@ namespace OldGoldMine.Gameplay
         {
             while (caves.Count > 0)
                 caves.Dequeue().IsActive = false;
+
+            while (caveProps.Count > 0)
+                caveProps.Dequeue().IsActive = false;
 
             while (collectibles.Count > 0)
                 collectibles.Dequeue().IsActive = false;
@@ -532,6 +541,7 @@ namespace OldGoldMine.Gameplay
                 {
                     // Remove previous cave segments from the active queue
                     caves.Dequeue().IsActive = false;
+                    caveProps.Dequeue().IsActive = false;
                 }
             }
 
@@ -561,10 +571,20 @@ namespace OldGoldMine.Gameplay
 
         private void GenerateCave(float position)
         {
+            // Generate new cave segment
             GameObject3D newCave = cavePool.GetOne();
             newCave.EnableDefaultLighting();
+            newCave.SetSpecularSettings(Color.Transparent, 1f);
             newCave.Position = new Vector3(0f, 0f, position);
             caves.Enqueue(newCave);
+
+            // Populate cave segment with a random set of props
+            int val = randomizer.Next(caveProps.Count);
+            GameObject3D newProps = cavePropsPool[val].GetOne();
+            newProps.EnableDefaultLighting();
+            newProps.SetSpecularSettings(Color.Transparent, 1f);
+            newProps.Position = new Vector3(0f, 0f, position);
+            caveProps.Enqueue(newProps);
         }
 
         private void GenerateObjects()
@@ -668,6 +688,9 @@ namespace OldGoldMine.Gameplay
         {
             foreach (GameObject3D cave in caves)
                 cave.Draw(camera);
+
+            foreach (GameObject3D props in caveProps)
+                props.Draw(camera);
 
             foreach (Collectible gold in collectibles)
                 gold.Draw(camera);
