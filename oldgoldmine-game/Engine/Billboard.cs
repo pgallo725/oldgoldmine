@@ -9,7 +9,7 @@ namespace OldGoldMine.Engine
     public class Billboard : IPoolable
     {
         // Tool for rendering the textured quad into the scene
-        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.graphics.GraphicsDevice)
+        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.Graphics.GraphicsDevice)
         {
             TextureEnabled = true
         };
@@ -112,13 +112,13 @@ namespace OldGoldMine.Engine
                 if (constraint.LengthSquared() == 0)
                     renderer.World *= Matrix.CreateBillboard(Position, camera.Position, camera.Up, camera.Forward);
                 else renderer.World *= Matrix.CreateConstrainedBillboard(Position, camera.Position, constraint, camera.Forward, null);
-                renderer.View = OldGoldMineGame.player.Camera.View;
-                renderer.Projection = OldGoldMineGame.player.Camera.Projection;
+                renderer.View = camera.View;
+                renderer.Projection = camera.Projection;
                 renderer.Texture = Texture;
                 renderer.CurrentTechnique.Passes[0].Apply();
 
-                OldGoldMineGame.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                OldGoldMineGame.graphics.GraphicsDevice.
+                OldGoldMineGame.Graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                OldGoldMineGame.Graphics.GraphicsDevice.
                     DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
             }
         }
