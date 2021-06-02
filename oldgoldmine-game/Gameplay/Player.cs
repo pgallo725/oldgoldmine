@@ -131,8 +131,7 @@ namespace OldGoldMine.Gameplay
             if (playerModel != null)
             {
                 this.model = new GameObject3D(playerModel, position + modelOffset, scale, rotation);
-                this.model.EnableDefaultLighting();
-                this.model.SetSpecularSettings(Color.Transparent, 1f);
+                this.model.EnableDefaultLighting(specular: false);
             }
 
             this.hitboxOffset = hitboxOffset;

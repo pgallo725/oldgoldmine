@@ -98,84 +98,52 @@ namespace OldGoldMine
             HUD.Create(Window);           
 
 
-            float popupDistance = 400f;
-
             // Set-up the properties of the GameObjects that will be used in the level generation
                        
             Collectible gold = new Collectible(Resources.GetModel("GoldOre"), 
                 Vector3.Zero, 0.33f * Vector3.One, Quaternion.Identity);
-            gold.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance);
             gold.SetEmissiveColor(Color.Gold * 0.78f);
 
             Obstacle lowerObstacle = new Obstacle(Resources.GetModel("LowerObstacle"),
                 Vector3.Zero, 1.2f * Vector3.One, Quaternion.Identity, 
                 new BoundingBox(new Vector3(-2f, -1f, -1.2f), new Vector3(2f, 2.5f, 1.2f)));
-            lowerObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
 
             Obstacle leftObstacle = new Obstacle(Resources.GetModel("LeftObstacle"),
                 Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(0f, 0f, -1.5f), new Vector3(4f, 6f, 1.5f)));
-            leftObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
-            leftObstacle.EnableDefaultLighting();
-            leftObstacle.SetSpecularSettings(Color.Transparent, 1f);
+            leftObstacle.EnableDefaultLighting(specular: false);
 
             Obstacle rightObstacle = new Obstacle(Resources.GetModel("RightObstacle"),
                 Vector3.Zero, Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-4f, 0f, -1.5f), new Vector3(0f, 6f, 1.5f)));
-            rightObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
-            rightObstacle.EnableDefaultLighting();
-            rightObstacle.SetSpecularSettings(Color.Transparent, 1f);
+            rightObstacle.EnableDefaultLighting(specular: false);
 
             Obstacle upperObstacle = new Obstacle(Resources.GetModel("UpperObstacle"),
                 new Vector3(0f, -1.1f, 0f), Vector3.One, Quaternion.Identity,
                 new BoundingBox(new Vector3(-3f, 2.75f, -1.2f), new Vector3(3f, 7f, 1.2f)));
-            upperObstacle.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
-            //upperObstacle.EnableDefaultLighting();
-            //upperObstacle.SetSpecularSettings(Color.Transparent, 1f);
-
+            upperObstacle.EnableDefaultLighting(specular: false);
 
             GameObject3D cave = new GameObject3D(Resources.GetModel("CaveSegment"));
-            cave.SetFogEffect(true, Color.Black, popupDistance - 15f, popupDistance - 5f);
+            cave.EnableDefaultLighting(specular: false);
 
-
-            Model[] caveProps = new Model[3]
+            GameObject3D[] props = new GameObject3D[3]
             {
-                Resources.GetModel("CaveProps_0"),
-                Resources.GetModel("CaveProps_1"),
-                Resources.GetModel("CaveProps_2")
+                new GameObject3D(Resources.GetModel("CaveProps_0")),
+                new GameObject3D(Resources.GetModel("CaveProps_1")),
+                new GameObject3D(Resources.GetModel("CaveProps_2"))
             };
 
-            // Prepare the props models to be used inside the cave
-            foreach (Model model in caveProps)
+            foreach (GameObject3D model in props)
             {
-                foreach (ModelMesh mesh in model.Meshes)
-                {
-                    if (mesh.Name.Contains("LanternEmissive"))
-                    {
-                        foreach (BasicEffect effect in mesh.Effects)
-                        {
-                            effect.FogEnabled = true;
-                            effect.FogColor = Color.Black.ToVector3();
-                            effect.FogStart = popupDistance - 15f;
-                            effect.FogEnd = popupDistance - 5f;
-
-                            effect.EmissiveColor = new Vector3(0.92f, 0.85f, 0.68f);
-                        }
-                    }
-                }
+                model.EnableDefaultLighting(specular: false);
+                model.SetEmissiveMaterial("LanternEmissive", new Color(235, 218, 174));
             }
 
-            GameObject3D[] caveObjects = new GameObject3D[3]
-            {
-                new GameObject3D(caveProps[0]),
-                new GameObject3D(caveProps[1]),
-                new GameObject3D(caveProps[2])
-            };
 
-
-            // Instantiate the procedural generator and initialize the level
-            level = new Level(cave, 220f, caveObjects, gold, lowerObstacle,
-                leftObstacle, rightObstacle, upperObstacle, popupDistance - 5f);
+            // Instantiate the procedural generator and create the level
+            level = new Level(cave, 220f, props, gold,
+                lowerObstacle, leftObstacle, rightObstacle, upperObstacle,
+                popupDistance: 500f);
 
 
             AudioManager.PlaySong("Cave_MainTheme", true);
@@ -456,14 +424,13 @@ namespace OldGoldMine
                 lastSpeedUpdate = 0f;
                 timer.Reset();
                 level.Reset();
+                level.Difficulty = gameSettings.Difficulty;
+                level.Initialize(gameSettings.Seed);
 
                 // Initialize the Player object
                 player = new Player(Resources.GetModel($"Cart_{gameSettings.Cart}"), 
                     new Vector3(0f, 2.5f, -15f), new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity,
                     new Vector3(0f, -2.3f, -0.65f), 1.2f, new Vector3(0f, -0.5f, 0.1f));
-
-                level.InitializeSeed(gameSettings.Seed);
-                level.Difficulty = gameSettings.Difficulty;
 
                 // Reset the game HUD
                 HUD.Instance.UpdateTimer(timer);
