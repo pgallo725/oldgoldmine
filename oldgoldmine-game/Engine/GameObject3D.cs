@@ -165,9 +165,10 @@ namespace OldGoldMine.Engine
         }
 
         /// <summary>
-        /// Enables the basic XNA lighting model for all meshes of the object
+        /// Enables the basic XNA lighting model for all meshes of the object.
         /// </summary>
-        public void EnableDefaultLighting()
+        /// <param name="specular">Allow or disallow specular shading of the object.</param>
+        public void EnableDefaultLighting(bool specular = true)
         {
             if (model3d == null)
                 return;
@@ -180,6 +181,9 @@ namespace OldGoldMine.Engine
                     effect.PreferPerPixelLighting = true;
                 }
             }
+
+            if (!specular)
+                SetSpecularSettings(Color.Transparent, 1f);
         }
 
         /// <summary>
@@ -252,6 +256,28 @@ namespace OldGoldMine.Engine
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EmissiveColor = color.ToVector3();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set an emissive color for all materials of this object matching the provided name.
+        /// </summary>
+        /// <param name="name">The (partial) name of the materials that will emit this color.</param>
+        /// <param name="color">The emissive color of the selected materials.</param>
+        public void SetEmissiveMaterial(string name, Color color)
+        {
+            if (model3d == null)
+                return;
+
+            foreach (ModelMesh mesh in model3d.Meshes)
+            {
+                if (mesh.Name.Contains(name))
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.EmissiveColor = color.ToVector3();
+                    }
                 }
             }
         }
@@ -333,7 +359,6 @@ namespace OldGoldMine.Engine
                     }
                 }
             }
-
         }
 
         /// <summary>
