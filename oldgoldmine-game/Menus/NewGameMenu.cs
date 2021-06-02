@@ -57,7 +57,7 @@ namespace OldGoldMine.Menus
 
 
         public NewGameMenu(Viewport viewport, Texture2D background, Menu parent = null)
-            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+            : base(background, new SolidColorTexture(OldGoldMineGame.Graphics.GraphicsDevice,
                 new Color(Color.Black, 0.66f)), new Point(240, 80), parent)
         {
             Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
@@ -106,7 +106,7 @@ namespace OldGoldMine.Menus
 
             cartPreview = new Image(Resources.GetTexture("CartPreview_0"), cartPanel.Position, new Point(380, 380));
 
-            cartTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+            cartTransparencyLayer = new Image(new SolidColorTexture(OldGoldMineGame.Graphics.GraphicsDevice,
                 new Color(Color.Black, 0.6f)), cartPanel.Position, new Point(400, 400));
 
             cartSelector = new Selector(cartPanel.Position + new Point(0, 270), new Point(60, 60), 200,
@@ -126,7 +126,7 @@ namespace OldGoldMine.Menus
 
         protected override void Layout()
         {
-            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Viewport viewport = OldGoldMineGame.Graphics.GraphicsDevice.Viewport;
 
             Point anchorPointTitle = new Point((int)(viewport.Width * 0.5f), (int)(viewport.Height * 0.08f));
             Point anchorPointCarts = new Point((int)(viewport.Width * 0.25f), (int)(viewport.Height * 0.45f));
@@ -236,8 +236,9 @@ namespace OldGoldMine.Menus
         }
 
 
-        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
+        public override void Draw(in SpriteBatch spriteBatch)
         {
+            var screen = spriteBatch.GraphicsDevice;
             screen.Clear(Color.Black);
 
             spriteBatch.Begin();

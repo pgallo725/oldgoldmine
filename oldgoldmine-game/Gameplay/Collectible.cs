@@ -13,7 +13,7 @@ namespace OldGoldMine.Gameplay
         private static Color DebugColor = Color.Green;
 
         // Tool for rendering the hitbox outlines in the scene (debug mode)
-        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.graphics.GraphicsDevice)
+        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.Graphics.GraphicsDevice)
         {
             Alpha = 1f,
             VertexColorEnabled = true,
@@ -124,7 +124,8 @@ namespace OldGoldMine.Gameplay
         /// Update the object's status in the current frame.
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
-        public void Update(GameTime gameTime)
+        /// <param name="player">Reference to the current Player object.</param>
+        public void Update(GameTime gameTime, Player player)
         {
             if (!IsActive)
                 return;
@@ -134,7 +135,7 @@ namespace OldGoldMine.Gameplay
             this.RotateAroundAxis(Vector3.Up, rotationAmount);
 
             // Check if the collectible has been touched by the player and picked up
-            if (this.hitbox.Intersects(OldGoldMineGame.player.Hitbox))
+            if (this.hitbox.Intersects(player.Hitbox))
             {
                 this.IsActive = false;
                 Score.Add(100);
@@ -152,8 +153,8 @@ namespace OldGoldMine.Gameplay
 
             if (DrawDebugHitbox)
             {
-                renderer.Projection = OldGoldMineGame.player.Camera.Projection;
-                renderer.View = OldGoldMineGame.player.Camera.View;
+                renderer.Projection = camera.Projection;
+                renderer.View = camera.View;
                 renderer.CurrentTechnique.Passes[0].Apply();
 
                 Vector3[] vertices = hitbox.GetCorners();
@@ -187,7 +188,7 @@ namespace OldGoldMine.Gameplay
                     new VertexPositionColor(vertices[7], DebugColor)
                 };
 
-                OldGoldMineGame.graphics.GraphicsDevice.
+                OldGoldMineGame.Graphics.GraphicsDevice.
                     DrawUserPrimitives(PrimitiveType.LineList, lineVertices, 0, 12);
             }
         }

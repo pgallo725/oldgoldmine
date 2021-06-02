@@ -33,7 +33,7 @@ namespace OldGoldMine.Menus
 
 
         public OptionsMenu(Viewport viewport, Texture2D background, Menu parent)
-            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+            : base(background, new SolidColorTexture(OldGoldMineGame.Graphics.GraphicsDevice,
                 new Color(Color.Black, 0.66f)), new Point(225, 75), parent)
         {
             Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
@@ -142,7 +142,7 @@ namespace OldGoldMine.Menus
 
         protected override void Layout()
         {
-            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Viewport viewport = OldGoldMineGame.Graphics.GraphicsDevice.Viewport;
 
             Point anchorPointVolumes = new Point(viewport.Width / 2, (int)(viewport.Height * 0.25f));
             Point anchorPointDisplay = new Point(viewport.Width / 2, (int)(viewport.Height * 0.625f));
@@ -186,8 +186,9 @@ namespace OldGoldMine.Menus
         }
 
 
-        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
+        public override void Draw(in SpriteBatch spriteBatch)
         {
+            var screen = spriteBatch.GraphicsDevice;
             screen.Clear(Color.Black);
 
             spriteBatch.Begin();

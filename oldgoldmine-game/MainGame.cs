@@ -11,10 +11,13 @@ using OldGoldMine.Gameplay;
 namespace OldGoldMine
 {
     /// <summary>
-    /// This is the main type for your game.
+    /// This is the main type for the game, it contains code for resource initialization and the game loop.
     /// </summary>
     public class OldGoldMineGame : Game
     {
+        public static OldGoldMineGame Application { get; private set; }
+        public static GraphicsDeviceManager Graphics { get; private set; }
+
         public enum GameState
         {
             MainMenu,
@@ -23,23 +26,16 @@ namespace OldGoldMine
             GameOver
         }
 
-        // Globally accessible graphics and rendering tools
-        public static GraphicsDeviceManager graphics;
-        public static SpriteBatch spriteBatch;
+        private GameState       state;
+        private GameSettings    settings;
 
-        public static OldGoldMineGame Application { get; private set; }
-        
-        GameState gameState;
+        private MainMenu        mainMenu;
+        private PauseMenu       pauseMenu;
+        private GameOverMenu    gameOverMenu;
 
-        private MainMenu mainMenu;
-        private PauseMenu pauseMenu;
-        private GameOverMenu gameOverMenu;
-
-        Timer timer;
-        public static Player player;
-        Level level;
-
-        private GameSettings currentGameInfo;
+        private Timer       timer;
+        private Player      player;
+        private Level       level;
 
         private float currentSpeed = 20f;
         public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
@@ -56,7 +52,7 @@ namespace OldGoldMine
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 4);    // 250 FPS target
 
-            graphics = new GraphicsDeviceManager(this)
+            Graphics = new GraphicsDeviceManager(this)
             {
                 GraphicsProfile = GraphicsProfile.HiDef,
                 SynchronizeWithVerticalRetrace = false,
@@ -98,8 +94,8 @@ namespace OldGoldMine
             HUD.Create(Window);           
 
 
-            // Set-up the properties of the GameObjects that will be used in the level generation
-                       
+            // Create all the GameObjects that will be used in the level generation
+
             Collectible gold = new Collectible(Resources.GetModel("GoldOre"), 
                 Vector3.Zero, 0.33f * Vector3.One, Quaternion.Identity);
             gold.SetEmissiveColor(Color.Gold * 0.78f);
@@ -148,7 +144,7 @@ namespace OldGoldMine
 
             AudioManager.PlaySong("Cave_MainTheme", true);
 
-            gameState = GameState.MainMenu;
+            state = GameState.MainMenu;
             IsMouseVisible = true;
         }
 
@@ -159,10 +155,6 @@ namespace OldGoldMine
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-
             // LOAD 3D MODELS
 
             Resources.AddModel("Cart_0", Content.Load<Model>("Models/Cart/WoodenCart/cart_wooden"));
@@ -277,11 +269,13 @@ namespace OldGoldMine
             if (!IsActive)
                 return;
 
+            // Process inputs in the current frame
             InputManager.UpdateFrameInput();
 
+            // Update the audio playback in the current frame
             AudioManager.Update(gameTime);
 
-            switch (gameState)
+            switch (state)
             {
                 case GameState.MainMenu:
                 {
@@ -303,25 +297,25 @@ namespace OldGoldMine
                         HUD.Instance.ToggleFramerateVisible();
                     }
 
-                    // Update time-related information and parameters
-
+                    // Tick the in-game timer
                     timer.Update(gameTime);
 
+                    // TODO: move in Player
                     if (timer.Time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
                     {
                         Speed = MathHelper.Clamp(Speed + 1f, 0f, maxSpeed);
                         lastSpeedUpdate = (float)timer.Time.TotalSeconds;
-                        HUD.Instance.UpdateSpeed(Speed);
                     }
 
+                    // Update the player and all level objects in the current frame
+                    player.Update(gameTime);
+                    level.Update(gameTime, player);
+
+                    // Update the HUD
+                    HUD.Instance.UpdateSpeed(Speed);
                     HUD.Instance.UpdateTimer(timer);
                     HUD.Instance.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
                     HUD.Instance.Show(Window);
-
-                    // Update the player and level status in the current frame
-
-                    player.Update(gameTime);
-                    level.Update(gameTime, player.Position);
 
                     break;
                 }
@@ -351,11 +345,13 @@ namespace OldGoldMine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            switch (gameState)
+            using SpriteBatch spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            switch (state)
             {
                 case GameState.MainMenu:
                 {
-                    mainMenu.Draw(GraphicsDevice, spriteBatch);
+                    mainMenu.Draw(spriteBatch);
                     break;
                 }
 
@@ -390,13 +386,13 @@ namespace OldGoldMine
 
                 case GameState.Paused:
                 {
-                    pauseMenu.Draw(GraphicsDevice, spriteBatch);
+                    pauseMenu.Draw(spriteBatch);
                     break;
                 }
 
                 case GameState.GameOver:
                 {
-                    gameOverMenu.Draw(GraphicsDevice, spriteBatch);
+                    gameOverMenu.Draw(spriteBatch);
                     break;
                 }
 
@@ -412,10 +408,10 @@ namespace OldGoldMine
 
         public void StartGame(GameSettings gameSettings)
         {
-            if (gameState == GameState.MainMenu || gameState == GameState.GameOver)
+            if (state == GameState.MainMenu || state == GameState.GameOver)
             {
                 // Store the new game's settings
-                currentGameInfo = gameSettings;
+                settings = gameSettings;
 
                 // Reset the level information
                 Speed = gameSettings.StartSpeed;
@@ -438,7 +434,7 @@ namespace OldGoldMine
                 HUD.Instance.UpdateSpeed(Speed);
 
                 player.Start();
-                gameState = GameState.Running;
+                state = GameState.Running;
                 IsMouseVisible = false;
 
                 // Fade-out the menu music
@@ -451,43 +447,44 @@ namespace OldGoldMine
 
         public void RestartGame()
         {
-            if (gameState == GameState.GameOver)
+            if (state == GameState.GameOver)
             {
                 AudioManager.StopAllSoundEffects();
-                StartGame(currentGameInfo);
+                StartGame(settings);
             }
         }
 
         public void PauseGame()
         {
-            if (gameState == GameState.Running)
+            if (state == GameState.Running)
             {
                 player.Pause();
                 pauseMenu.Show();
-                gameState = GameState.Paused;
+                state = GameState.Paused;
                 IsMouseVisible = true;
             }
         }
 
         public void ResumeGame()
         {
-            if (gameState == GameState.Paused)
+            if (state == GameState.Paused)
             {
                 player.Resume();
-                gameState = GameState.Running;
+                state = GameState.Running;
                 IsMouseVisible = false;
             }
         }
 
         public void GameOver()
         {
-            if (gameState == GameState.Running)
+            if (state == GameState.Running)
             {
                 player.Kill();
                 gameOverMenu.Show();
-                gameState = GameState.GameOver;
+                state = GameState.GameOver;
                 IsMouseVisible = true;
 
+                // Save the new highscore, if any
                 if (Score.Current > Score.Best)
                     Score.Save();
             }
@@ -495,21 +492,23 @@ namespace OldGoldMine
 
         public void ToMainMenu()
         {
-            if (gameState != GameState.MainMenu)
+            if (state != GameState.MainMenu)
             {
+                // Immediately stop all sound effects being played
+                AudioManager.StopAllSoundEffects();
+
+                // Start playing the menu music
                 AudioManager.PlaySong("Cave_MainTheme", true);
 
-                AudioManager.StopAllSoundEffects();      // Immediately stop all sound effects being played
-
-                if (gameState == GameState.Paused)
+                if (state == GameState.Paused)
                 {
-                    // Save any highscore even if the user leaves the game without losing
+                    // Save the highscore even if the user leaves the game
                     if (Score.Current > Score.Best)
                         Score.Save();
                 }
 
                 mainMenu.Show();
-                gameState = GameState.MainMenu;
+                state = GameState.MainMenu;
                 IsMouseVisible = true;
             }
         }

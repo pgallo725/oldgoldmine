@@ -121,7 +121,8 @@ namespace OldGoldMine.Gameplay
             sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
             sound.Pause();
 
-            this.camera = new GameCamera(OldGoldMineGame.graphics.GraphicsDevice.DisplayMode.AspectRatio, clippingPlaneNear: 0.2f)
+            this.camera = new GameCamera(OldGoldMineGame.Graphics.GraphicsDevice.DisplayMode.AspectRatio,
+                clippingPlaneNear: 0.2f)
             {
                 Position = position
             };

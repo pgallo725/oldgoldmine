@@ -64,10 +64,9 @@ namespace OldGoldMine.Menus
         /// <summary>
         /// Draw the menu (and all of its elements) on the screen.
         /// </summary>
-        /// <param name="screen">A reference to the target GraphicsDevice of this render operation.</param>
         /// <param name="spriteBatch">A SpriteBatch object that will be used to draw the menu elements.
         /// It will Begin() and End() inside this call.</param>
-        public abstract void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch);
+        public abstract void Draw(in SpriteBatch spriteBatch);
     }
 
 }

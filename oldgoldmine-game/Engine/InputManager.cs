@@ -177,8 +177,8 @@ namespace OldGoldMine.Engine
         /// </summary>
         public static void ResetMousePosition()
         {
-            Vector2 screenCenter = new Vector2(OldGoldMineGame.graphics.GraphicsDevice.Viewport.Width,
-                OldGoldMineGame.graphics.GraphicsDevice.Viewport.Height) / 2;
+            Vector2 screenCenter = new Vector2(OldGoldMineGame.Graphics.GraphicsDevice.Viewport.Width,
+                OldGoldMineGame.Graphics.GraphicsDevice.Viewport.Height) / 2;
 
             MousePosition = screenCenter.ToPoint();
             Mouse.SetPosition(MousePosition.X, MousePosition.Y);

@@ -19,7 +19,7 @@ namespace OldGoldMine.Menus
 
 
         public PauseMenu(Viewport viewport, Texture2D background, Menu parent = null)
-            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+            : base(background, new SolidColorTexture(OldGoldMineGame.Graphics.GraphicsDevice,
                 new Color(Color.Black, 0.4f)), new Point(400, 120), parent)
         {
             // CREATE SUB-MENU
@@ -47,7 +47,7 @@ namespace OldGoldMine.Menus
 
         protected override void Layout()
         {
-            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Viewport viewport = OldGoldMineGame.Graphics.GraphicsDevice.Viewport;
 
             menuTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.12f));
 
@@ -94,15 +94,16 @@ namespace OldGoldMine.Menus
         }
 
 
-        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
+        public override void Draw(in SpriteBatch spriteBatch)
         {
             if (optionsActive)
             {
                 // If the options menu is the one currently active, it gets drawn instead of the PauseMenu
-                optionsMenu.Draw(screen, spriteBatch);
+                optionsMenu.Draw(spriteBatch);
             }
             else
             {
+                var screen = spriteBatch.GraphicsDevice;
                 screen.Clear(Color.Black);
 
                 spriteBatch.Begin();

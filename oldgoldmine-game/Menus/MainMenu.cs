@@ -25,7 +25,7 @@ namespace OldGoldMine.Menus
 
 
         public MainMenu(Viewport viewport, Texture2D background, Menu parent = null)
-            : base(background, new SolidColorTexture(OldGoldMineGame.graphics.GraphicsDevice,
+            : base(background, new SolidColorTexture(OldGoldMineGame.Graphics.GraphicsDevice,
                 new Color(Color.Black, 0.5f)), new Point(400, 110), parent)
         {
             // CREATE SUB-MENUS
@@ -57,7 +57,7 @@ namespace OldGoldMine.Menus
 
         protected override void Layout()
         {
-            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Viewport viewport = OldGoldMineGame.Graphics.GraphicsDevice.Viewport;
 
             gameTitle.Position = new Point(viewport.Width / 2, (int)(viewport.Height * 0.16f));
 
@@ -117,20 +117,21 @@ namespace OldGoldMine.Menus
         }
 
 
-        public override void Draw(in GraphicsDevice screen, in SpriteBatch spriteBatch)
+        public override void Draw(in SpriteBatch spriteBatch)
         {
             if (optionsMenuActive)
             {
                 // If the options menu is the one currently active, it gets drawn instead of the MainMenu
-                optionsMenu.Draw(screen, spriteBatch);
+                optionsMenu.Draw(spriteBatch);
             }
             else if (newGameMenuActive)
             {
                 // If the new game menu is the one currently active, it gets drawn instead of the MainMenu
-                newGameMenu.Draw(screen, spriteBatch);
+                newGameMenu.Draw(spriteBatch);
             }
             else
             {
+                var screen = spriteBatch.GraphicsDevice;
                 screen.Clear(Color.Black);
 
                 spriteBatch.Begin();

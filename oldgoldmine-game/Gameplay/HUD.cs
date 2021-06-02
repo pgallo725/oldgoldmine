@@ -113,7 +113,7 @@ namespace OldGoldMine.Gameplay
 
         private void Layout()
         {
-            Viewport viewport = OldGoldMineGame.graphics.GraphicsDevice.Viewport;
+            Viewport viewport = OldGoldMineGame.Graphics.GraphicsDevice.Viewport;
 
             timerText.Position = new Point(viewport.Bounds.Width / 2, 5);
             framerateText.Position = new Point(viewport.Bounds.Width - 10, 5);

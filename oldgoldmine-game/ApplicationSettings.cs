@@ -96,7 +96,7 @@ namespace OldGoldMine
         public static void Apply()
         {
             AudioManager.SetVolume(MasterVolume, MusicVolume, EffectsVolume);
-            var graphics = OldGoldMineGame.graphics;
+            var graphics = OldGoldMineGame.Graphics;
 
             try
             {

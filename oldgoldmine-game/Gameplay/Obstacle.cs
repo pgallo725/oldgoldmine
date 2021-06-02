@@ -11,7 +11,7 @@ namespace OldGoldMine.Gameplay
         private static Color DebugColor = Color.Red;
 
         // Tool for rendering the hitbox outlines in the scene (debug mode)
-        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.graphics.GraphicsDevice)
+        private static readonly BasicEffect renderer = new BasicEffect(OldGoldMineGame.Graphics.GraphicsDevice)
         {
             Alpha = 1f,
             VertexColorEnabled = true,
@@ -117,18 +117,19 @@ namespace OldGoldMine.Gameplay
         {
         }
 
-        
+
         /// <summary>
         /// Update the object's status in the current frame.
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
-        public void Update(GameTime gameTime)
+        /// <param name="player">Reference to the current Player object.</param>
+        public void Update(GameTime gameTime, Player player)
         {
             if (!IsActive)
                 return;
 
             // Check if the player has hit the obstacle
-            if (this.hitbox.Intersects(OldGoldMineGame.player.Hitbox))
+            if (this.hitbox.Intersects(player.Hitbox))
             {
                 this.IsActive = false;
                 AudioManager.PlaySoundEffect("Crash_Sound");
@@ -146,8 +147,8 @@ namespace OldGoldMine.Gameplay
 
             if (DrawDebugHitbox)
             {
-                renderer.Projection = OldGoldMineGame.player.Camera.Projection;
-                renderer.View = OldGoldMineGame.player.Camera.View;
+                renderer.Projection = camera.Projection;
+                renderer.View = camera.View;
                 renderer.CurrentTechnique.Passes[0].Apply();
 
                 Vector3[] vertices = hitbox.GetCorners();
@@ -181,7 +182,7 @@ namespace OldGoldMine.Gameplay
                     new VertexPositionColor(vertices[7], DebugColor)
                 };
                 
-                OldGoldMineGame.graphics.GraphicsDevice.
+                OldGoldMineGame.Graphics.GraphicsDevice.
                     DrawUserPrimitives(PrimitiveType.LineList, lineVertices, 0, 12);
             }
         }

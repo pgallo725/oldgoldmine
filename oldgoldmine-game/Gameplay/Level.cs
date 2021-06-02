@@ -514,29 +514,29 @@ namespace OldGoldMine.Gameplay
         /// Update the level's status in the current frame.
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
-        /// <param name="playerPosition">The current position of the player inside the level.</param>
-        public void Update(GameTime gameTime, Vector3 playerPosition)
+        /// <param name="playerPosition">The current Player object navigating the level.</param>
+        public void Update(GameTime gameTime, Player player)
         {
             // Generate new cave segments and level objects when in range
-            if (playerPosition.Z >= nextCavePosition - popupDistance)
+            if (player.Position.Z >= nextCavePosition - popupDistance)
                 GenerateCave();
-            if (playerPosition.Z >= nextObjectPosition - popupDistance)
+            if (player.Position.Z >= nextObjectPosition - popupDistance)
                 GenerateObjects();
 
-            while (caves.Peek().Position.Z < playerPosition.Z - 2 * caveSegmentLength)
+            while (caves.Peek().Position.Z < player.Position.Z - 2 * caveSegmentLength)
             {
                 // Remove previous cave segments and props from the active queue
                 caves.Dequeue().IsActive = false;
                 props.Dequeue().IsActive = false;
             }
 
-            while (collectibles.Peek().Position.Z < playerPosition.Z - caveSegmentLength)
+            while (collectibles.Peek().Position.Z < player.Position.Z - caveSegmentLength)
             {
                 // Remove and deactivate surpassed collectibles from the queue (ordered by distance)
                 collectibles.Dequeue().IsActive = false;
             }
 
-            while (obstacles.Peek().Position.Z < playerPosition.Z - caveSegmentLength)
+            while (obstacles.Peek().Position.Z < player.Position.Z - caveSegmentLength)
             {
                 // Remove and deactivate surpassed obstacles from the queue (ordered by distance)
                 obstacles.Dequeue().IsActive = false;
@@ -544,9 +544,9 @@ namespace OldGoldMine.Gameplay
 
             // Update all active items in the current frame
             foreach (Collectible gold in collectibles)
-                gold.Update(gameTime);
+                gold.Update(gameTime, player);
             foreach (Obstacle obstacle in obstacles)
-                obstacle.Update(gameTime);
+                obstacle.Update(gameTime, player);
         }
 
 
