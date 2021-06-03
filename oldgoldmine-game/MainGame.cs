@@ -37,13 +37,6 @@ namespace OldGoldMine
         private Player      player;
         private Level       level;
 
-        private float currentSpeed = 20f;
-        public float Speed { get { return currentSpeed; } set { currentSpeed = value; } }
-
-        const float speedIncreaseInterval = 4f;
-        const float maxSpeed = 200f;
-        private float lastSpeedUpdate = 0f;
-
 
         public OldGoldMineGame()
         {
@@ -300,19 +293,12 @@ namespace OldGoldMine
                     // Tick the in-game timer
                     timer.Update(gameTime);
 
-                    // TODO: move in Player
-                    if (timer.Time.TotalSeconds >= lastSpeedUpdate + speedIncreaseInterval)
-                    {
-                        Speed = MathHelper.Clamp(Speed + 1f, 0f, maxSpeed);
-                        lastSpeedUpdate = (float)timer.Time.TotalSeconds;
-                    }
-
                     // Update the player and all level objects in the current frame
                     player.Update(gameTime);
                     level.Update(gameTime, player);
 
                     // Update the HUD
-                    HUD.Instance.UpdateSpeed(Speed);
+                    HUD.Instance.UpdateSpeed(player.Speed);
                     HUD.Instance.UpdateTimer(timer);
                     HUD.Instance.UpdateFramerate(1 / gameTime.ElapsedGameTime.TotalSeconds);
                     HUD.Instance.Show(Window);
@@ -413,29 +399,27 @@ namespace OldGoldMine
                 // Store the new game's settings
                 settings = gameSettings;
 
-                // Reset the level information
-                Speed = gameSettings.StartSpeed;
-                Score.Current = 0;
-                Score.Multiplier = gameSettings.ScoreMultiplier; 
-                lastSpeedUpdate = 0f;
+                // Reset the current game state
+                Score.Current = 0; 
+                Score.Multiplier = gameSettings.ScoreMultiplier;
                 timer.Reset();
                 level.Reset();
                 level.Difficulty = gameSettings.Difficulty;
-                level.Initialize(gameSettings.Seed);
+                level.Initialize(gameSettings.Seed, gameSettings.StartSpeed);
 
                 // Initialize the Player object
                 player = new Player(Resources.GetModel($"Cart_{gameSettings.Cart}"), 
                     new Vector3(0f, 2.5f, -15f), new Vector3(0.8f, 1f, 1.1f), Quaternion.Identity,
                     new Vector3(0f, -2.3f, -0.65f), 1.2f, new Vector3(0f, -0.5f, 0.1f));
 
+                player.Start(gameSettings.StartSpeed);
+                state = GameState.Running;
+                IsMouseVisible = false;
+
                 // Reset the game HUD
                 HUD.Instance.UpdateTimer(timer);
                 HUD.Instance.UpdateScore(0);
-                HUD.Instance.UpdateSpeed(Speed);
-
-                player.Start();
-                state = GameState.Running;
-                IsMouseVisible = false;
+                HUD.Instance.UpdateSpeed(player.Speed);
 
                 // Fade-out the menu music
                 AudioManager.FadeOutMusic(1.5f);

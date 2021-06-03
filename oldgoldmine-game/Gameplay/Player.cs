@@ -57,6 +57,13 @@ namespace OldGoldMine.Gameplay
         private AnimationState state = AnimationState.Idle;
 
 
+        // Movement speed variables
+        private const float MaxSpeed = 200f;
+        private const float SpeedInterval = 4f;
+        public float Speed { get; private set; }
+        private float speedUpdateTimer = 0f;
+
+
         // Jump animation parameters
         private const float jumpHeight = 9f;
         private const float jumpVelocity = 16f;
@@ -187,8 +194,11 @@ namespace OldGoldMine.Gameplay
 
         // Handle game state changes relative to the player
 
-        public void Start()
+        public void Start(float startingSpeed)
         {
+            Speed = startingSpeed;
+            speedUpdateTimer = 0f;
+
             sound.Play();
         }
 
@@ -221,8 +231,16 @@ namespace OldGoldMine.Gameplay
                 ResetCameraLook();
             }
 
+            // Update the player movement speed over time
+            speedUpdateTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (speedUpdateTimer >= SpeedInterval)
+            {
+                Speed = MathHelper.Clamp(Speed + 1f, 0f, MaxSpeed);
+                speedUpdateTimer = 0f;
+            }
+
             // Move the player according to the current frame inputs
-            float moveSpeed = OldGoldMineGame.Application.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float moveSpeed = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             Move(moveSpeed, Vector3.Backward);
 
             if (InputManager.RightHold)

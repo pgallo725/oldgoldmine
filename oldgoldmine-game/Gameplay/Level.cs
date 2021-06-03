@@ -475,7 +475,7 @@ namespace OldGoldMine.Gameplay
         /// Begin the generation of the procedural level based on the provided seed.
         /// </summary>
         /// <param name="seed">64-bit integer seed.</param>
-        public void Initialize(long seed)
+        public void Initialize(long seed, float startSpeed)
         {
             randomizer = new Random((int)seed);
 
@@ -484,7 +484,7 @@ namespace OldGoldMine.Gameplay
                 GenerateCave();
 
             while (nextObjectPosition < popupDistance)
-                GenerateObjects();
+                GenerateObjects(startSpeed);
         }
 
 
@@ -521,7 +521,7 @@ namespace OldGoldMine.Gameplay
             if (player.Position.Z >= nextCavePosition - popupDistance)
                 GenerateCave();
             if (player.Position.Z >= nextObjectPosition - popupDistance)
-                GenerateObjects();
+                GenerateObjects(player.Speed);
 
             while (caves.Peek().Position.Z < player.Position.Z - 2 * caveSegmentLength)
             {
@@ -566,10 +566,10 @@ namespace OldGoldMine.Gameplay
             nextCavePosition += caveSegmentLength;
         }
 
-        private void GenerateObjects()
+        private void GenerateObjects(float speed)
         {
             int val = randomizer.Next(100);
-            float distance = MathHelper.Clamp(OldGoldMineGame.Application.Speed/2, 12f, 1000f);
+            float distance = MathHelper.Clamp(speed/2, 12f, 1000f);
 
             // Choose the pattern to be generated, based on probabilities
             Pattern pattern;
