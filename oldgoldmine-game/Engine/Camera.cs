@@ -15,11 +15,28 @@ namespace OldGoldMine.Engine
         /// </summary>
         public Vector3 Position { get { return position; } set { Move(value - position); } }
 
+
+        private Matrix viewMatrix;
+        private bool updated = false;
+
         /// <summary>
-        /// The view matrix of the Camera for the current frame.
-        /// NOTE: if Update() hasn't been called yet, it refers to the previous frame.
+        /// The view matrix of the Camera for the current frame, incorporating the latest
+        /// position and rotation values applied to the Camera object.
         /// </summary>
-        public Matrix View { get; private set; }
+        public Matrix View
+        {
+            get
+            {
+                if (!updated)
+                {
+                    // Update viewMatrix
+                    viewMatrix = Matrix.CreateLookAt(position, lookAt, Vector3.Up);
+                    updated = true;
+                }
+
+                return viewMatrix;
+            }
+        }
 
         /// <summary>
         /// The projection matrix generated for this Camera (based on FOV, aspect ratio and clipping planes).
@@ -50,18 +67,6 @@ namespace OldGoldMine.Engine
 
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(fieldOfView),
                 aspectRatio, clippingPlaneNear, clippingPlaneFar);
-
-            View = Matrix.CreateLookAt(position, lookAt , Vector3.Up);
-        }
-
-
-        /// <summary>
-        /// Updates the camera's ViewMatrix with the latest position and rotation settings.
-        /// NOTE: always call this method at the end of Game.Update() before Draw() begins.
-        /// </summary>
-        public void Update()
-        {
-            View = Matrix.CreateLookAt(position, lookAt, Vector3.Up);
         }
 
 
@@ -73,6 +78,8 @@ namespace OldGoldMine.Engine
         {
             this.position += movement;
             this.lookAt += movement;
+
+            updated = false;
         }
 
         /// <summary>
@@ -82,6 +89,8 @@ namespace OldGoldMine.Engine
         public void LookAt(Vector3 targetPosition)
         {
             this.lookAt = targetPosition;
+
+            updated = false;
         }
 
 
@@ -97,6 +106,8 @@ namespace OldGoldMine.Engine
 
             Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
             lookAt = position + lookAtOffset;
+
+            updated = false;
         }
 
         /// <summary>
@@ -111,6 +122,8 @@ namespace OldGoldMine.Engine
 
             Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
             lookAt = position + lookAtOffset;
+
+            updated = false;
         }
 
         /// <summary>
@@ -123,6 +136,8 @@ namespace OldGoldMine.Engine
 
             Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotation);
             lookAt = position + lookAtOffset;
+
+            updated = false;
         }
 
     }
