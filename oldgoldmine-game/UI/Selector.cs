@@ -98,8 +98,8 @@ namespace OldGoldMine.UI
                 this.index = MathHelper.Clamp(value, 0, values.Count - 1);
                 label.Text = values[index];
 
-                leftButton.Enabled = this.Enabled && index > 0;
-                rightButton.Enabled = this.Enabled && index < values.Count - 1;
+                leftButton.Enabled = index > 0;
+                rightButton.Enabled = index < (values.Count - 1);
             }
         }
 
