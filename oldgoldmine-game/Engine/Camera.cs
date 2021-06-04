@@ -5,7 +5,7 @@ namespace OldGoldMine.Engine
     /// <summary>
     /// Camera class, responsible for updating and holding the View and Projection matrices used to render the scene.
     /// </summary>
-    public class GameCamera
+    public class Camera
     {
         private Vector3 position;
         private Vector3 lookAt;
@@ -43,7 +43,7 @@ namespace OldGoldMine.Engine
         /// <param name="fieldOfView">Field of view of the camera, in degrees.</param>
         /// <param name="clippingPlaneNear">Distance of the near clipping plane.</param>
         /// <param name="clippingPlaneFar">Distance of the far clipping plane.</param>
-        public GameCamera(float aspectRatio, float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
+        public Camera(float aspectRatio, float fieldOfView = 60f, float clippingPlaneNear = 0.5f, float clippingPlaneFar = 500f)
         {
             this.position = Vector3.Zero;
             this.lookAt = position + Vector3.UnitZ;

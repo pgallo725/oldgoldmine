@@ -18,7 +18,7 @@ namespace OldGoldMine.Gameplay
 
         bool freeLook = false;
 
-        private readonly GameCamera camera;
+        private readonly Camera camera;
         private readonly GameObject3D model;
         private readonly SoundEffectInstance sound;
 
@@ -28,7 +28,7 @@ namespace OldGoldMine.Gameplay
         /// <summary>
         /// The camera object through which the Player observes the game world.
         /// </summary>
-        public GameCamera Camera { get { return camera; } }
+        public Camera Camera { get { return camera; } }
 
         /// <summary>
         /// The current position of the Player object in the game world.
@@ -128,7 +128,7 @@ namespace OldGoldMine.Gameplay
             sound = AudioManager.PlaySoundEffect("Minecart_Loop", true, 0.8f, 0.2f);
             sound.Pause();
 
-            this.camera = new GameCamera(OldGoldMineGame.Graphics.GraphicsDevice.DisplayMode.AspectRatio,
+            this.camera = new Camera(OldGoldMineGame.Graphics.GraphicsDevice.DisplayMode.AspectRatio,
                 clippingPlaneNear: 0.2f)
             {
                 Position = position

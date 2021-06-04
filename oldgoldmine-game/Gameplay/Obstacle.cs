@@ -138,7 +138,7 @@ namespace OldGoldMine.Gameplay
         }
 
 
-        public override void Draw(in GameCamera camera)
+        public override void Draw(in Camera camera)
         {
             if (!IsActive)
                 return;

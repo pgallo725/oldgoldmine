@@ -390,7 +390,7 @@ namespace OldGoldMine.Engine
         /// Render the object in 3D space, with the previously defined Position, Rotation and Scale.
         /// </summary>
         /// <param name="camera">The camera that will be used to render the object.</param>
-        public virtual void Draw(in GameCamera camera)
+        public virtual void Draw(in Camera camera)
         {
             if (IsActive && model3d != null)
                 model3d.Draw(this.ObjectWorldMatrix, camera.View, camera.Projection);

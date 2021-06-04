@@ -104,7 +104,7 @@ namespace OldGoldMine.Engine
         /// Render the object in 3D space, according to its position and scale, rotating it towards the camera.
         /// </summary>
         /// <param name="camera">The camera that will be used to render and orientate the Billboard.</param>
-        public virtual void Draw(in GameCamera camera)
+        public virtual void Draw(in Camera camera)
         {
             if (IsActive && Texture != null)
             {

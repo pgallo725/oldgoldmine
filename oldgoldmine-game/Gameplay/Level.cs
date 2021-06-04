@@ -666,7 +666,7 @@ namespace OldGoldMine.Gameplay
         /// Draw the level environment and all gameplay objects (obstacles and collectibles)
         /// </summary>
         /// <param name="camera">The camera used to render the scene.</param>
-        public void Draw (GameCamera camera)
+        public void Draw (Camera camera)
         {
             foreach (GameObject3D cave in caves)
                 cave.Draw(camera);
