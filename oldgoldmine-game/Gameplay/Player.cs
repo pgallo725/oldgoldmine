@@ -200,6 +200,9 @@ namespace OldGoldMine.Gameplay
             speedUpdateTimer = 0f;
 
             sound.Play();
+
+            // Make sure that the camera state is updated
+            camera.Update();
         }
 
         public void Pause()
