@@ -517,36 +517,54 @@ namespace OldGoldMine.Gameplay
         /// <param name="playerPosition">The current Player object navigating the level.</param>
         public void Update(in GameTime gameTime, in Player player)
         {
-            // Generate new cave segments and level objects when in range
+            // Generate new cave segments when needed
             if (player.Position.Z >= nextCavePosition - popupDistance)
                 GenerateCave();
+
+            // Generate new level objects when needed
             if (player.Position.Z >= nextObjectPosition - popupDistance)
                 GenerateObjects(player.Speed);
 
-            while (caves.Peek().Position.Z < player.Position.Z - 2 * caveSegmentLength)
+            while (IsRemovable(caves.Peek(), player))
             {
-                // Remove previous cave segments and props from the active queue
+                // Remove previous cave segments and props from the queue
                 caves.Dequeue().IsActive = false;
                 props.Dequeue().IsActive = false;
             }
 
-            while (collectibles.Peek().Position.Z < player.Position.Z - caveSegmentLength)
+            while (IsRemovable(obstacles.Peek(), player))
             {
-                // Remove and deactivate surpassed collectibles from the queue (ordered by distance)
-                collectibles.Dequeue().IsActive = false;
-            }
-
-            while (obstacles.Peek().Position.Z < player.Position.Z - caveSegmentLength)
-            {
-                // Remove and deactivate surpassed obstacles from the queue (ordered by distance)
+                // Remove surpassed obstacles from the queue (ordered by distance)
                 obstacles.Dequeue().IsActive = false;
             }
 
-            // Update all active items in the current frame
+            // Update all active collectibles in the current frame
             foreach (Collectible gold in collectibles)
                 gold.Update(gameTime, player);
+
+            // Check collisions for all obstacles in the level
             foreach (Obstacle obstacle in obstacles)
                 obstacle.Update(gameTime, player);
+
+            // Remove all inactive or surpassed collectibles from the queue
+            int N = collectibles.Count;
+            for (int i = 0; i < N; i++)
+            {
+                Collectible gold = collectibles.Dequeue();
+                if (IsRemovable(gold, player))
+                    gold.IsActive = false;
+
+                // Re-insert only active collectibles in the queue (preserving order)
+                if (gold.IsActive)
+                    collectibles.Enqueue(gold);
+            }
+        }
+
+
+        // Check if the provided GameObject has been surpassed by the player
+        private bool IsRemovable(GameObject3D gameObject, Player player)
+        {
+            return gameObject.Position.Z < player.Position.Z - caveSegmentLength;
         }
 
 
