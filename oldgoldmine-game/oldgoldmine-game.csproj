@@ -11,6 +11,16 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>oldgoldmine.ico</ApplicationIcon>
+    <AssemblyName>oldgoldmine</AssemblyName>
+    <RootNamespace>OldGoldMine</RootNamespace>
+    <StartupObject>OldGoldMine.Program</StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+    <RepositoryUrl>https://github.com/pgallo725/oldgoldmine</RepositoryUrl>
+    <Authors>Paolo Gallo</Authors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationSettings.cs" />
