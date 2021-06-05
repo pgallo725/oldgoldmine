@@ -53,7 +53,7 @@ namespace OldGoldMine.Engine
             get
             {
                 return keysDown.Contains(Keys.S) || keysDown.Contains(Keys.Down) || keysDown.Contains(Keys.LeftControl) ||
-                    buttonsDown.Contains(Buttons.DPadDown) || buttonsDown.Contains(Buttons.LeftThumbstickDown);
+                    buttonsDown.Contains(Buttons.B) || buttonsDown.Contains(Buttons.DPadDown) || buttonsDown.Contains(Buttons.LeftThumbstickDown);
             }
         }
         public static bool LeftReleased
@@ -77,7 +77,7 @@ namespace OldGoldMine.Engine
             get
             {
                 return keysReleased.Contains(Keys.S) || keysReleased.Contains(Keys.Down) || keysReleased.Contains(Keys.LeftControl) ||
-                    buttonsReleased.Contains(Buttons.DPadDown) || buttonsReleased.Contains(Buttons.LeftThumbstickDown);
+                    buttonsReleased.Contains(Buttons.B) || buttonsReleased.Contains(Buttons.DPadDown) || buttonsReleased.Contains(Buttons.LeftThumbstickDown);
             }
         }
         public static bool JumpPressed 
