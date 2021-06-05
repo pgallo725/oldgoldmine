@@ -233,6 +233,24 @@ namespace OldGoldMine.Gameplay
             },
 
             new Pattern {
+                PatternElement.Empty,
+                PatternElement.ObstacleRight,
+                PatternElement.GoldRight,
+                PatternElement.GoldRight,
+                PatternElement.ObstacleAbove
+            },
+
+            new Pattern {
+                PatternElement.Empty,
+                PatternElement.ObstacleLeft,
+                PatternElement.GoldLeft,
+                PatternElement.GoldRight,
+                PatternElement.ObstacleRight,
+                PatternElement.GoldLeft,
+                PatternElement.ObstacleAbove
+            },
+
+            new Pattern {
                 PatternElement.ObstacleBelow,
                 PatternElement.Empty,
                 PatternElement.ObstacleAbove,
@@ -277,6 +295,14 @@ namespace OldGoldMine.Gameplay
                 PatternElement.GoldBothSides,
                 PatternElement.GoldBothSides,
                 PatternElement.ObstacleBelow
+            },
+
+            new Pattern {
+                PatternElement.Empty,
+                PatternElement.ObstacleAbove,
+                PatternElement.GoldBothSides,
+                PatternElement.GoldBothSides,
+                PatternElement.ObstacleAbove
             }
         };
 
@@ -291,7 +317,7 @@ namespace OldGoldMine.Gameplay
                 PatternElement.ObstacleRight,
                 PatternElement.Empty,
                 PatternElement.ObstacleLeft, 
-                PatternElement.GoldRight,
+                PatternElement.GoldLeft,
                 PatternElement.GoldRight
             },
 
@@ -310,7 +336,6 @@ namespace OldGoldMine.Gameplay
                 PatternElement.ObstacleBelow,
                 PatternElement.ObstacleAbove,
                 PatternElement.Empty,
-                PatternElement.GoldRight,
                 PatternElement.GoldRight
             },
 
@@ -320,6 +345,42 @@ namespace OldGoldMine.Gameplay
                 PatternElement.ObstacleBelow,
                 PatternElement.GoldBothSides,
                 PatternElement.GoldBothSides,
+                PatternElement.ObstacleRight
+            },
+
+            new Pattern {
+                PatternElement.ObstacleBelow,
+                PatternElement.GoldBothSides,
+                PatternElement.ObstacleBelow,
+                PatternElement.GoldBothSides,
+                PatternElement.ObstacleAbove,
+                PatternElement.Empty
+            },
+
+            new Pattern {
+                PatternElement.Empty,
+                PatternElement.ObstacleAbove,
+                PatternElement.ObstacleBelow,
+                PatternElement.GoldAbove,
+                PatternElement.GoldCenter,
+                PatternElement.ObstacleAbove
+            },
+
+            new Pattern {
+                PatternElement.Empty,
+                PatternElement.ObstacleAbove,
+                PatternElement.ObstacleLeft,
+                PatternElement.GoldLeft,
+                PatternElement.ObstacleLeft,
+                PatternElement.ObstacleRight
+            },
+
+            new Pattern {
+                PatternElement.ObstacleLeft,
+                PatternElement.GoldLeft,
+                PatternElement.ObstacleLeft,
+                PatternElement.ObstacleRight,
+                PatternElement.GoldRight,
                 PatternElement.ObstacleRight
             },
 
@@ -359,7 +420,14 @@ namespace OldGoldMine.Gameplay
             },
 
             new Pattern {
-                PatternElement.Empty,
+                PatternElement.ObstacleAbove,
+                PatternElement.ObstacleRight,
+                PatternElement.GoldRight,
+                PatternElement.ObstacleRight,
+                PatternElement.GoldRight
+            },
+
+            new Pattern {
                 PatternElement.Empty,
                 PatternElement.ObstacleRight,
                 PatternElement.ObstacleLeft,
@@ -372,8 +440,8 @@ namespace OldGoldMine.Gameplay
                 PatternElement.Empty,
                 PatternElement.GoldAbove,
                 PatternElement.GoldCenter,
-                PatternElement.GoldCenter,
                 PatternElement.ObstacleBelow,
+                PatternElement.GoldAbove,
                 PatternElement.Empty,
                 PatternElement.ObstacleAbove
             }
@@ -415,16 +483,31 @@ namespace OldGoldMine.Gameplay
         /// </summary>
         public int Difficulty 
         {
-            get { return difficulty; }
-            set { difficulty = MathHelper.Clamp(value, 0, 2); }
-        }
-        private int difficulty = 1;
+            set
+            {
+                switch (value)
+                {
+                    case 0: // Easy
+                        marginMultiplier = (1.5f, 1.25f);
+                        patternProbability = new float[3] { 0.6f, 0.3f, 0.1f };
+                        break;
 
-        // Additional level generation parameters based on difficulty
-        private readonly float[] marginMultiplier    = { 1.4f, 1.2f, 1.1f };     // Extra room for maneuver: Easy 40%, Medium 20%, Hard 10%
-        private readonly float[] easyProbability     = { 0.6f, 0.3f, 0.1f };     // Probability of easy patterns: Easy 60%, Medium 30%, Hard 10%
-        private readonly float[] mediumProbability   = { 0.3f, 0.4f, 0.3f };     // Probability of medium patterns: Easy 30%, Medium 40%, Hard 30%
-        private readonly float[] hardProbability     = { 0.1f, 0.3f, 0.6f };     // Probability of hard patterns: Easy 10%, Medium 30%, Hard 60%
+                    case 1: // Medium
+                        marginMultiplier = (1.33f, 1.1f);
+                        patternProbability = new float[3] { 0.3f, 0.4f, 0.3f };
+                        break;
+
+                    case 2: // Hard
+                        marginMultiplier = (1.20f, 1.02f);
+                        patternProbability = new float[3] { 0.1f, 0.3f, 0.6f };
+                        break;
+                }
+            }
+        }
+
+        // Level generation parameters based on difficulty
+        private float[] patternProbability;                     // Probability of easy, medium and hard patterns
+        private (float start, float end) marginMultiplier;      // Extra room for maneuver (in %)
 
 
         /// <summary>
@@ -475,14 +558,16 @@ namespace OldGoldMine.Gameplay
         /// Begin the generation of the procedural level based on the provided seed.
         /// </summary>
         /// <param name="seed">64-bit integer seed.</param>
+        /// <param name="startSpeed">The starting speed of the player inside the level.</param>
         public void Initialize(long seed, float startSpeed)
         {
             randomizer = new Random((int)seed);
 
-            // Generate the first few cave segments and patterns
+            // Generate the first few cave segments
             while (nextCavePosition < popupDistance)
                 GenerateCave();
 
+            // Populate the cave with the first round of objects
             while (nextObjectPosition < popupDistance)
                 GenerateObjects(startSpeed);
         }
@@ -514,7 +599,7 @@ namespace OldGoldMine.Gameplay
         /// Update the level's status in the current frame.
         /// </summary>
         /// <param name="gameTime">Time signature of the current frame.</param>
-        /// <param name="playerPosition">The current Player object navigating the level.</param>
+        /// <param name="player">The current Player object navigating the level.</param>
         public void Update(in GameTime gameTime, in Player player)
         {
             // Generate new cave segments when needed
@@ -538,14 +623,6 @@ namespace OldGoldMine.Gameplay
                 obstacles.Dequeue().IsActive = false;
             }
 
-            // Update all active collectibles in the current frame
-            foreach (Collectible gold in collectibles)
-                gold.Update(gameTime, player);
-
-            // Check collisions for all obstacles in the level
-            foreach (Obstacle obstacle in obstacles)
-                obstacle.Update(gameTime, player);
-
             // Remove all inactive or surpassed collectibles from the queue
             int N = collectibles.Count;
             for (int i = 0; i < N; i++)
@@ -558,6 +635,14 @@ namespace OldGoldMine.Gameplay
                 if (gold.IsActive)
                     collectibles.Enqueue(gold);
             }
+
+            // Update all active collectibles in the current frame
+            foreach (Collectible gold in collectibles)
+                gold.Update(gameTime, player);
+
+            // Check collisions for all obstacles in the level
+            foreach (Obstacle obstacle in obstacles)
+                obstacle.Update(gameTime, player);
         }
 
 
@@ -586,17 +671,23 @@ namespace OldGoldMine.Gameplay
 
         private void GenerateObjects(float speed)
         {
-            int val = randomizer.Next(100);
-            float distance = MathHelper.Clamp(speed/2, 12f, 1000f);
+            // Choose the distance between objects interpolating between
+            // a maximum and a minimum value based on the player speed
+            float margin = MathHelper.Lerp(marginMultiplier.start, marginMultiplier.end,
+                MathHelper.Clamp((speed - 20f) / 120f, 0f, 1f));
+            float distance = MathHelper.Clamp((speed * 0.48f), 12f, 1000f) * margin;
+            System.Diagnostics.Debug.WriteLine(margin);
 
             // Choose the pattern to be generated, based on probabilities
             Pattern pattern;
-            if (val <= easyProbability[difficulty] * 100)
+
+            int val = randomizer.Next(100);
+            if (val <= patternProbability[0] * 100)
             {
                 // Easy pattern
                 pattern = easyPatterns[randomizer.Next(easyPatterns.Length)];
             }
-            else if (val <= (easyProbability[difficulty] + mediumProbability[difficulty]) * 100)
+            else if (val <= (patternProbability[0] + patternProbability[1]) * 100)
             {
                 // Medium pattern
                 pattern = mediumPatterns[randomizer.Next(mediumPatterns.Length)];
@@ -655,10 +746,10 @@ namespace OldGoldMine.Gameplay
                     obstacles.Enqueue(newObstacle);
                 }
 
-                nextObjectPosition += distance * marginMultiplier[difficulty];
+                nextObjectPosition += distance;
             }
 
-            nextObjectPosition += distance * marginMultiplier[difficulty];
+            nextObjectPosition += distance;
         }
 
 
