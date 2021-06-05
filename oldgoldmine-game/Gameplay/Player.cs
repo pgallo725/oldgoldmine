@@ -58,8 +58,9 @@ namespace OldGoldMine.Gameplay
 
 
         // Movement speed variables
-        private const float MaxSpeed = 200f;
-        private const float SpeedInterval = 4f;
+        private const float MinSpeed = 20f;
+        private const float MaxSpeed = 150f;
+        private const float SpeedInterval = 5f;
         public float Speed { get; private set; }
         private float speedUpdateTimer = 0f;
 
@@ -196,7 +197,7 @@ namespace OldGoldMine.Gameplay
 
         public void Start(float startingSpeed)
         {
-            Speed = startingSpeed;
+            Speed = MathHelper.Clamp(startingSpeed, MinSpeed, MaxSpeed);
             speedUpdateTimer = 0f;
 
             sound.Play();
@@ -235,7 +236,7 @@ namespace OldGoldMine.Gameplay
             speedUpdateTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (speedUpdateTimer >= SpeedInterval)
             {
-                Speed = MathHelper.Clamp(Speed + 1f, 0f, MaxSpeed);
+                Speed = MathHelper.Clamp(Speed + 1f, MinSpeed, MaxSpeed);
                 speedUpdateTimer = 0f;
             }
 
