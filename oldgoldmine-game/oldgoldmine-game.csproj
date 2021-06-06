@@ -14,8 +14,7 @@
     <AssemblyName>oldgoldmine</AssemblyName>
     <RootNamespace>OldGoldMine</RootNamespace>
     <StartupObject>OldGoldMine.Program</StartupObject>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
     <RepositoryUrl>https://github.com/pgallo725/oldgoldmine</RepositoryUrl>
     <Authors>Paolo Gallo</Authors>
   </PropertyGroup>
@@ -64,7 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-    <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.0.1641" />
   </ItemGroup>
 </Project>
