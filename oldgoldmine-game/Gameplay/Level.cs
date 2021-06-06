@@ -676,7 +676,6 @@ namespace OldGoldMine.Gameplay
             float margin = MathHelper.Lerp(marginMultiplier.start, marginMultiplier.end,
                 MathHelper.Clamp((speed - 20f) / 120f, 0f, 1f));
             float distance = MathHelper.Clamp((speed * 0.48f), 12f, 1000f) * margin;
-            System.Diagnostics.Debug.WriteLine(margin);
 
             // Choose the pattern to be generated, based on probabilities
             Pattern pattern;
