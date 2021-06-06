@@ -165,7 +165,7 @@ namespace OldGoldMine.Menus
 
             // Reset all the UI elements to their original status
 
-            speedToggle.SelectedValueIndex = 0;
+            speedToggle.SelectedValueIndex = 2;
             difficultyToggle.SelectedValueIndex = 1;
 
             seedBox.Content = string.Empty;
@@ -199,7 +199,8 @@ namespace OldGoldMine.Menus
 
         private float ComputeMultiplier()
         {
-            return 1f + (SelectedDifficulty - 1) * 0.5f + (SelectedSpeed - 20) / 10 * 0.05f;
+            int baseSpeed = 20 + SelectedDifficulty * 2 * 10;
+            return 1f + (SelectedDifficulty - 1) * 0.5f + (SelectedSpeed - baseSpeed) / 10 * 0.05f;
         }
 
         private void UpdateSettingsDisplay()
