@@ -610,14 +610,14 @@ namespace OldGoldMine.Gameplay
             if (player.Position.Z >= nextObjectPosition - popupDistance)
                 GenerateObjects(player.Speed);
 
-            while (IsRemovable(caves.Peek(), player))
+            while (caves.TryPeek(out GameObject3D cave) && IsRemovable(cave, player))
             {
                 // Remove previous cave segments and props from the queue
                 caves.Dequeue().IsActive = false;
                 props.Dequeue().IsActive = false;
             }
 
-            while (IsRemovable(obstacles.Peek(), player))
+            while (obstacles.TryPeek(out Obstacle obstacle) && IsRemovable(obstacle, player))
             {
                 // Remove surpassed obstacles from the queue (ordered by distance)
                 obstacles.Dequeue().IsActive = false;
