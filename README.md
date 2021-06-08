@@ -59,7 +59,9 @@ The game has been developed using the [MonoGame](https://www.monogame.net/) fram
 
 ### Supported platforms
 
-The game can be played on any system that runs **.NET Core 3.1**, with an ***x86*** or ***x64*** CPU and a graphics device that supports the DirectX 11 feature level (it might also work with older devices back to DirectX 9, but it has not been tested to confirm).
+Builds of the game are provided for both the **win-x86** and **win-x64** target platforms; these have been tested on Windows 10, but the portability of .NET should guarantee compatibility for all platforms supported by **.NET 5.0**. The game also requires a graphics device that supports the **DirectX 11** feature level (it might also work with older devices back to DirectX 9, but it has not been tested to confirm).
+
+> **NOTE:** Windows SmartScreen or Windows Defender might complain when extracting the release package or running the application, due to its unknown source. You can safely ignore these warnings and proceed, but in some cases you might need to right-click `oldgoldmine.exe` and *Run as Administrator* for it to work properly.
 
 ## Maintained status
 
