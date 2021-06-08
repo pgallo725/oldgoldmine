@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
-	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <UseWindowsForms>true</UseWindowsForms>
+	  <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <UseWindowsForms>false</UseWindowsForms>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup>
@@ -17,6 +17,9 @@
     <SignAssembly>false</SignAssembly>
     <RepositoryUrl>https://github.com/pgallo725/oldgoldmine</RepositoryUrl>
     <Authors>Paolo Gallo</Authors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
