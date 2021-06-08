@@ -67,18 +67,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Cart/AluminumCart/cart_aluminum.fbx
 
-#begin Models/Cart/AluminumCart/cart_aluminum_bake.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cart/AluminumCart/cart_aluminum_bake.png
-
 #begin Models/Cart/GoldenCart/cart_golden.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -97,18 +85,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/Cart/GoldenCart/cart_golden.fbx
-
-#begin Models/Cart/GoldenCart/cart_golden_bake.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cart/GoldenCart/cart_golden_bake.png
 
 #begin Models/Cart/IronCart/cart_iron.fbx
 /importer:FbxImporter
@@ -129,18 +105,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Cart/IronCart/cart_iron.fbx
 
-#begin Models/Cart/IronCart/cart_iron_bake.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cart/IronCart/cart_iron_bake.png
-
 #begin Models/Cart/TankCart/cart_tank.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -160,18 +124,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Cart/TankCart/cart_tank.fbx
 
-#begin Models/Cart/TankCart/cart_tank_bake.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cart/TankCart/cart_tank_bake.png
-
 #begin Models/Cart/WoodenCart/cart_wooden.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -190,66 +142,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/Cart/WoodenCart/cart_wooden.fbx
-
-#begin Models/Cart/WoodenCart/cart_wooden_bake.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cart/WoodenCart/cart_wooden_bake.png
-
-#begin Models/Cave/cave_BakedBeams1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/cave_BakedBeams1.png
-
-#begin Models/Cave/cave_BakedBeams2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/cave_BakedBeams2.png
-
-#begin Models/Cave/cave_BakedBeams3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/cave_BakedBeams3.png
-
-#begin Models/Cave/cave_groundTexture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/cave_groundTexture.png
 
 #begin Models/Cave/cave_props_01.fbx
 /importer:FbxImporter
@@ -308,18 +200,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Cave/cave_props_03.fbx
 
-#begin Models/Cave/cave_rockTexture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/cave_rockTexture.png
-
 #begin Models/Cave/cave_segment.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -338,102 +218,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/Cave/cave_segment.fbx
-
-#begin Models/Cave/lantern_BakedMetal.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/lantern_BakedMetal.png
-
-#begin Models/Cave/lantern_RustTexture.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=True
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/lantern_RustTexture.jpg
-
-#begin Models/Cave/pickaxe_BakedIron.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/pickaxe_BakedIron.png
-
-#begin Models/Cave/pickaxe_BakedWood.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/pickaxe_BakedWood.png
-
-#begin Models/Cave/rails_BakedMetal.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/rails_BakedMetal.png
-
-#begin Models/Cave/rails_BakedWood.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/rails_BakedWood.png
-
-#begin Models/Cave/sackClosed_BakedTexture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/sackClosed_BakedTexture.png
-
-#begin Models/Cave/woodenCrate_woodTexture.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Cave/woodenCrate_woodTexture.jpg
 
 #begin Models/GoldOre/goldOre.fbx
 /importer:FbxImporter
@@ -454,18 +238,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/GoldOre/goldOre.fbx
 
-#begin Models/GoldOre/goldOre_BakedTexture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=True
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/GoldOre/goldOre_BakedTexture.png
-
 #begin Models/Obstacles/ObstacleBottom/obstacle_bottom.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -484,54 +256,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/Obstacles/ObstacleBottom/obstacle_bottom.fbx
-
-#begin Models/Obstacles/ObstacleBottom/obstacleBottom_BakedRocks.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleBottom/obstacleBottom_BakedRocks.png
-
-#begin Models/Obstacles/ObstacleBottom/obstacleBottom_BakedWood.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleBottom/obstacleBottom_BakedWood.png
-
-#begin Models/Obstacles/ObstacleLeft/leftObstacle_BakedFrame.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleLeft/leftObstacle_BakedFrame.png
-
-#begin Models/Obstacles/ObstacleLeft/leftObstacle_BakedSupport.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleLeft/leftObstacle_BakedSupport.png
 
 #begin Models/Obstacles/ObstacleLeft/obstacle_left.fbx
 /importer:FbxImporter
@@ -571,54 +295,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Obstacles/ObstacleRight/obstacle_right.fbx
 
-#begin Models/Obstacles/ObstacleRight/rightObstacle_BakedFrame.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleRight/rightObstacle_BakedFrame.png
-
-#begin Models/Obstacles/ObstacleRight/rightObstacle_BakedSupport.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleRight/rightObstacle_BakedSupport.png
-
-#begin Models/Obstacles/ObstacleTop/Arrows.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/Obstacles/ObstacleTop/Arrows.jpg
-
-#begin Models/Obstacles/ObstacleTop/Attention.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/Obstacles/ObstacleTop/Attention.jpg
-
 #begin Models/Obstacles/ObstacleTop/obstacle_top.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -637,30 +313,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Color
 /build:Models/Obstacles/ObstacleTop/obstacle_top.fbx
-
-#begin Models/Obstacles/ObstacleTop/obstacleTop_BakedFrame.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleTop/obstacleTop_BakedFrame.png
-
-#begin Models/Obstacles/ObstacleTop/obstacleTop_BakedPoles.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Models/Obstacles/ObstacleTop/obstacleTop_BakedPoles.png
 
 #begin Sounds/Music/Main_Cave_Theme.mp3
 /importer:Mp3Importer
